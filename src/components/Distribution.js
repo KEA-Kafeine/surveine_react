@@ -165,13 +165,13 @@ const Distribution = (props) => {
             console.log("SET start time: ", startTime);
             console.log("SET end time: ", endTime);
         } else if(selectedOption === "2") {
-            startTime = firstDateStr;
+            startTime = firstDateStr.slice(0, -3);
             endTime = "";
             console.log("SET start time: ", startTime);
             console.log("SET end time: ", endTime);
         } else if(selectedOption === "3") {
             startTime = "";
-            endTime = firstDateStr;
+            endTime = firstDateStr.slice(0, -3);
             console.log("SET start time: ", startTime);
             console.log("SET end time: ", endTime);
         }
