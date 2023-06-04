@@ -1,0 +1,42 @@
+{
+  "enqId": "asdfasdfasdfasdf",
+  "enqTitle": "나의 첫번째 설문",
+  "enqCont": [
+    {
+      "qstId": "Q-QqJ1HDVAtW9ycgbrfgkm9",
+      "qstType": "체크박스",
+      "qstTitle": "첫번째 질문입니다.",
+      "qstImg": "",
+      "anonymous": false,
+      "essential": false,
+      "branch": false,
+      "branchCont": {},
+      "options": ["아니요", "예"]
+    },
+
+    {
+      "qstId": "Q-QqJ1HDVAtW9ycgbrfgkm9",
+      "qstType": "체크박스",
+      "qstTitle": "두번째 질문입니다.",
+      "qstImg": "",
+      "anonymous": false,
+      "essential": false,
+      "branch": false,
+      "branchCont": {},
+      "options": ["맞다", "아니다"]
+    },
+
+    {
+      "qstId": "Q-QqJ1HDVAtW9ycgbrfgkm9",
+      "qstType": "체크박스",
+      "qstTitle": "세번째 질문입니다.",
+      "qstImg": "",
+      "anonymous": false,
+      "essential": false,
+      "branch": false,
+      "branchCont": {},
+      "options": ["ㅇㅇ", "ㅇ"]
+    }
+  ],
+  "_class": "com.kafeine.surveine.domain.Enq"
+}
