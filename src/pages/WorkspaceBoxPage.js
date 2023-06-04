@@ -1,3 +1,6 @@
+// 안 쓰는 페이지 ? (제가 확인하고 지우겠습니다!)
+// by Gina
+
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import CoffeeBeanList from "../components/workspace/CoffeeBeanList";
@@ -12,17 +15,10 @@ import * as cm from "../components/Common";
 import CboxBlank from "../components/workspace/CboxBlank";
 import { AboxBlank } from "../components/workspace/AboxBlank";
 import { uToken } from "../components/TokenAtom";
-import { useRecoilValue, useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
-import EnqSetIcon from "../img/workspace/enqSetting.svg";
-import FolderSettings from "../components/workspace/FolderSettings";
-import { GPSBlank } from "../components/workspace/GPSBlank";
-import { memNameToken, cbListToken, abListToken, boxToken, CorAToken } from "../components/TokenAtom";
 
-// const {kakao} = window;
-import KakaoMap from "../components/workspace/KakaoMap";
-
-function Workspace() {
+function WorkspaceBox() {
   const tokenValue = useRecoilValue(uToken);
   const navigate = useNavigate();
 
@@ -33,28 +29,11 @@ function Workspace() {
     alert("검색 클릭");
   };
 
-  const memName = useRecoilValue(memNameToken);
-  const [cbList, setCbList] = useRecoilState(cbListToken);
-  const [abList, setAbList] = useRecoilState(abListToken);
-  // const [box, setBox] = useRecoilState(boxToken);
-  const [CorA, setCorA] = useRecoilState(CorAToken);
-
+  const [memName, setMemName] = useState("");
+  const [cbList, setCbList] = useState([]);
+  const [abList, setAbList] = useState([]);
   const [box, setBox] = useState({});
-
-  // useEffect(() => {
-  //   console.log("====WS TEST====");
-  //   console.log(memName);
-  //   console.log(cbList);
-  //   console.log(abList);
-  //   // console.log(box); // 비어있어
-  //   console.log(CorA);
-  // }, []);
-
-  // const [memName, setMemName] = useState("");
-  // const [cbList, setCbList] = useState([]);
-  // const [abList, setAbList] = useState([]);
-  // const [box, setBox] = useState({});
-  // const [CorA, setCorA] = useState("");
+  const [CorA, setCorA] = useState("");
 
   // back이랑 소통할 때!
   useEffect(() => {
@@ -68,7 +47,7 @@ function Workspace() {
           console.log(response.data);
           console.log(response.data.result);
 
-          // setMemName(response.data.result.memberName);
+          setMemName(response.data.result.memberName);
           setCbList(response.data.result.cboxList);
           setAbList(response.data.result.aboxList);
 
@@ -85,22 +64,17 @@ function Workspace() {
       });
   }, []);
 
+  // useEffect(() => {
+  //   console.log("====TEST TEST TEST====");
+  //   console.log(box);
+  // }, [box]);
+
   const [upFolderData, setUpFolderData] = useState({});
-  // const [boxId, setBoxId] = useState(0);
   const handleFolderDataChange = (folderData) => {
     console.log("===WHY NOT===");
     console.log(folderData);
     setUpFolderData(folderData);
-    // if(folderData.hasOwnProperty("cboxId")) {
-    //   setBoxId(folderData.cboxId);
-    //   console.log(folderData.cboxId);
-    //   // navigate(`/workspace/${folderData.cboxId}`);
-    // } else if(folderData.hasOwnProperty("aboxId")) {
-    //   setBoxId(folderData.aboxId);
-    //   // navigate(`/workspace/${folderData.aboxId}`);
-    // }
   };
-
   useEffect(() => {
     console.log("===YEAH===");
     console.log(upFolderData);
@@ -111,31 +85,9 @@ function Workspace() {
     console.log(box);
   }, [box]);
 
-  const [folderSet, setFolderSet] = useState(false); 
-  const clickSettings = (boxId) => {
-    // alert(boxId + " click settings");
-    setFolderSet(true);
-  };
-  const closeModal = () => {
-    setFolderSet(false);
-  }
-
-  // const userLocation = {
-  //   lat: 37.45521937066099,
-  //   lng: 127.13396513505703,
-  // };
-  const [lat, setLat] = useState(0);
-  const [lng, setLng] = useState(0);
-  const handleChangeLat = (changeLat) => {
-    setLat(changeLat);
-  };
-  const handleChangeLng = (changeLng) => {
-    setLng(changeLng);
-  };
-
   return (
     <WorkspaceContainer>
-      <SideNaviContainer>{memName && <SideNavi memberName={memName} cbList={cbList} abList={abList} onChangeLat={handleChangeLat} onChangeLng={handleChangeLng} onFolderDataChange={handleFolderDataChange} />}</SideNaviContainer>
+      <SideNaviContainer>{memName && <SideNavi memberName={memName} cbList={cbList} abList={abList} onFolderDataChange={handleFolderDataChange} />}</SideNaviContainer>
       <TopBarContainer>
         <cm.TopBarWhite>
           <cm.TopBar_menu style={{ marginLeft: "5rem" }}>
@@ -159,12 +111,6 @@ function Workspace() {
               <h3>{box.aboxName}</h3>
             </div>  
           )}
-          {box.hasOwnProperty("GPSBox") && (
-            <div>
-              GPS 설문함
-              <h3>내 주변의 설문지</h3>
-            </div>
-          )}
         </Title>
         <SearchContainer>
           <SearchDiv>
@@ -173,14 +119,6 @@ function Workspace() {
               <StyledSerachBtn src={SearchIcon} />
             </SearchBtn>
           </SearchDiv>
-          {((box.cboxName !== "기본 제작함") && (box.aboxName !== "기본 참여함")) && (
-            <div>
-              <StyledSetBtn src={EnqSetIcon} onClick={() => clickSettings(box.cboxName ? box.cboxId : box.aboxId)} />
-              {folderSet && (
-                <FolderSettings onClose={closeModal} boxId={box.cboxName ? box.cboxId : box.aboxId} boxName={box.cboxName ? box.cboxName : box.aboxName} type={box.cboxName ? "cbox" : "abox"} />
-              )}
-            </div>
-          )}
         </SearchContainer>
       </MiddleContainer>
 
@@ -188,35 +126,22 @@ function Workspace() {
         {box.hasOwnProperty("cboxId") && Object.keys(box).length != 0 &&
           (box.enqList.length != 0 ? (
             // <CoffeeBeanList cboxId={box.cboxId} enqList={box.enqList} cbList={CorA === "cbox" ? cbList : undefined} abList={CorA === "abox" ? abList : undefined} />
-            <CoffeeBeanList boxType="cbox" boxId={box.cboxId} boxList={box.enqList} cbList={cbList} abList={undefined} />
+            <CoffeeBeanList cboxId={box.cboxId} enqList={box.enqList} cbList={cbList} abList={undefined} />
           ) : (
             <CboxBlank cboxId={box.cboxId} />
           ))}
         {box.hasOwnProperty("aboxId") && Object.keys(box).length != 0 &&
           (box.ansList.length != 0 ? (
-            // <CoffeeBeanList boxType="abox" boxId={box.aboxId} boxList={box.ansList} cbList={CorA === "cbox" ? cbList : undefined} abList={CorA === "abox" ? abList : undefined} />
-            <CoffeeBeanList boxType="abox" boxId={box.aboxId} boxList={box.ansList} cbList={undefined} abList={abList} />
+            <CoffeeBeanList aboxId={box.aboxId} ansList={box.ansList} cbList={CorA === "cbox" ? cbList : undefined} abList={CorA === "abox" ? abList : undefined} />
           ) : (
             <AboxBlank aboxId={box.aboxId} />
           ))}
-        {box.hasOwnProperty("GPSBox") && (
-          <div>
-            {box.GPSBox.length != 0 ? (
-              <CoffeeBeanList boxType="gbox" boxList={box.GPSBox} abList={abList} />
-              ) : (
-                <GPSBlank />
-            )}
-            <SubInfoBottomContainer>
-              <KakaoMap lat={lat} lng={lng} />
-            </SubInfoBottomContainer>
-          </div>
-        )}
       </CoffeeBeanListContainer>
     </WorkspaceContainer>
   );
 }
 
-export default Workspace;
+export default WorkspaceBox;
 
 const WorkspaceContainer = styled.div`
   display: grid;
@@ -279,7 +204,6 @@ const SearchContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 1rem;
-  flex-direction: row;
 `;
 
 const SearchDiv = styled.div`
@@ -322,21 +246,4 @@ const CBContainer = styled.div`
   width: calc((100% - 16px) / 4);
   height: 200px;
   margin-right: 25px;
-`;
-
-const StyledSetBtn = styled.img`
-  width: 0.4rem;
-  margin: 0.4rem 1.5rem 3.2rem 0.5rem;
-`;
-
-const SubInfoBottomContainer = styled.div`
-  position: absolute;
-  right: 2rem;
-  top: 27rem;
-  height: 10vh;
-  width: 25vw;
-
-  // border-radius: 12px;
-  // box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
-  // background: #81c147;
 `;

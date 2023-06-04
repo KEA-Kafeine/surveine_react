@@ -6,14 +6,83 @@ import * as cm from "../components/Common";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "../img/search.svg";
+import CoffeeBeanList from "../components/workspace/CoffeeBeanList";
+import { SboxBlank } from "../components/workspace/SboxBlank";
 
 function SandBoxPage() {
   const tokenValue = useRecoilValue(uToken);
   const navigate = useNavigate();
+  
+  const [SBList, setSBList] = useState([]);
+  const [cboxList, setCboxList] = useState([]);
+  const [type, setType] = useState("sandbox");
+
+  useEffect(() => {
+    axios
+      .get("/api/sbox", {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        if (response.data.isSuccess) {
+          console.log("===SAND BOX===");
+          console.log(response.data.result);
+          setSBList(response.data.result.sandboxCBList);
+          setCboxList(response.data.result.cbList);
+          setType("sandbox");
+        } else {
+          alert("failed to");
+        }
+      });
+  }, []);
 
   const [selectedMenu, setSelectedMenu] = useState("sandbox")
-  const handleMenuClick = (menu) => {
+
+  // Sand Box 메뉴 클릭
+  const handleClickSandBox = (menu) => {
     setSelectedMenu(menu);
+
+    axios
+      .get("/api/sbox", {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        if (response.data.isSuccess) {
+          console.log("===SAND BOX===");
+          console.log(response.data.result);
+          setSBList(response.data.result.sandboxCBList);
+          setCboxList(response.data.result.cbList);
+          setType("sandbox");
+        } else {
+          alert("failed to");
+        }
+      });
+  }
+
+  // 추후 삭제
+  useEffect(() => {
+    console.log("====After SB===");
+    console.log(SBList);
+  }, [SBList]);
+
+  // 관심 템플릿 메뉴 클릭
+  const handleClickFavorite = (menu) => {
+    setSelectedMenu(menu);
+
+    axios
+      .get("/api/sbox/favlist", {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        if (response.data.isSuccess) {
+          console.log("===FAVORITE TEMPLATE===");
+          console.log(response.data.result);
+          setSBList(response.data.result.favEnqList);
+          setCboxList(response.data.result.cbList);
+          setType("sandbox");
+        } else {
+          alert("failed to");
+        }
+      });
   }
 
   const clickSearch = () => {
@@ -40,11 +109,11 @@ function SandBoxPage() {
       </cm.TopBarDark>
 
       <MenuWrapper>
-        <MenuItem isSelected={selectedMenu === "sandbox"} onClick={() => handleMenuClick("sandbox")}>
+        <MenuItem isSelected={selectedMenu === "sandbox"} onClick={() => handleClickSandBox("sandbox")}>
           Sand Box
         </MenuItem>
         <VerticalLine />
-        <MenuItem isSelected={selectedMenu === "favTemplate"} onClick={() => handleMenuClick("favTemplate")}>
+        <MenuItem isSelected={selectedMenu === "favTemplate"} onClick={() => handleClickFavorite("favTemplate")}>
           관심 템플릿
         </MenuItem>
 
@@ -57,6 +126,16 @@ function SandBoxPage() {
           </SearchDiv>
         </SearchContainer>
       </MenuWrapper>
+
+      <SBCBConatiner>
+        {type === "sandbox" && (
+          SBList.length != 0 ? (
+            <CoffeeBeanList boxType="sbox" boxList={SBList} cbList={cboxList} />
+          ) : (
+            <SboxBlank />
+          )
+        )}
+      </SBCBConatiner>
 
     </SandBoxPageContainer>
   );
@@ -129,4 +208,22 @@ const StyledSerachBtn = styled.img`
   width: 1rem;
   height: 1rem;
   margin-right: 1rem;
+`;
+
+const SBCBConatiner = styled.div`
+  grid-area: contains;
+  margin-left: 65px;
+  margin-top: 30px;
+  max-height: 100%;
+  min-width: 70rem;
+  overflow-y: scroll;
+  /* 스크롤바 제거 */
+  .scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scroll {
+    -ms-overflow-style: none; /* IE11 */
+    scrollbar-width: none; /* Firefox */
+  }
 `;

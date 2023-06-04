@@ -8,3 +8,33 @@ export const uToken = atom({
   default: "",
   effects_UNSTABLE: [persistAtom],
 });
+
+export const memNameToken = atom({
+  key: "memNameToken",
+  default: "",
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const cbListToken = atom({
+  key: "cbListToken",
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const abListToken = atom({
+  key: "abListToken",
+  default: [],
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const boxToken = atom({
+  key: "boxToken",
+  default: {},
+  effects_UNSTABLE: [persistAtom],
+});
+
+export const CorAToken = atom({
+  key: "CorAToken",
+  default: "",
+  effects_UNSTABLE: [persistAtom],
+});

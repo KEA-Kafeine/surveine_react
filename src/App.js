@@ -24,6 +24,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotpwPage />} />
         <Route path="/workspace" element={<Workspace />} />
+        {/* <Route path="/workspace/:boxId" element={<Workspace />} /> */}
         <Route path="/mypage" element={<MemberPage />} />
         <Route path="/create/:cboxId" element={<FormCreation />} />
         <Route path="/create/:cboxId/:enqId" element={<FormCreation />} />

@@ -10,6 +10,8 @@ import * as cm from "../components/Common";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const {kakao} = window;
+
 function MemberPage() {
   const tokenValue = useRecoilValue(uToken);
   const navigate = useNavigate();
@@ -51,8 +53,8 @@ function MemberPage() {
 
   const NowMemberLocation = {
     address: "경기도 성남시 복정동 가천대학교 AI관",
-    lat: 39.2393,
-    lng: 23.2393,
+    lat: 37.45521937066099,
+    lng: 127.13396513505703,
   };
 
   const clickLeftArrowBtn = () => {
@@ -70,6 +72,21 @@ function MemberPage() {
   const clickGoogleSocial = () => {
     alert("구글 소셜 연동");
   };
+
+  useEffect(() => {
+    const container = document.getElementById('map');
+    const options = {
+      center: new kakao.maps.LatLng(NowMemberLocation.lat, NowMemberLocation.lng),
+      level: 3
+    };
+    const map = new kakao.maps.Map(container, options);
+    const markerPosition = new kakao.maps.LatLng(NowMemberLocation.lat, NowMemberLocation.lng);
+    const marker = new kakao.maps.Marker({
+      position: markerPosition
+    });
+    marker.setMap(map);
+  }, []);
+  
 
   return (
     <MemberPageContainer>
@@ -165,7 +182,8 @@ function MemberPage() {
               </LocationLatLng>
             </LocationInfoContainer>
           </SubInfoTopContainer>
-          <SubInfoBottomContainer></SubInfoBottomContainer>
+          <SubInfoBottomContainer id="map">
+          </SubInfoBottomContainer>
         </SubInfoContainer>
       </MemberMainContainer>
     </MemberPageContainer>

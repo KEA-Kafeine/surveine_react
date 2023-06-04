@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-export function AboxBlank() {
+export function SboxBlank() {
     return (
         <>
         <Wrapper>
-            There is no response in this folder.
+            There is no template.
         </Wrapper>
         </>
     );

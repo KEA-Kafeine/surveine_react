@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-export function AboxBlank() {
+export function GPSBlank() {
     return (
         <>
         <Wrapper>
-            There is no response in this folder.
+            There is no GPS enquete you can response.
         </Wrapper>
         </>
     );

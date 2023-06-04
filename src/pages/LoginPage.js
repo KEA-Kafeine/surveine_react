@@ -6,12 +6,20 @@ import { useRecoilState } from "recoil";
 import * as cm from "../components/Common";
 import * as sl from "../components/SignupLogin";
 import { Link } from "react-router-dom";
+
+import { memNameToken, cbListToken, abListToken, boxToken, CorAToken } from "../components/TokenAtom";
 import { useLocation } from "react-router-dom";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [token, setToken] = useRecoilState(uToken);
+
+  const [memName, setMemName] = useRecoilState(memNameToken);
+  const [cbList, setCbList] = useRecoilState(cbListToken);
+  const [abList, setAbList] = useRecoilState(abListToken);
+  const [box, setBox] = useRecoilState(boxToken);
+  const [CorA, setCorA] = useRecoilState(CorAToken);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,6 +53,15 @@ const LoginPage = () => {
         }
       });
   };
+
+  // useEffect(() => {
+  //   console.log("====LOGIN TEST====");
+  //   console.log("memName:", memName);
+  //   console.log(cbList);
+  //   console.log(abList);
+  //   console.log(box);
+  //   console.log(CorA);
+  // }, [memName]);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -92,38 +109,20 @@ const LoginPage = () => {
             </cm.DivHorizon>
             <cm.DivVertical>
               <sl.InputTitle>이메일 *</sl.InputTitle>
-              <sl.InputBox
-                type="email"
-                placeholder="이메일을 입력하세요"
-                value={email}
-                onChange={handleEmailChange}
-              />
+              <sl.InputBox type="email" placeholder="이메일을 입력하세요" value={email} onChange={handleEmailChange} />
             </cm.DivVertical>
             <cm.DivVertical>
               <sl.InputTitle>비밀번호 *</sl.InputTitle>
-              <sl.InputBox
-                type="password"
-                placeholder="비밀번호를 입력하세요"
-                value={password}
-                onChange={handlePasswordChange}
-              />
+              <sl.InputBox type="password" placeholder="비밀번호를 입력하세요" value={password} onChange={handlePasswordChange} />
             </cm.DivVertical>
             <cm.DivHorizon>
               <cm.LeftDiv>
-                <sl.CheckboxInput
-                  id="checkbox"
-                  checked={rememberMe}
-                  onChange={handleRememberMe}
-                />
-                <sl.CheckboxLabel htmlFor="checkbox">
-                  로그인 상태 유지하기
-                </sl.CheckboxLabel>
+                <sl.CheckboxInput id="checkbox" checked={rememberMe} onChange={handleRememberMe} />
+                <sl.CheckboxLabel htmlFor="checkbox">로그인 상태 유지하기</sl.CheckboxLabel>
               </cm.LeftDiv>
               <cm.RightDiv>
                 <cm.LinkNone to={"/forgot-password"}>
-                  <sl.BlueBoldText style={{ marginRight: "10px" }}>
-                    비밀번호 찾기
-                  </sl.BlueBoldText>
+                  <sl.BlueBoldText style={{ marginRight: "10px" }}>비밀번호 찾기</sl.BlueBoldText>
                 </cm.LinkNone>
               </cm.RightDiv>
             </cm.DivHorizon>
@@ -136,9 +135,7 @@ const LoginPage = () => {
               </cm.LeftDiv>
               <cm.RightDiv>
                 <cm.LinkNone to={"/signup"}>
-                  <sl.BlueBoldText style={{ marginRight: "10px" }}>
-                    서베인에 가입하기
-                  </sl.BlueBoldText>
+                  <sl.BlueBoldText style={{ marginRight: "10px" }}>서베인에 가입하기</sl.BlueBoldText>
                 </cm.LinkNone>
               </cm.RightDiv>
             </cm.DivHorizon>

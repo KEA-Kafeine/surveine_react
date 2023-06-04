@@ -10,7 +10,7 @@ const EditModal = (props) => {
         console.log("===ENQ SET MODAL===");
         console.log(props);
         console.log("===END Modal===");
-    }, [])
+    }, []);
     
     const tokenValue = useRecoilValue(uToken);
 
@@ -19,7 +19,14 @@ const EditModal = (props) => {
     const [moveFolder, setMoveFolder] = useState("");
     const [confirmRep, setConfirmRep] = useState(false);
     const [confirmDel, setConfirmDel] = useState(false);
+    const [confirmDelAns, setConfirmDelAns] = useState(false);
     const [confirmShare, setConfirmShare] = useState(false);
+    const [confirmReport, setConfirmReport] = useState(false);
+    const [bringCbox, setBringCbox] = useState("");
+    const [modifyFName, setModifyFName] = useState("");
+    const [delFolder, setDelFolder] = useState(false);
+    const [confirmDist, setConfirmDist] = useState(false);
+    const [respGPS, setRespGPS] = useState("");
 
     const setIsShared = props.setIsShared;
     const setEnqNameByRsp = props.setEnqName;
@@ -29,23 +36,54 @@ const EditModal = (props) => {
     };
     const handleEnqNameChange = (e) => {
         setEnqName(e.target.value);
-    }
+    };
     const handleMoveFolder = (folderName) => {
         console.log("이동할 폴더: ", folderName);
         setMoveFolder(folderName);
-    }
+    };
     const handleConfirmRep = (confRep) => {
         setConfirmRep(confRep);
         enqReplic(confRep);
-    }
+    };
     const handleConfirmDel = (confDel) => {
         setConfirmDel(confDel);
         enqDelete(confDel);
-    }
+    };
+    const handleConfirmDelAns = (confDel) => {
+        setConfirmDelAns(confDel);
+        ansDelete(confDel);
+    };
     const handleConfirmShare = (confShare) => {
         setConfirmShare(confShare);
         enqShare(confShare);
-    }
+    };
+    const handleConfirmReport = (confReport) => {
+        setConfirmReport(confReport);
+        enqReport(confReport);
+    };
+    const handleBringCbox = (folderName) => {
+        console.log("가져올 폴더: ", folderName);
+        setBringCbox(folderName);
+    };
+    const handleFNameModify = (e) => {
+        setModifyFName(e.target.value);
+    };
+    const handleDelFolder = (confDelF) => {
+        setDelFolder(confDelF);
+        folderDelete(confDelF);
+    };
+    const handleStartDist = (confDist) => {
+        setConfirmDist(confDist);
+        startDist(confDist);
+    };
+    const handleEndDist = (confDist) => {
+        setConfirmDist(confDist);
+        endDist(confDist);
+    };
+    const handleRespGPS = (folderName) => {
+        console.log("가져올 참여함 폴더: ", folderName);
+        setRespGPS(folderName);
+    };
 
     const saveFolderName = () => {
         props.onSave(folderName);
@@ -92,25 +130,14 @@ const EditModal = (props) => {
         props.onClose();
     };
 
-    const saveMoveFolder = () => {
+    // 제작함 폴더 이동
+    const saveMoveFolder_cbox = () => {
         // props.onSave(folderId);
         const selectedFolder = props.folderList.find((item) => item.cboxName === moveFolder);
         console.log(selectedFolder);
         console.log("id: ", selectedFolder.cboxId);
-        
-        // 폴더이동: cbox, abox 따로
-        let url, reqData;
-        if(selectedFolder.hasOwnProperty("cboxId")) {
-            // url = `/api/wspace/enq/move/${selectedFolder.cboxId}`;
-            url = `/api/wspace/enq/move/${props.enqId}`;
-            reqData = {"cboxId": selectedFolder.cboxId};
-        } else if(selectedFolder.hasOwnProperty("aboxId")) {
-            // url = `/api/wspace/ans/move/${selectedFolder.aboxId}`;
-            url = `/api/wspace/ans/move/${props.ansId}`;
-            reqData = {"aboxId": selectedFolder.aboxId};
-        }
 
-        axios.put(url, reqData, {
+        axios.put(`/api/wspace/enq/move/${props.enqId}`, {"cboxId": selectedFolder.cboxId}, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
@@ -118,11 +145,29 @@ const EditModal = (props) => {
         })
         .catch(error => {
             console.error("[ERROR] move folder: ", error);
-            console.log(reqData);
         });
 
         props.onClose();
-    }
+    };
+
+    // 참여함 폴더 이동
+    const saveMoveFolder_abox = () => {
+        const selectedFolder = props.folderList.find((item) => item.aboxName === moveFolder);
+        console.log(selectedFolder);
+        console.log("id: ", selectedFolder.aboxId);
+
+        axios.put(`/api/wspace/ans/move/${props.ansId}`, {"aboxId": selectedFolder.aboxId}, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            console.log("Enquete is moved: ", response.data);
+        })
+        .catch(error => {
+            console.error("[ERROR] move folder: ", error);
+        });
+
+        props.onClose();
+    };
 
     const enqReplic = (confRep) => {
         // props.onSave(confirmRep);
@@ -141,7 +186,7 @@ const EditModal = (props) => {
         });
 
         props.onClose();
-    }
+    };
 
     const enqDelete = (confDel) => {
         console.log("confirmDel: ", confDel);
@@ -160,12 +205,33 @@ const EditModal = (props) => {
         });
         
         props.onClose();
-    }
+    };
+    const ansDelete = (confDel) => {
+        console.log("confirmDelAns: ", confDel);
+        console.log(confirmDelAns);
+
+        axios.put(`/api/wspace/ans/delete/${props.ansId}`, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("Answer is deleted: ", response.data);
+            } else {
+                alert("faild to");
+            }
+        })
+        .catch(error => {
+            console.log("[ERROR] delete answer: ", error);
+        });
+
+        props.onClose();
+    };
 
     const enqShare = (confShare) => {
         console.log("confirmShare: ", confShare);
         console.log(confirmShare);
 
+        // 커피콩 공유여부: cbox에서만 가능 (abox에 관한 것 따로 구현 X)
         axios.put(`/api/wspace/enq/share/${props.enqId}`, null, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
@@ -178,11 +244,165 @@ const EditModal = (props) => {
         });
 
         props.onClose();
-    }
+    };
 
+    const enqReport = (confReport) => {
+        console.log("confirmReport: ", confReport);
+        console.log(confirmReport);
+
+        axios.post("/api/sbox/report", {"enqId": props.enqId}, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("Template is reported: ", response.data);
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.log("[ERROR] report template: ", error);
+        });
+
+        props.onClose();
+    };
+
+    const bring_to_cbox = () => {
+        const selectedFolder = props.folderList.find((item) => item.cboxName === bringCbox);
+        console.log(selectedFolder);
+        console.log("id: ", selectedFolder.cboxId);
+
+        axios.post("/api/sbox/bring", {"cboxId": selectedFolder.cboxId, "enqId": props.enqId}, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("Bring template to my cbox: ", response.data);
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.log("[ERROR] bring tempalte: ", error);
+        });
+
+        props.onClose();
+    };
+
+    // 폴더 이름 변경
+    const saveModifyFName = () => {
+        props.onSave(modifyFName);
+        console.log("modify folder name: " + modifyFName);
+        
+        let url = `/api/wspace/cbox/rename/${props.boxId}`;
+        if(props.type === "abox") {
+            url = `/api/wspace/abox/rename/${props.boxId}`;
+        }
+        axios.put(url, {[props.type === "cbox" ? "cboxName" : "aboxName"]: modifyFName}, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("Modify folder name: ", response.data);
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.error("[ERROR] modify folder name: ", error);
+        });
+    
+        props.onClose();
+    };
+
+    const folderDelete = (confDelF) => {
+        console.log("confirm delete folder: ", confDelF);
+        
+        let url = `/api/wspace/cbox/delete/${props.boxId}`;
+        if(props.type === "abox") {
+            url = `/api/wspace/abox/delete/${props.boxId}`;
+        }
+        
+        axios.delete(url, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("Delete folder: ", response.data);
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.error("[ERROR] delete folder: ", error);
+        });
+
+        props.onClose();
+    };
+
+    const startDist = (confDist) => {
+        console.log("confirm distribute: ", confDist);
+        axios.put("/api/wspace/dist", {"enqId": props.enqId, "enqStatus": "DIST_DONE"}, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("Start distribute: ", response.data);
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.error("[ERROR] start distribute: ", error);
+        });
+
+        props.onClose();
+    };
+    const endDist = (confDist) => {
+        console.log("confirm distribute: ", confDist);
+        axios.put("/api/wspace/dist", {"enqId": props.enqId, "enqStatus": "ENQ_DONE"}, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("End distribute: ", response.data);
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.error("[ERROR] end distribute: ", error);
+        });
+
+        props.onClose();
+    };
+
+    const respGPS_abox = () => {
+        const selectedFolder = props.folderList.find((item) => item.aboxName === respGPS);
+        console.log(selectedFolder);
+        console.log("id: ", selectedFolder.aboxId);
+        
+        // axios
+        axios.post("/api/wspace/gps/resp", {"enqId": props.enqId, "aboxId": selectedFolder.aboxId}, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("Response GPS enquete (bring it to abox): ", response.data);
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.error("[ERROR] response GPS enquete: ", error);
+        });
+
+        props.onClose();
+    };
+    
     const closeModal = () => {
         props.onClose();
-    }
+    };
 
     return(
         <Wrapper>
@@ -204,10 +424,10 @@ const EditModal = (props) => {
             )}
             {props.what === "modifyEnqName" && (
                 <div>
-                    <h2>이름 바꾸기</h2>
+                    <h2>설문지 이름 변경</h2>
                     <InputWrapper
                         type="text"
-                        placeholder="Enquete Name"
+                        placeholder={props.enqName}
                         value={enqName}
                         onChange={handleEnqNameChange} />
                     {/* <SaveBtn style={{marginLeft: "230px", marginTop: "5px"}} onClick={modifyEnqName}>확인</SaveBtn> */}
@@ -217,22 +437,45 @@ const EditModal = (props) => {
                     </BtnWrapper>
                 </div>
             )}
-            {props.what === "moveFolder" && (
+            {props.what === "moveFolder_cbox" && (
                 <div>
                     <h2>폴더 이동</h2>
-                    {[props.folderList[0], ...props.folderList.slice(1).sort((a, b) => a.cboxName.localeCompare(b.cboxName))]
-                    .map((item) => (
-                        <div
-                            key={item.cboxId}
-                            onClick={() => handleMoveFolder(item.cboxName)}
-                            style={{fontWeight: moveFolder === item.cboxName ? "bold" : "normal", cursor: "pointer"}}
-                        >
-                            {item.cboxName}
-                        </div>
-                    ))}
+                    {(
+                        [props.folderList[0], ...props.folderList.slice(1).sort((a, b) => a.cboxName.localeCompare(b.cboxName))]
+                        .map((item) => (
+                            <div
+                                key={item.cboxId}
+                                onClick={() => handleMoveFolder(item.cboxName)}
+                                style={{fontWeight: moveFolder === item.cboxName ? "bold" : "normal", cursor: "pointer"}}
+                            >
+                                {item.cboxName}
+                            </div>
+                        ))
+                    )}
                     <BtnWrapper>
                         <SaveBtn style={{marginLeft: "170px", border: 0}} onClick={closeModal}>취소</SaveBtn>
-                        <SaveBtn onClick={saveMoveFolder}>이동</SaveBtn>
+                        <SaveBtn onClick={saveMoveFolder_cbox}>이동</SaveBtn>
+                    </BtnWrapper>
+                </div>
+            )}
+            {props.what === "moveFolder_abox" && (
+                <div>
+                    <h2>폴더 이동</h2>
+                    {(
+                        [props.folderList[0], ...props.folderList.slice(1).sort((a, b) => a.aboxName.localeCompare(b.aboxName))]
+                        .map((item) => (
+                            <div
+                                key={item.aboxId}
+                                onClick={() => handleMoveFolder(item.aboxName)}
+                                style={{fontWeight: moveFolder === item.aboxName ? "bold" : "normal", cursor: "pointer"}}
+                            >
+                                {item.aboxName}
+                            </div>
+                        ))
+                    )}
+                    <BtnWrapper>
+                        <SaveBtn style={{marginLeft: "170px", border: 0}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtn onClick={saveMoveFolder_abox}>이동</SaveBtn>
                     </BtnWrapper>
                 </div>
             )}
@@ -254,6 +497,15 @@ const EditModal = (props) => {
                     </BtnWrapper>
                 </CenteredDiv>
             )}
+            {props.what === "deleteAns" && (
+                <CenteredDiv>
+                    <h3>"{props.enqName}"을 <br/><br/>삭제하시겠습니까?</h3>
+                    <BtnWrapper>
+                        <SaveBtn className="cancel" style={{marginRight: "15px", cursor: "pointer"}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtnNoHover onClick={() => handleConfirmDelAns(true)}>확인</SaveBtnNoHover>
+                    </BtnWrapper>
+                </CenteredDiv>
+            )}
             {props.what === "shareEnq" && (
                 <CenteredDiv>
                     {props.isShared === false && (
@@ -268,6 +520,103 @@ const EditModal = (props) => {
                     </BtnWrapper>
                 </CenteredDiv>
             )}
+            {props.what === "reportEnq" && (
+                <CenteredDiv>
+                    <h3>"{props.enqName}"을 <br/><br/>신고하시겠습니까?</h3>
+                    <BtnWrapper>
+                        <SaveBtn className="cancel" style={{marginRight: "15px", cursor: "pointer"}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtnNoHover onClick={() => handleConfirmReport(true)}>확인</SaveBtnNoHover>
+                    </BtnWrapper>
+                </CenteredDiv>
+            )}
+            {props.what === "bringToCbox" && (
+                <div>
+                    <h2>"{props.enqName}"을 <br/>내 제작함으로 가져오기</h2>
+                    {(
+                        [props.folderList[0], ...props.folderList.slice(1).sort((a, b) => a.cboxName.localeCompare(b.cboxName))]
+                        .map((item) => (
+                            <div
+                                key={item.cboxId}
+                                onClick={() => handleBringCbox(item.cboxName)}
+                                style={{fontWeight: bringCbox === item.cboxName ? "bold" : "normal", cursor: "pointer"}}
+                            >
+                                {item.cboxName}
+                            </div>
+                        ))
+                    )}
+                    <BtnWrapper>
+                        <SaveBtn style={{marginLeft: "8.5rem", border: 0, width: "4rem"}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtn style={{width: "5.5rem", marginRight: "0.2rem"}} onClick={bring_to_cbox}>가져오기</SaveBtn>
+                    </BtnWrapper>
+                </div>
+            )}
+
+            {props.what === "modifyFolderName" && (
+                <div>
+                    <h2>폴더 이름 변경</h2>
+                    <InputWrapper
+                        type="text"
+                        placeholder={props.boxName}
+                        value={modifyFName}
+                        onChange={handleFNameModify}
+                    />
+                    <BtnWrapper>
+                        <SaveBtn style={{marginLeft: "160px", border: 0}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtn style={{marginLeft: "10px"}} onClick={saveModifyFName}>확인</SaveBtn>
+                    </BtnWrapper>
+                </div>
+            )}
+            {props.what === "deleteFolder" && (
+                <CenteredDiv>
+                    <h3>"{props.boxName}" 폴더를<br/><br/>삭제하시겠습니까?</h3>
+                    <BtnWrapper>
+                        <SaveBtn className="cancel" style={{marginRight: "15px", cursor: "pointer"}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtnNoHover onClick={() => handleDelFolder(true)}>확인</SaveBtnNoHover>
+                    </BtnWrapper>
+                </CenteredDiv>
+            )}
+
+            {props.what === "startDistribute" && (
+                <CenteredDiv>
+                    <h3>"{props.enqName}" 설문지를<br/><br/>지금 바로 배포시작 하시겠습니까?</h3>
+                    <BtnWrapper>
+                        <SaveBtn className="cancel" style={{marginRight: "15px", cursor: "pointer"}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtnNoHover onClick={() => handleStartDist(true)}>확인</SaveBtnNoHover>
+                    </BtnWrapper>
+                </CenteredDiv>
+            )}
+            {props.what === "endDistribute" && (
+                <CenteredDiv>
+                    <h3>"{props.enqName}" 설문지를<br/><br/>지금 바로 배포종료 하시겠습니까?</h3>
+                    <BtnWrapper>
+                        <SaveBtn className="cancel" style={{marginRight: "15px", cursor: "pointer"}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtnNoHover onClick={() => handleEndDist(true)}>확인</SaveBtnNoHover>
+                    </BtnWrapper>
+                </CenteredDiv>
+            )}
+
+            {props.what === "responseGPS" && (
+                <div>
+                    <h2>"{props.enqName}"을 <br/>내 참여함으로 가져오기</h2>
+                    {(
+                        [props.folderList[0], ...props.folderList.slice(1).sort((a, b) => a.aboxName.localeCompare(b.aboxName))]
+                        .map((item) => (
+                            <div
+                                key={item.aboxId}
+                                onClick={() => handleRespGPS(item.aboxName)}
+                                style={{fontWeight: respGPS === item.aboxName ? "bold" : "normal", cursor: "pointer"}}
+                            >
+                                {item.aboxName}
+                            </div>
+                        ))
+                    )}
+                    <BtnWrapper>
+                        <SaveBtn style={{marginLeft: "8.5rem", border: 0, width: "4rem"}} onClick={closeModal}>취소</SaveBtn>
+                        <SaveBtn style={{width: "5.5rem", marginRight: "0.2rem"}} onClick={respGPS_abox}>가져오기</SaveBtn>
+                    </BtnWrapper>
+                </div>
+            )}
+
         </Wrapper>
     );
 };

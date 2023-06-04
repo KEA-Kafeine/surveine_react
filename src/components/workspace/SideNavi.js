@@ -10,17 +10,14 @@ import toggleOpen from "../../img/sideNavi/toggle_open.svg";
 import { Fort } from "@mui/icons-material";
 import { click } from "@testing-library/user-event/dist/click";
 import EditModal from "./EditModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { uToken } from "../TokenAtom";
 import { useRecoilValue } from "recoil";
 
 export function SideNavi(props) {
   const tokenValue = useRecoilValue(uToken);
-
-  const GPSEnq = () => {
-    alert("GPS 설문함 클릭");
-  };
+  const navigate = useNavigate();
 
   const Test = () => {
     console.log(props.memberName);
@@ -35,6 +32,7 @@ export function SideNavi(props) {
     console.log(props);
     console.log(props.memberName);
     console.log(props.cbList);
+    console.log(props.abList);
 
     setAllCBList([
       props.cbList[0],
@@ -51,11 +49,11 @@ export function SideNavi(props) {
   }, []);
   // [props.abList, props.cbList]
 
-  useEffect(() => {
-    console.log("====TEST All List====");
-    console.log(allCBList);
-    console.log(allABList);
-  }, []);
+  // useEffect(() => {
+  //   console.log("====TEST All List====");
+  //   console.log(allCBList);
+  //   console.log(allABList);
+  // }, []);
   // [allCBList, allABList]
 
   const [CBToggle, setCBToggle] = useState(true);
@@ -91,7 +89,7 @@ export function SideNavi(props) {
   }
 
   const clickFolder = (folderType, folderId, folderName) => {
-    alert("CLICK " + folderType + ": " + folderId + ": " + folderName);
+    // alert("CLICK " + folderType + ": " + folderId + ": " + folderName);
 
     // 폴더 조회: cbox, abox 따로
     let url = `api/wspace/cbox/${folderId}`;
@@ -116,13 +114,84 @@ export function SideNavi(props) {
     }).catch(error => {
       console.error(error);
     });
+
+    // <cm.TopBar_menu_item onClick={() => navigate("/workspace")}>Work Space</cm.TopBar_menu_item>
+    // navigate(`/workspace/${}`)
+  };
+
+  const [lat, setLat] = useState(0);
+  const [lng, setLng] = useState(0);
+  useEffect(() => {
+    if(lat && lng) {
+      // // TODO: Back
+      // axios.put("/api/wspace/gps", {"lat": lat, "lng": lng}, {
+      //   headers: { Authorization: "Bearer " + String(tokenValue) },
+      // })
+      // .then((response) => {
+      //   if(response.data.isSuccess) {
+      //     let GPSBoxData = [];
+      //     GPSBoxData = response.data.result.GPSBox;
+      //     props.onFolderDataChange(GPSBoxData);
+      //     props.onChangeLat(lat);
+      //     props.onChangeLng(lng);
+      //   } else {
+      //     alert("failed to");
+      //   }
+      // })
+      // .catch((error) => {
+      //   console.error("[ERROR] get GPS coffeebean list", error);
+      // });
+
+      // 하드코딩
+      let GPSData = {
+        "result": {
+          // "abList": [
+          //   {"aboxId": 1, "aboxName": "기본 참여함", "ansCnt": 2},
+          //   {"aboxId": 2, "aboxName": "배고파", "ansCnt": 0}
+          // ],
+          "GPSBox": [
+            {"enqId": 1, "enqName": "설문지1", "enqStatus": "SAVE", "updateDate": "2023.5.31"},
+            {"enqId": 2, "enqName": "설문지2", "enqStatus": "SUBMIT", "updateDate": "2023.6.2"},
+            {"enqId": 3, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+            {"enqId": 4, "enqName": "설문지4", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+            {"enqId": 5, "enqName": "설문지1", "enqStatus": "SAVE", "updateDate": "2023.5.31"},
+            {"enqId": 6, "enqName": "설문지2", "enqStatus": "SUBMIT", "updateDate": "2023.6.2"},
+            {"enqId": 7, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+            {"enqId": 8, "enqName": "설문지4", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+            {"enqId": 9, "enqName": "설문지1", "enqStatus": "SAVE", "updateDate": "2023.5.31"},
+            {"enqId": 10, "enqName": "설문지2", "enqStatus": "SUBMIT", "updateDate": "2023.6.2"},
+            {"enqId": 11, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+            {"enqId": 12, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"}
+          ]
+        }
+      };
+      let GPSBoxData = {};
+      GPSBoxData = GPSData.result;
+      props.onFolderDataChange(GPSBoxData);
+      props.onChangeLat(lat);
+      props.onChangeLng(lng);
+    }
+  }, [lat, lng]);
+
+  const clickGPS = () => {
+    // alert("GPS 설문함 클릭");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLat(position.coords.latitude);
+        setLng(position.coords.longitude);
+      },
+      (error) => {
+        console.log("[ERROR] GPS: ", error);
+        alert("위치에 엑세스 할 수 있도록 위치 권한을 허용해주세요.");
+      }
+    );
   };
 
   return (
     <>
       <Wrapper>
         <TopWapper>
-          <Link to="/workspace">
+          <Link to="/workspace/0">
             <Logo src={LogoWhite} />
           </Link>
           <Link to="/mypage">
@@ -131,7 +200,7 @@ export function SideNavi(props) {
           <Profile src={defaultProfile} onClick={Test} />
           <ProfName>{props.memberName}</ProfName>
           <Line />
-          <Category onClick={GPSEnq}>
+          <Category onClick={clickGPS}>
             <GPSIcon src={GPSwhite} />
             GPS 설문함
           </Category>
@@ -154,7 +223,7 @@ export function SideNavi(props) {
               {CBToggle && (
                 <div style={{display: "flex", flexDirection: "column"}}>
                   {allCBList.map((cbList) => (
-                    <div>
+                    <div key={cbList.cboxId}>
                       <Folder
                         key={cbList.cboxName}
                         onClick={() => clickFolder("cbox", cbList.cboxId, cbList.cboxName)}
@@ -186,15 +255,17 @@ export function SideNavi(props) {
               {ABToggle && (
                 <div style={{display: "flex", flexDirection: "column"}}>
                   {allABList.map((abList) => (
-                    <Folder
-                      key={abList.aboxName}
-                      onClick={() => clickFolder("abox", abList.aboxId, abList.aboxName)}
-                    >
-                      <FolderList>
-                        <div>{abList.aboxName}</div>
-                        <div>{abList.ansCnt}</div>
-                      </FolderList>
-                    </Folder>
+                    <div key={abList.aboxId}>
+                      <Folder
+                        key={abList.aboxName}
+                        onClick={() => clickFolder("abox", abList.aboxId, abList.aboxName)}
+                      >
+                        <FolderList>
+                          <div>{abList.aboxName}</div>
+                          <div>{abList.ansCnt}</div>
+                        </FolderList>
+                      </Folder>
+                    </div>
                   ))}
                 </div>
               )}
@@ -335,8 +406,8 @@ const FolderContainerTop = styled.div`
 `;
 
 const FolderContainerBottom = styled.div`
-width:95%;
-height: auto;
+  width: 95%;
+  height: auto;
   display: flex;
   flex-direction: column;
   flex-grow: 0.001;

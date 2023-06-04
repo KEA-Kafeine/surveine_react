@@ -10,7 +10,7 @@ function CoffeeBeanList(props) {
 
   const [searchValue, setSearchValue] = useState(""); //검색해야하는 변수
   const [data, setData] = useState([]);
-  const [cboxId, setCboxId] = useState(0);
+  const [boxId, setBoxId] = useState(0);
 
   const searchChange = (event) => {
     //search안에 들어가 있는 value를 바꿈
@@ -24,53 +24,137 @@ function CoffeeBeanList(props) {
 
   useEffect(() => {
     console.log("CB List - props: ", props);
-    setData(props.enqList);
-    setCboxId(props.cboxId);
-  }, [props.enqList]);
+    // setData(props.enqList);
+    setData(props.boxList);
+    setBoxId(props.boxId);
+    // if(props.cboxId != undefined) {
+    //   setData(props.enqList);
+    //   setBoxId(props.cboxId);
+    // } else if(props.aboxId != undefined) {
+    //   setData(props.ansList);
+    //   setBoxId(props.aboxId);
+    // }
+  }, [props.boxList]);
 
-  // useEffect(() => {
-  //   console.log("CB List - props - enqList: ", data);
-  //   console.log("folder id: ", folderId);
-  // }, [folderId])
+  useEffect(() => {
+    console.log("CB List - props - enqList: ", data);
+    // console.log("folder id: ", folderId);
+    console.log(data);
+    console.log(boxId);
+  }, [data, boxId]);
 
   const cboxList = props.cbList;
   const aboxList = props.abList;
 
   return (
     <Wrapper>
-      <FormList>
-        {data
-          .slice()
-          .reverse()
-          .map((coffeeBean) => (
-            <CBContainer
-              onDoubleClick={() => {
-                navigate(`/create/${cboxId}/${coffeeBean["enqId"]}`);
-              }}
+      {props.boxType === "cbox" && (
+        <FormList>
+          {data
+            .slice()
+            .reverse()
+            .map((coffeeBean) => (
+              <CBContainer
+                onDoubleClick={() => {
+                  navigate(`/create/${boxId}/${coffeeBean.enqId}`);
+                }}
+                key={coffeeBean.enqId}
+              >
+                <CoffeeBean
+                  cbId={coffeeBean.enqId}
+                  cbName={coffeeBean.enqName}
+                  cbStatus={coffeeBean.enqStatus}
+                  distType={coffeeBean.distType}
+                  updateDate={coffeeBean.updateDate}
+                  isShared={coffeeBean.isShared}
+                  cbList={cboxList}
+                  abList={aboxList}
+                  type="cbox"
+                />
+              </CBContainer>
+            ))}
+          <Link to={`/create/${boxId}`}>
+            <PlusDiv>
+              <StyledPlusIcon src={PlusIcon} />
+            </PlusDiv>
+          </Link>
+        </FormList>
+      )}
+
+      {props.boxType === "abox" && (
+        <FormList>
+          {data
+            .slice()
+            .reverse()
+            .map((coffeeBean) => (
+              <CBContainer
+                onDoubleClick={() => {
+                  // navigate(`/answer/${boxId}/${coffeeBean.ansId}`);
+                  navigate(`/answer`);
+                }}
+                key={coffeeBean.ansId}
+              >
+                <CoffeeBean
+                  cbId={coffeeBean.ansId}
+                  cbName={coffeeBean.enqName}
+                  cbStatus={coffeeBean.ansStatus}
+                  distType={coffeeBean.distType}
+                  updateDate={coffeeBean.updateDate}
+                  isShow={coffeeBean.isShow}
+                  cbList={cboxList}
+                  abList={aboxList}
+                  type="abox"
+                />
+
+              </CBContainer>
+            ))}
+        </FormList>
+      )}
+
+      {props.boxType === "sbox" && (
+        <FormList>
+          {data.map((coffeeBean) => (
+            <SBContainer
+              key={coffeeBean.enqId}
             >
               <CoffeeBean
-                enqId={coffeeBean.enqId}
-                enqName={coffeeBean.enqName}
-                enqStatus={coffeeBean.enqStatus}
-                distType={coffeeBean.distType}
-                updateDate={coffeeBean.updateDate}
-                isShared={coffeeBean.isShared}
+                cbId={coffeeBean.enqId}
+                cbName={coffeeBean.enqName}
+                favCount={coffeeBean.favCount}
+                fav={coffeeBean.fav}
                 cbList={cboxList}
+                type="sbox"
+              />
+            </SBContainer>
+          ))}
+        </FormList>
+      )}
+
+      {props.boxType === "gbox" && (
+        <FormList>
+          {data.map((coffeeBean) => (
+            <CBContainer
+              key={coffeeBean.enqId}
+            >
+              <CoffeeBean
+                cbId={coffeeBean.enqId}
+                cbName={coffeeBean.enqName}
+                cbStatus={coffeeBean.enqStatus}
+                updateDate={coffeeBean.updateDate}
+                distType="GPS"
                 abList={aboxList}
+                type="gbox"
               />
             </CBContainer>
           ))}
-        <Link to={`/create/${cboxId}`}>
-          <PlusDiv>
-            <StyledPlusIcon src={PlusIcon} />
-          </PlusDiv>
-        </Link>
-      </FormList>
+        </FormList>
+      )}
+
     </Wrapper>
   );
 }
-
 export default CoffeeBeanList;
+
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -115,5 +199,13 @@ const CBContainer = styled.div`
   width: 19%;
   height: 200px;
   margin-right: 70px;
+  margin-bottom: 30px;
+`;
+
+const SBContainer = styled.div`
+  position: relative;
+  width: 19%;
+  height: 200px;
+  margin-right: 45px;
   margin-bottom: 30px;
 `;

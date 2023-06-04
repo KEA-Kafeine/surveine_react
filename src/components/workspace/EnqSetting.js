@@ -1,13 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { uToken } from "../TokenAtom";
 import CoffeeBeanList from "./CoffeeBeanList";
 import EditModal from "./EditModal";
-import { Edit } from "@mui/icons-material";
 
 function EnqSetModal(props) {
+    const modalRef = useRef();
+    const handleClickOutside = (event) => {
+        if(modalRef.current && !modalRef.current.contains(event.target)) {
+            props.onClose();
+        }
+    };
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     useEffect(() => {
         console.log("===ENQ SETTING===");
         console.log(props);
@@ -25,7 +37,7 @@ function EnqSetModal(props) {
     const handleConfirmReplic = (confRep) => {
         setConfirmReplic(confRep);
         setShowReplicModal(false);
-    }
+    };
 
     // 커피콩 점3개: 커피콩 삭제
     const [showDelModal, setShowDelModal] = useState(false);
@@ -47,7 +59,7 @@ function EnqSetModal(props) {
     const handleConfirmShare = (confShare) => {
         setConfirmShare(confShare);
         setShowShareModal(false);
-    }
+    };
     const[isSharedState, setIsSharedState] = useState(props.isShared);
 
     // 커피콩 점3개: 커피콩 이름변경
@@ -59,7 +71,7 @@ function EnqSetModal(props) {
     const handleNewEnqNameSave = (EnqName) => {
         setNewEnqName(EnqName);
         setShowNewNameEditModal(false);
-    }
+    };
     
     const setEnqName = props.setEnqName;
 
@@ -72,46 +84,91 @@ function EnqSetModal(props) {
     const handleMoveFolder = (mFolderId) => {
         setMoveFolder(mFolderId);
         setShowMoveFolderEditModal(false);
-    }
+    };
+
+    // 샌드박스 템플릿 내제작함으로 가져오기
+    const [showBringModal, setShowBringModal] = useState(false);
+    const [bring, setBring] = useState(0);
+    const clickBring = () => {
+        setShowBringModal(true);
+    };
+    const handleBring = (folderId) => {
+        setBring(folderId);
+        setShowBringModal(false);
+    };
+ 
+    // 샌드박스 템플릿 신고
+    const [showReportModal, setShowReportModal] = useState(false);
+    const [confirmReport, setConfirmReport] = useState(false);
+    const clickReport = () => {
+        setShowReportModal(true);
+    };
+    const handleConfirmReport = (confReport) => {
+        setConfirmReport(confReport);
+        setShowReportModal(false);
+    };
 
     return (
-        <Wrapper>
-            <div>
-                <SetOption onClick={clickRepc}>복제</SetOption>
-                {showReplicModal && (
-                    <EditModal onClose={() => setShowReplicModal(false)} onSave={handleConfirmReplic} enqId={props.enqId} enqName={props.enqName} what="replicateEnq" />
-                )}
-            </div>
+        <Wrapper className="modal" ref={modalRef}>
+            {props.type === "cbox" && (
+                <div>
+                    <SetOption onClick={clickRepc}>복제</SetOption>
+                    {showReplicModal && (
+                        <EditModal onClose={() => setShowReplicModal(false)} onSave={handleConfirmReplic} enqId={props.enqId} enqName={props.enqName} what="replicateEnq" />
+                    )}
+                </div>
+            )}
 
-            <div>
-                <SetOption onClick={clickMod}>이름변경</SetOption>
-                {showNewNameEditModal && (
-                    <EditModal onClose={() => setShowNewNameEditModal(false)} onSave={handleNewEnqNameSave} enqId={props.enqId} setEnqName={setEnqName} what="modifyEnqName" />
-                )}
-            </div>
+            {props.type === "cbox" && (
+                <div>
+                    <SetOption onClick={clickMod}>이름변경</SetOption>
+                    {showNewNameEditModal && (
+                        <EditModal onClose={() => setShowNewNameEditModal(false)} onSave={handleNewEnqNameSave} enqId={props.enqId} enqName={props.enqName} setEnqName={setEnqName} what="modifyEnqName" />
+                    )}
+                </div>
+            )}
+
+            {props.type !== "sbox" && (
+                <div>
+                    <SetOption onClick={clickMove}>폴더이동</SetOption>
+                    {props.abList === undefined && showMoveFolderEditModal && (
+                        <EditModal
+                            onClose={() => setShowMoveFolderEditModal(false)}
+                            onSave={handleMoveFolder}
+                            enqId={props.enqId}
+                            folderList={props.cbList}
+                            what="moveFolder_cbox" />
+                    )}
+                    {props.cbList === undefined && showMoveFolderEditModal && (
+                        <EditModal
+                            onClose={() => setShowMoveFolderEditModal(false)}
+                            onSave={handleMoveFolder}
+                            ansId={props.ansId}
+                            folderList={props.abList}
+                            what="moveFolder_abox"
+                        />
+                    )}
+                </div>
+            )}
             
-            <div>
-                <SetOption onClick={clickMove}>폴더이동</SetOption>
-                {showMoveFolderEditModal && (
-                    <EditModal
-                        onClose={() => setShowMoveFolderEditModal(false)}
-                        onSave={handleMoveFolder}
-                        enqId={props.enqId}
-                        // {...(props.cbList && !props.abList ? {cbList: props.cbList} : {})}
-                        // {...(!props.cbList && props.abList ? {abList: props.abList} : {})}
-                        folderList={props.cbList ?? props.abList}
-                        what="moveFolder" />
-                )}
-            </div>
+            {props.type === "cbox" && (
+                <div>
+                    <SetOption onClick={() => {clickDel(props.enqId)}}>삭제</SetOption>
+                    {showDelModal && (
+                        <EditModal onClose={() => setShowDelModal(false)} onSave={handleConfirmDelete} enqId={props.enqId} enqName={props.enqName} what="deleteEnq" />
+                    )}
+                </div>
+            )}
+            {props.type === "abox" && (
+                <div>
+                    <SetOption onClick={() => {clickDel(props.ansId)}}>삭제</SetOption>
+                    {showDelModal && (
+                        <EditModal onClose={() => setShowDelModal(false)} onSave={handleConfirmDelete} ansId={props.ansId} enqName={props.enqName} what="deleteAns" />
+                    )}
+                </div>
+            )}
 
-            <div>
-                <SetOption onClick={() => {clickDel(props.enqId)}}>삭제</SetOption>
-                {showDelModal && (
-                    <EditModal onClose={() => setShowDelModal(false)} onSave={handleConfirmDelete} enqId={props.enqId} enqName={props.enqName} what="deleteEnq" />
-                )}
-            </div>
-
-            {isSharedState == false && (
+            {props.type === "cbox" && isSharedState == false && (
                 <div>
                     <SetOption onClick={() => {clickShare(props.enqId)}}>공유하기</SetOption>
                     {showShareModal && (
@@ -119,7 +176,7 @@ function EnqSetModal(props) {
                     )}
                 </div>
             )}
-            {isSharedState == true && (
+            {props.type === "cbox" && isSharedState == true && (
                 <div>
                     <SetOption onClick={() => {clickShare(props.enqId)}}>공유취소</SetOption>
                     {showShareModal && (
@@ -127,6 +184,31 @@ function EnqSetModal(props) {
                     )}
                 </div>
             )}
+
+            {props.type === "sbox" && (
+                <div>
+                    <SetOption onClick={clickBring}>가져오기</SetOption>
+                    {showBringModal && (
+                        <EditModal
+                            onClose={() => setShowBringModal(false)}
+                            onSave={handleBring}
+                            enqId={props.enqId}
+                            enqName={props.enqName}
+                            folderList={props.cbList}
+                            what="bringToCbox"
+                        />
+                    )}
+                </div>
+            )}
+            {props.type === "sbox" && (
+                <div>
+                    <SetOption onClick={() => {clickReport(props.enqId)}}>신고</SetOption>
+                    {showReportModal && (
+                        <EditModal onClose={() => setShowReportModal(false)} onSave={handleConfirmReport} enqId={props.enqId} enqName={props.enqName} what="reportEnq" />
+                    )}
+                </div>
+            )}
+
         </Wrapper>
     );
 }

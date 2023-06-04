@@ -7,7 +7,7 @@ function CboxBlank({cboxId}) {
   return (
     <>
       <Wrapper>
-        <Text>Create your first SurVeine</Text>
+        <Text>Create your first SurVeine.</Text>
         <br />
         <Link to={`/create/${cboxId}`}>
           <StyledPlusIcon src={PlusIcon} />

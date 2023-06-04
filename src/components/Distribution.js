@@ -1,19 +1,304 @@
 import axios from "axios";
-import React, { useState, useEffect, useParams } from "react";
+import React, { useState, useEffect } from "react";
 import { uToken } from "../components/TokenAtom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import * as cm from "../components/Common";
-import { Sd } from "@mui/icons-material";
-import { set } from "date-fns";
-import { DivHorizon } from "../components/Common";
-import { Button } from "@mui/base";
-import { nanoid } from "nanoid";
-const Dist = {};
+import { DatePicker, Space, Button, Dropdown, Menu } from 'antd';
+import Ximg from "../img/sideNavi/xImg.svg";
+
+const { RangePicker } = DatePicker;
+const onChange = (value, dateString) => {
+  console.log('Selected Time: ', value);
+  console.log('Formatted Selected Time: ', dateString);
+};
+const onOk = (value) => {
+  console.log('onOk: ', value);
+};
+
+const items = [
+  {
+    key: "1",
+    label: "시작일과 종료일 설정"
+  },
+  {
+    key: "2",
+    label: "시작일만 설정"
+  },
+  {
+    key: "3",
+    label: "종료일만 설정"
+  }
+];
+
+const gps_ranges = [
+    {
+        key: "1",
+        label: "100m"
+    },
+    {
+        key: "2",
+        label: "200m"
+    },
+    {
+        key: "3",
+        label: "300m"
+    },
+    {
+        key: "4",
+        label: "400m"
+    },
+    {
+        key: "5",
+        label: "500m"
+    }
+];
+
+const Distribution = (props) => {
+    const tokenValue = useRecoilValue(uToken);
+
+    useEffect(() => {
+        console.log("==DISTRIBUTE===");
+        console.log(props);
+    }, []);
+
+    const closeModal = () => {
+        props.clickDistriubtion();
+    };
+
+    const [selectedOption, setSelectedOption] = useState("1");
+    const [buttonName, setButtonName] = useState("시작일과 종료일 설정");
+    const handleOptionSelect = (option) => {
+        setSelectedOption(option.key);
+        const selectedLabel = items.find(item => item.key === option.key)?.label;
+        if (selectedLabel) {
+            setButtonName(selectedLabel);
+        }
+    };
+    useEffect(() => {
+        console.log("selected option: ", selectedOption);
+    }, [selectedOption]);
+
+    const [rangeOption, setRangeOption] = useState("1");
+    const [rangeName, setRangeName] = useState("100m");
+    const handleRangeSelect = (option) => {
+        setRangeOption(option.key);
+        const rangeSelectedLabel = gps_ranges.find(item => item.key === option.key)?.label;
+        if(rangeSelectedLabel) {
+            setRangeName(rangeSelectedLabel);
+        }
+    };
+    useEffect(() => {
+        console.log("selected range: ", rangeOption);
+    }, [rangeOption]);
+
+    const [limitQuota, setLimitQuota] = useState(false);
+    const [quota, setQuota] = useState(0); // 인원 제한 수를 저장하는 state
+    const handleNoLimitQuota = () => {
+        setLimitQuota(false);
+        setQuota(0);
+    };
+    const handleLimitQuota = () => {
+        setLimitQuota(true);
+    };
+    const handleQuotaChange = (e) => {
+        const parsedValue = parseInt(e.target.value);
+        if(parsedValue < 1) {
+            alert("1 이상의 숫자를 입력해주세요.");
+            e.target.value = "";
+        } else {
+            setQuota(parsedValue);
+        }
+    };
+    const handleKeyPress = (e) => {
+        const keyCode = e.keyCode || e.which;
+        const keyValue = String.fromCharCode(keyCode);
+        const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(keyValue);
+        const isSpecialChar = /[+\-=]/.test(keyValue);
+
+        if (isKorean || isSpecialChar) {
+            e.preventDefault();
+        }
+    };
+    useEffect(() => {
+        console.log("quota: ", quota);
+    }, [quota]);
+
+    const [isLink, setIsLink] = useState(true); // 링크배포 클릭 시 true / GPS 배포 클릭 시 false
+    const handleLink = () => {
+        setIsLink(true);
+    };
+    const handleGPS = () => {
+        setIsLink(false);
+    };
+    useEffect(() => {
+        console.log("isLink: ", isLink);
+    }, [isLink]);
+
+    const clickDistribute = (enqId) => {
+        alert(enqId + ": click distribute");
+        // if(isLink === true) {
+            
+        // }
+        // let reqData = {
+        //     "distType": 
+        // };
+
+        // axios.put(`/api/wspace/enq/dist/${enqId}`, reqData, {
+        //     headers: { Authorization: "Bearer " + String(tokenValue) },
+        // })
+        // .then((response) => {
+        //     if(response.data.isSuccess) {
+        //         console.log("Distribute Enquete: ", response.data);
+        //     } else {
+        //         alert("failed to");
+        //     }
+        // })
+        // .catch(error => {
+        //     console.error("[ERROR] distribute enquete: ", error);
+        // });
+    };
+    const clickDeleteDist = (enqId) => {
+        alert(enqId + ": click delete distribute");
+    };
+    const clickSaveDist = (enqId) => {
+        alert(enqId + ": click save distribute");
+    };
+
+    return (
+        <>
+        <Modal>
+            <XImg src={Ximg} onClick={closeModal} />
+            <NumWrapper>
+                <NumTitle>1. 인원제한</NumTitle>
+                <ToggleWrapper>
+                    <Toggle>
+                    <LeftToggle active={!limitQuota} onClick={handleNoLimitQuota}>
+                        제한없음
+                    </LeftToggle>
+                    <RightToggle active={limitQuota} onClick={handleLimitQuota}>
+                        제한있음
+                    </RightToggle>
+                    {limitQuota && (
+                        <InputBox>
+                        <Input onChange={handleQuotaChange} onKeyPress={handleKeyPress} />
+                        <InnerTitle
+                            style={{ marginRight: "15px", marginLeft: "0px" }}
+                        >
+                            명
+                        </InnerTitle>
+                        </InputBox>
+                    )}
+                    </Toggle>
+                </ToggleWrapper>
+            </NumWrapper>
+
+            <NumWrapper>
+                <NumTitle style={{marginTop: "3rem"}}>2. 배포방식</NumTitle>
+                <ToggleWrapper>
+                    <Toggle>
+                        <LeftToggle active={isLink} onClick={handleLink}>
+                            링크배포
+                        </LeftToggle>
+                        <RightToggle active={!isLink} onClick={handleGPS}>
+                            GPS배포
+                        </RightToggle>
+                    </Toggle>
+                </ToggleWrapper>
+
+                <SetDateTime>
+                    <div>
+                        <Dropdown
+                            overlay={(
+                            <Menu onClick={handleOptionSelect}>
+                                {items.map(item => (
+                                <Menu.Item key={item.key}>{item.label}</Menu.Item>
+                                ))}
+                            </Menu>
+                            )}
+                        >
+                            <Button>{buttonName}</Button>
+                        </Dropdown>
+                    </div>
+
+                    <Space size={12}>
+                        {selectedOption === "1" && (
+                        <div style={{marginTop: "1rem"}}>
+                            <RangePicker
+                                showTime={{
+                                    format: 'HH:mm',
+                                }}
+                                format="YYYY-MM-DD HH:mm"
+                                onChange={onChange}
+                                onOk={onOk}
+                                placeholder={["Start Date and Time", "End Date and Time"]}
+                            />
+                        </div>
+                        )}
+                        {selectedOption === "2" && (
+                        <div>
+                            <GuideSetTime>* 종료일을 설정하지 않으면 강제로 배포종료를 선택할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
+                                <DatePicker
+                                    showTime
+                                    onChange={onChange}
+                                    onOk={onOk}
+                                    placeholder="Start Date and Time"
+                                />
+                        </div>
+                        )}
+                        {selectedOption === "3" && (
+                        <div>
+                            <GuideSetTime>* 시작일을 설정하지 않으면 즉시 배포됩니다.</GuideSetTime>
+                                <DatePicker
+                                    showTime
+                                    onChange={onChange}
+                                    onOk={onOk}
+                                    placeholder="End Date and Time"
+                                />
+                        </div>
+                        )}
+                    </Space>
+                </SetDateTime>
+                {!isLink && (
+                    <SetGPSRange>
+                        <div>여기서부터 반경</div>
+                        <div style={{marginTop: "-0.4rem", marginLeft: "1rem"}}>
+                            <Dropdown
+                                overlay={(
+                                <Menu onClick={handleRangeSelect}>
+                                    {gps_ranges.map(item => (
+                                    <Menu.Item key={item.key}>{item.label}</Menu.Item>
+                                    ))}
+                                </Menu>
+                                )}
+                            >
+                                <Button>{rangeName}</Button>
+                            </Dropdown>
+                        </div>
+                    </SetGPSRange>
+                )}
+            </NumWrapper>
+
+            {props.enqStatus === "ENQ_MAKE" && (
+                <BtnWrapper>
+                    <SaveBtn onClick={() => clickDistribute(props.enqId)}>배포하기</SaveBtn>
+                </BtnWrapper>
+            )}
+            {props.enqStatus === "DIST_WAIT" && (
+                <BtnWrapper>
+                    <SaveBtn onClick={() => clickSaveDist(props.enqId)}>저장하기</SaveBtn>
+                    <SaveBtn style={{marginLeft: "1.5rem"}} onClick={() => clickDeleteDist(props.enqId)}>삭제하기</SaveBtn>
+                </BtnWrapper>
+            )}
+        </Modal>
+        </>
+    );
+}
+export default Distribution;
 
 const Modal = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
 
   position: fixed;
   top: 50%;
@@ -23,8 +308,8 @@ const Modal = styled.div`
 
   flex-direction: column;
 
-  width: 464px;
-  height: 583px;
+  width: 470px;
+  height: 590px;
 
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   border: 1px solid #dae0e6;
@@ -32,64 +317,46 @@ const Modal = styled.div`
   background-color: white;
 `;
 
-//모달 안에 header (x버튼 부분)
-const Modal_header = styled.div`
-  display: flex;
-  justify-content: right;
-  align-items: right;
-  height: 5%;
-  width: 100%;
+const XImg = styled.img`
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    cursor: pointer;
 `;
 
-const CloseBtn = styled.button`
-  top: 1rem;
-  right: 1rem;
-  margin: 1rem;
-  background-color: transparent;
-  border: none;
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  font-family: "Noto Sans";
-`;
-
-//옵션 wrapper
-const Wrapper = styled.div`
+// 1번, 2번 wrapper
+const NumWrapper = styled.div`
   display: flex;
   width: 100%;
   align-items: flex-start;
   flex-direction: column;
 `;
 
-//모달 안 옵션 타이틀
-const Modal_title = styled.div`
+const NumTitle = styled.div`
   display: inline-block;
-  margin-left: 63px;
+  margin-left: 3.5rem;
   justify-content: left;
   text-align: left;
   color: hsl(234, 52%, 14%);
   font-family: "Poppins";
   font-style: normal;
-  font-weight: bolder;
-  font-size: 1.5rem;
-
-  margin-top: 30px;
+  font-weight: 500;
+  font-size: 1.45rem;
+  margin-top: 4.5rem;
 `;
 
-//토글쪽 wrapper(선택지 포함)
 const ToggleWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 63px;
-  margin-top: 30px;
+  margin-left: 3.5rem;
+  margin-top: 1.3rem;
 `;
 
-//옵션토글버튼
 const Toggle = styled.div`
   display: flex;
   width: 16em;
   height: 2.8em;
-  border: 2px solid #1a2051;
+  border: 1.8px solid #1a2051;
   border-radius: 25px;
   font-family: "Poppins";
   font-style: normal;
@@ -149,15 +416,14 @@ const InputBox = styled.div`
 const Input = styled.input.attrs({ type: "number", min: 1 })`
   width: 3em;
   height: 1.7em;
-  background-color: #f0f0f0;
+  background-color: #FFFFFF;
   border-radius: 10px;
-  border: 0;
+  border: 1px solid #BFBFBF;
   margin-left: 25px;
   text-align: center;
   font-size: 1rem;
 `;
 
-//글씨
 const InnerTitle = styled.p`
   font-family: "Poppins";
   font-style: normal;
@@ -165,415 +431,41 @@ const InnerTitle = styled.p`
   margin-left: 20%;
 `;
 
-//시간 설정 박스
-const TimeBox = styled.div`
-  height: 12em;
-  width: 15.9em;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  border-bottom: 1px dashed #1a2051;
-  border-left: 1px dashed #1a2051;
-  border-right: 1px dashed #1a2051;
-  top: calc(100% - 50%);
-
-  margin-left: 63px;
-  display: flex;
-  flex-direction: row;
+const SetDateTime = styled.div`
+    margin-top: 1.5rem;
+    margin-left: 4rem;
 `;
 
-//시작일/마감일 박스
-const DateBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 13%;
-  text-align: left;
-  width: 50%;
+const GuideSetTime = styled.div`
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 7px;
+    line-height: 10px;
+    display: flex;
+    align-items: center;
+    color: #6F6A6A;
+    margin-bottom: 1rem;
 `;
 
-//세로선
-const Line = styled.div`
-  border-left: 1px solid #1a2051;
-  margin-top: 37.5%;
-  height: 17%;
+const SetGPSRange = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin-top: 1.5rem;
+    margin-left: 4rem;
 `;
 
-//날짜선택
-const DateSelect = styled.input.attrs({ type: "date" })`
-  border: 0;
-  width: 75%;
-  font-family: "Poppins";
-  font-style: normal;
-  margin-left: 15%;
-  color: #1a2051;
-  font-size: 13px;
+const BtnWrapper = styled.div`
+    margin: auto auto 2.5rem auto;
 `;
 
-//시간선택
-const TimeSelect = styled.input.attrs({ type: "time" })`
-  border: 0;
-  width: 76%;
-  font-family: "Poppins";
-  font-style: normal;
-  margin-left: 15%;
-  color: #1a2051;
-  font-size: 12.5px;
+const SaveBtn = styled.button`
+    padding: 9px 21px;
+    background-color: #FFFFFF;
+    border: 1.5px solid #1A2051;
+    border-radius: 35px;
+    color: #1A2051;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
 `;
-//배포버튼
-const ExportBtn = styled.button`
-  width: 5em;
-  height: 2.5em;
-  border-radius: 1rem;
-  background: white;
-  display: inline-block;
-  margin-left: 10px;
-  border: 2px solid #1a2051;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  width: 70%;
-  margin-top: 30px;
-  justify-content: center;
-`;
-
-const Distribution = (props) => {
-  const tokenValue = useRecoilValue(uToken);
-  const [enqStatus, setEnqStatus] = useState("ENQ_MAKE"); //배포 상태
-
-  const [currentDate, setCurrentDate] = useState(new Date()); //현재 날짜
-  const [maxDate, setMaxDate] = useState(); //최대 날짜
-  const [minDate, setMinDate] = useState(currentDate); //최소 날짜
-
-  const [distArr, setDistArr] = useState({}); //배포 request를 담을 배열
-  const [limitQuota, setLimitQuota] = useState(false);
-  const [quota, setQuota] = useState(""); // 인원 제한 수를 저장하는 state
-  const [distType, setDistType] = useState("LINK"); //distType를 저장하는 state
-  const [isLink, setIsLink] = useState(true); // 링크배포 클릭 시 true / GPS 배포 클릭 시 false
-  const [startDate, setStartDate] = useState(new Date()); // 배포 시작 날짜
-  const [startTime, setStartTime] = useState(new Date()); // 배포 시작 시각
-  const [endDate, setEndDate] = useState(new Date()); // 배포 종료 시간을 저장하는 state
-  const [endTime, setEndTime] = useState(new Date()); // 배포 종료 시간을 저장하는 state
-  const [howLong, setHowLong] = useState(0); //gps 배포 시간
-  const [distRange, setDistRange] = useState(0); //gps 반경
-  const [clickLink, setClickLink] = useState(true); // 링크배포 클릭 시 true / GPS 배포 클릭 시 false
-
-  const [error, setError] = useState("");
-
-  const [distNanoId, setDistNanoId] = useState("");
-  useEffect(() => {
-    setCurrentDate(new Date());
-    console.log(currentDate);
-    setMaxDate(
-      new Date(
-        currentDate.getFullYear() + 1,
-        currentDate.getMonth(),
-        currentDate.getDate()
-      )
-        .toISOString()
-        .split("T")[0]
-    );
-    setMinDate(currentDate.toISOString().split("T")[0]);
-    console.log(props.enqStatus);
-    setEnqStatus(props.enqStatus);
-    // if (distNanoId != null) {
-    //   console.log(enqId);
-    //   setDistNanoId(enqId);
-    //   axios
-    //     .get(`/api/wspace/enq/dist/${enqId}`, {
-    //       headers: { Authorization: "Bearer " + String(tokenValue) },
-    //     })
-    //     .then((response) => {
-    //       const rs = response.data.result;
-    //       console.log(response);
-    //       setEnqStatus(rs.enqStatus);
-
-    //       setClickLink(rs.clickLink);
-    //       setLimitQuota(rs.limitQuota);
-    //       setQuota(limitQuota === true ? setQuota(rs.quota) : 0);
-    //       setStartDate(rs.startDate);
-    //       setStartTime(rs.startTime);
-    //       setEndDate(rs.endDate);
-    //       setEndTime(rs.endTime);
-    //     });
-    // }
-  }, []);
-
-  const handleNoLimitQuota = () => {
-    setLimitQuota(false);
-    // setQuota("");
-  };
-
-  const handleLimitQuota = () => {
-    setLimitQuota(true);
-    // setQuota(true);
-  };
-
-  const handleQuotaChange = (e) => {
-    setQuota(e.target.value);
-  };
-
-  const handleLink = () => {
-    setIsLink(true);
-    setDistType("LINK");
-    setClickLink(true);
-  };
-
-  const handleGPS = () => {
-    setIsLink(false);
-    setDistType("GPS");
-    setClickLink(false);
-  };
-
-  const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
-  };
-  const handleStartTimeChange = (e) => {
-    setStartTime(e.target.value);
-  };
-
-  const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
-  };
-
-  const handleEndTimeChange = (e) => {
-    setEndTime(e.target.value);
-  };
-
-  const handleHowLongChange = (e) => {
-    setHowLong(e.target.value);
-    validateGtime(e.target.value);
-  };
-
-  const validateGtime = (value) => {
-    if (value < 1 || value > 1000) {
-      setError("1~1000분 사이로 선택해주세요.");
-    } else {
-      setError("");
-    }
-  };
-
-  const handleDistRangeChange = (e) => {
-    setDistRange(e.target.value);
-    validateMeter(e.target.value);
-  };
-
-  const validateMeter = (value) => {
-    if (value < 1 || value > 1000) {
-      setError("1~1000m 사이로 선택해주세요.");
-    } else {
-      setError("");
-    }
-  };
-
-  /* 즉시배포 */
-  const handleImidiate = () => {
-    handleDist("IMMEDIATE");
-  };
-
-  /* 배포예약 */
-  const handleReserve = () => {
-    handleDist("RESERVE");
-  };
-
-  /* 배포취소 */
-  const handleDistCancle = () => {
-    handleDist("CANCLE");
-  };
-
-  const handleDist = (set) => {
-    const distInfo = {
-      quota: "",
-      startDate: "",
-      startTime: "",
-      endDate: "",
-      endTime: "",
-      distLink: "",
-    };
-
-    if (distNanoId === "") {
-    } else {
-    }
-
-    if (set === "IMMEDIATE") {
-      Dist.enqStatus = "DIST_DONE";
-    }
-
-    if (set === "RESERVE") {
-      Dist.enqStatus = "DIST_WAIT";
-    }
-
-    Dist.distType = distType;
-    Dist.distInfo = distArr;
-
-    distInfo.quota = quota;
-    distInfo.startDate = startDate;
-    distInfo.startTime = startTime;
-    distInfo.endDate = endDate;
-    distInfo.endTime = endTime;
-    distInfo.distLink = nanoid();
-
-    Dist.distInfo = distInfo;
-
-    console.log(set);
-    console.log(Dist);
-    axios
-      .put(`/api/wspace/enq/dist/${props.enqId}`, Dist, {
-        headers: { Authorization: "Bearer " + String(tokenValue) },
-      })
-      .then((response) => {
-        const rs = response.data.result;
-        console.log(response);
-        console.log(response.data.result);
-      });
-  };
-
-  const Buttons = (props) => {
-    if (enqStatus === "ENQ_MAKE") {
-      return (
-        <>
-          <ExportBtn onClick={handleImidiate}>즉시 배포</ExportBtn>
-          <ExportBtn onClick={handleReserve}>배포 예약</ExportBtn>
-        </>
-      );
-    } else if (enqStatus === "DIST_WAIT") {
-      return (
-        <>
-          <ExportBtn onClick={handleImidiate}>즉시 배포</ExportBtn>
-          <ExportBtn onClick={handleDistCancle}>배포 취소</ExportBtn>
-        </>
-      );
-    } else if (enqStatus === "DIST_DONE") {
-      return <ExportBtn onClick={props.clickDistriubtion}>확인</ExportBtn>;
-    } else if (enqStatus === "ENQ_DONE") {
-      return <ExportBtn onClick={props.clickDistriubtion}>확인</ExportBtn>;
-    }
-
-    // 위 조건문에 해당하지 않는 경우 null을 반환하거나 원하는 기본값을 반환할 수 있습니다.
-    return null;
-  };
-
-  return (
-    <>
-      <Modal>
-        <Modal_header>
-          <CloseBtn onClick={props.clickDistriubtion}>X</CloseBtn>
-        </Modal_header>
-        <Wrapper>
-          <Modal_title>1. 인원제한</Modal_title>
-          <ToggleWrapper>
-            <Toggle>
-              <LeftToggle active={!limitQuota} onClick={handleNoLimitQuota}>
-                제한없음
-              </LeftToggle>
-              <RightToggle active={limitQuota} onClick={handleLimitQuota}>
-                제한있음
-              </RightToggle>
-              {limitQuota && (
-                <InputBox>
-                  <Input onChange={handleQuotaChange} />
-                  <InnerTitle
-                    style={{ marginRight: "15px", marginLeft: "0px" }}
-                  >
-                    명
-                  </InnerTitle>
-                </InputBox>
-              )}
-            </Toggle>
-          </ToggleWrapper>
-        </Wrapper>
-        <Wrapper>
-          <Modal_title>2. 배포방식</Modal_title>
-          <ToggleWrapper>
-            <Toggle>
-              <LeftToggle active={isLink} onClick={handleLink}>
-                링크배포
-              </LeftToggle>
-              <RightToggle active={!isLink} onClick={handleGPS}>
-                GPS배포
-              </RightToggle>
-            </Toggle>
-          </ToggleWrapper>
-          {clickLink && (
-            <TimeBox>
-              <DateBox>
-                <InnerTitle>시작일</InnerTitle>
-                <DateSelect
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                  min={minDate}
-                  max={maxDate}
-                />
-
-                <TimeSelect
-                  value={startTime}
-                  onChange={handleStartTimeChange}
-                />
-              </DateBox>
-              <Line />
-              <DateBox>
-                <InnerTitle>마감일</InnerTitle>
-                <DateSelect
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  min={startDate}
-                  max={"2024-05-06"}
-                />
-                {startDate === endDate && (
-                  <TimeSelect
-                    value={endTime}
-                    onChange={handleEndTimeChange}
-                    min={startDate}
-                  />
-                )}
-                {startDate !== endDate && (
-                  <TimeSelect value={endTime} onChange={handleEndTimeChange} />
-                )}
-              </DateBox>
-            </TimeBox>
-          )}
-          {!clickLink && (
-            <TimeBox style={{ display: "flex", flexDirection: "column" }}>
-              <InnerTitle style={{ marginLeft: "12%" }}>
-                지금부터
-                <Input
-                  value={howLong}
-                  onChange={handleHowLongChange}
-                  style={{
-                    marginLeft: "8px",
-                    marginRight: "7px",
-                    marginTop: "20%",
-                  }}
-                />
-                분 동안
-              </InnerTitle>
-              <InnerTitle style={{ marginLeft: "12%", marginTop: "-10%" }}>
-                여기서부터 반경
-                <Input
-                  value={distRange}
-                  onChange={handleDistRangeChange}
-                  style={{
-                    marginLeft: "5px",
-                    marginRight: "5px",
-                    marginTop: "20%",
-                    width: "3.2em",
-                  }}
-                  max="1000"
-                />
-                m
-              </InnerTitle>
-            </TimeBox>
-          )}
-        </Wrapper>
-        <ButtonContainer>
-          <Buttons status={props.enqStatus} />
-        </ButtonContainer>
-      </Modal>
-    </>
-  );
-};
-
-export default Distribution;

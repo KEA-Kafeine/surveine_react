@@ -2,26 +2,30 @@ import React, { useState, useRef, useEffect } from "react";
 import styled, { keyframes, css } from "styled-components";
 import Axios from "axios";
 import CoffeeBeanIcon from "../../img/workspace/coffeeBean.svg";
-import EnqSetIcon from "../../img/workspace/enqSetting.svg";
-import GPSIcon from "../../img/workspace/GPS_icon.svg";
+import EnqSetIcon from "../../img/workspace/enqSetting.svg"
+import GPSIcon from "../../img/workspace/GPS_icon.svg"
 import LINKIcon from "../../img/workspace/LINK_icon.svg";
 import EnqSetModal from "./EnqSetting";
+import { HeartOutlined, HeartFilled } from '@ant-design/icons';
+import axios from "axios";
+import { uToken } from "../TokenAtom";
+import { useRecoilValue } from "recoil";
 import EditModal from "./EditModal";
-import LinkCopyModal from "./LinkCopyModal";
 
 const CoffeeBean = (props) => {
+  const tokenValue = useRecoilValue(uToken);
+
   useEffect(() => {
     console.log("===CoffeeBean===");
     console.log(props);
     console.log("===END CB===");
-  }, []);
+  }, [])
   const clickEnqSetting = () => {
     //검색을 클릭했을 때 실행되야할 기능 구현
     alert("설문지 설정 클릭");
   };
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [linkModalOpen, setLinkModalOpen] = useState(false);
 
   const showModal = () => {
     setModalOpen(true);
@@ -30,68 +34,175 @@ const CoffeeBean = (props) => {
     setModalOpen(false);
   };
 
-  const startDistribute = () => {
-    alert("배포시작 클릭");
+  const [showDistModal, setShowDistModal] = useState(false);
+  const [confirmDist, setConfirmDist] = useState(false);
+  const clickDistribute = () => {
+    setShowDistModal(true);
   };
-  const endDistribute = () => {
-    alert("배포종료 클릭");
+  const handleConfirmDist = (confDist) => {
+    setConfirmDist(confDist);
+    setShowDistModal(false);
   };
 
-  const getLink = () => {
-    setLinkModalOpen(!linkModalOpen);
+  const clickFav = (cbId) => {
+    console.log(cbId + " 좋아요");
+    axios.put("/api/sbox/fav", {"enqId": cbId}, {
+      headers: { Authorization: "Bearer " + String(tokenValue) },
+    })
+    .then((response) => {
+      if(response.data.isSuccess) {
+        console.log("Change favorite status: ", response.data);
+      } else {
+        alert("failed to");
+      }
+    })
+    .catch(error => {
+      console.log("[ERROR] change favorite status: ", error);
+    });
   };
-  const [enqName, setEnqName] = useState(props.enqName);
+
+  const [showGPSRespModal, setShowGPSRespModal] = useState(false);
+  const [respGPS, setRespGPS] = useState(0);
+  const clickGPSResponse = () => {
+    // alert("click GPS response");
+    setShowGPSRespModal(true);
+  };
+  const handleRespGPS = (folderId) => {
+    setRespGPS(folderId);
+    setShowGPSRespModal(false);
+  };
+
+  const [enqName, setEnqName] = useState(props.cbName);
 
   return (
     <CoffeeBox>
       <div>
-        {props.enqStatus == "ENQ_MAKE" && <EnqState>제작중</EnqState>}
-        {props.enqStatus == "DIST_WAIT" && <EnqState>배포예약</EnqState>}
-        {props.enqStatus == "DIST_DONE" && <EnqState>배포완료</EnqState>}
-        {props.enqStatus == "ENQ_DONE" && <EnqState>설문종료</EnqState>}
+        {/* 제작함 커피콩 상태 관련 */}
+        {props.type === "cbox" && props.cbStatus === "ENQ_MAKE" && (
+          <EnqState>제작중</EnqState>
+        )}
+        {props.type === "cbox" && props.cbStatus === "DIST_WAIT" && (
+          <EnqState>배포예약</EnqState>
+        )}
+        {props.type === "cbox" && props.cbStatus === "DIST_DONE" && (
+          <EnqState>배포완료</EnqState>
+        )}
+        {props.type === "cbox" && props.cbStatus === "ENQ_DONE" && (
+          <EnqState>설문종료</EnqState>
+        )}
+
+        {/* 참여함 커피콩 상태 관련 */}
+        {props.type !== "sbox" &&  props.cbStatus === "SAVE" && (
+          <EnqState>입력중</EnqState>
+        )}
+        {props.type !== "sbox" && props.cbStatus === "SUBMIT" && (
+          <EnqState>제출완료</EnqState>
+        )}
+
+        {/* GPS 설문함 커피콩 상태 */}
+        {props.type === "gbox" && props.cbStatus === "WAIT" && (
+          <EnqState>대기중</EnqState>
+        )}
 
         <CBIcon src={CoffeeBeanIcon} />
+
         <EnqPreview>
-          {enqName.length > 10 ? enqName.slice(0, 10) + "..." : enqName}
-          <br />
-          <p style={{ fontSize: "12px", fontWeight: "250" }}>
-            {props.updateDate}
-          </p>
-        </EnqPreview>
+          {props.cbName.length > 10 ? props.cbName.slice(0, 10) + "..." : props.cbName}<br/>
+          
+          {props.type !== "sbox" && (
+            <p style={{fontSize: "12px", fontWeight: "250"}}>
+              {props.updateDate}
+            </p>
+          )}
+
+          {props.type === "sbox" && props.fav === false && (
+            <FavCnt>
+              <HeartOutlined style={{marginRight: "0.3rem", marginTop: "0.5rem", marginBottom: "0.9rem"}} onClick={() => clickFav(props.cbId)} />
+              <p style={{marginRight: "0.3rem", marginTop: "0.35rem", marginBottom: "0.7rem"}}>{props.favCount}</p>
+            </FavCnt>
+          )}
+          {props.type === "sbox" && props.fav === true && (
+            <FavCnt>
+              <HeartFilled style={{marginRight: "0.3rem", marginTop: "0.5rem", marginBottom: "0.9rem"}} onClick={() => clickFav(props.cbId)} />
+              <p style={{marginRight: "0.3rem", marginTop: "0.35rem", marginBottom: "0.7rem"}}>{props.favCount}</p>
+            </FavCnt>
+          )}
+        </EnqPreview>   
+
       </div>
 
-      {props.distType == "GPS" && <GPSType src={GPSIcon} />}
-      {props.distType == "LINK" && (
-        <LINKType src={LINKIcon} onClick={getLink} />
+      {props.type !== "sbox" && props.type !== "gbox" && props.distType == "GPS" && (
+        <GPSType src={GPSIcon} />  
+      )}
+      {props.type === "gbox" && (
+        <GPSType style={{left: "224px", width: "1.1rem", height: "1.1rem"}} src={GPSIcon} />
+      )}
+      {props.type !== "sbox" && props.distType == "LINK" && (
+        <LINKType src={LINKIcon} />  
       )}
 
-      {props.enqStatus == "DIST_WAIT" && (
-        <DistrBtn onClick={startDistribute}>배포시작</DistrBtn>
-      )}
-      {props.enqStatus == "DIST_DONE" && (
-        <DistrBtn onClick={endDistribute}>배포종료</DistrBtn>
-      )}
-
-      <StyledEnqSetBtn src={EnqSetIcon} onClick={showModal} />
-      {modalOpen && (
+      {/* 제작함에서만 보이는 버튼 */}
+      {props.type === "cbox" &&  props.cbStatus == "DIST_WAIT" && (
         <div>
-          <EnqSetModal
-            isShared={props.isShared}
-            enqId={props.enqId}
-            enqName={enqName}
-            setEnqName={setEnqName}
-            cbList={props.cbList}
-            abList={props.abList}
-          />
-          <StyledEnqSetBtn src={EnqSetIcon} onClick={unShowModal} />
+          <DistrBtn onClick={clickDistribute}>배포시작</DistrBtn>
+          {showDistModal && (
+            <EditModal onClose={() => setShowDistModal(false)} onSave={handleConfirmDist} enqId={props.cbId} enqName={props.cbName} what="startDistribute" />
+          )}
+        </div>
+        
+      )}
+      {props.type === "cbox" && props.cbStatus == "DIST_DONE" && (
+        <div>
+          <DistrBtn onClick={clickDistribute}>배포종료</DistrBtn>
+          {showDistModal && (
+            <EditModal onClose={() => setShowDistModal(false)} onSave={handleConfirmDist} enqId={props.cbId} enqName={props.cbName} what="endDistribute" />
+          )}
         </div>
       )}
 
-      {linkModalOpen && (
+      {/* GPS 설문함에서만 보이는 버튼 */}
+      {props.type === "gbox" && (
         <div>
-          <LinkCopyModal enqId={props.enqId} />
+          <DistrBtn onClick={clickGPSResponse}>설문참여</DistrBtn>
+          {showGPSRespModal && (
+            <EditModal
+              onClose={() => setShowGPSRespModal(false)}
+              onSave={handleRespGPS}
+              enqId={props.cbId}
+              enqName={props.cbName}
+              folderList={props.abList}
+              what="responseGPS"
+            />
+          )}
         </div>
       )}
+
+      {props.type !== "gbox" && (
+        <StyledEnqSetBtn src={EnqSetIcon} onClick={showModal} />
+      )}
+
+      {/* 제작함 커피콩 점3개 */}
+      {props.type === "cbox" && modalOpen && (
+        <div>
+          <EnqSetModal onClose={unShowModal} isShared={props.isShared} enqId={props.cbId} enqName={props.cbName} setEnqName={setEnqName} cbList={props.cbList} abList={props.abList} type="cbox" />
+          {/* <StyledEnqSetBtn src={EnqSetIcon} onClick={unShowModal} /> */}
+        </div>
+      )}
+
+      {/* 참여함 커피콩 점3개 */}
+      {props.type === "abox" && modalOpen && (
+        <div style={{width: "400px", position: "absolute", bottom: "72px", right: "3px"}}>
+          <EnqSetModal onClose={unShowModal} ansId={props.cbId} enqName={props.cbName} setEnqName={setEnqName} cbList={props.cbList} abList={props.abList} type="abox" />
+        </div>
+      )}
+
+      {/* 샌드박스 커피콩 점3개 */}
+      {props.type === "sbox" && modalOpen && (
+        <div style={{width: "400px", position: "absolute", bottom: "72px", right: "10px"}}>
+          <EnqSetModal onClose={unShowModal} enqId={props.cbId} enqName={props.cbName} cbList={props.cbList} type="sbox" />
+        </div>
+      )}
+
     </CoffeeBox>
   );
 };
@@ -138,14 +249,14 @@ const EnqPreview = styled.p`
   left: 43px;
   display: inline-block;
   width: 100vw;
-  color: #1a2051;
+  color: #1A2051; 
   font-weight: 640;
 `;
 
 const StyledEnqSetBtn = styled.img`
   position: absolute;
   left: 231px;
-  bottom: 64px;
+  bottom: 64px;  
   width: 1rem;
   height: 1rem;
 `;
@@ -181,12 +292,19 @@ const DistrBtn = styled.button`
   font-family: "Noto Sans";
   font-size: 13px;
   font-weight: 400;
-  border: 1px solid #1a2051;
+  border: 1px solid #1A2051;
   border-radius: 15px;
   padding: 0.3rem 0.5rem;
-  color: #1a2051;
+  color: #1A2051;
   background-color: white;
   width: 65px;
   align-items: center;
   justify-content: center;
+`;
+
+const FavCnt = styled.div`
+  display: flex;
+  flex-direction: row;
+  font-size: 15px;
+  font-weight: 350;
 `;
