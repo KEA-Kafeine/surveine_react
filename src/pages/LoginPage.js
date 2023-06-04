@@ -7,7 +7,13 @@ import * as cm from "../components/Common";
 import * as sl from "../components/SignupLogin";
 import { Link } from "react-router-dom";
 
-import { memNameToken, cbListToken, abListToken, boxToken, CorAToken } from "../components/TokenAtom";
+import {
+  memNameToken,
+  cbListToken,
+  abListToken,
+  boxToken,
+  CorAToken,
+} from "../components/TokenAtom";
 import { useLocation } from "react-router-dom";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -37,7 +43,7 @@ const LoginPage = () => {
       .then((response) => {
         if (response.data.isSuccess) {
           console.log("rs" + response);
-          setToken(String(response.data.result.token));
+          setToken(String(response.data.result.accessToken));
           console.log(response.data.result);
           // 워크스페이스 이동
           alert("로그인 성공");
@@ -109,20 +115,38 @@ const LoginPage = () => {
             </cm.DivHorizon>
             <cm.DivVertical>
               <sl.InputTitle>이메일 *</sl.InputTitle>
-              <sl.InputBox type="email" placeholder="이메일을 입력하세요" value={email} onChange={handleEmailChange} />
+              <sl.InputBox
+                type="email"
+                placeholder="이메일을 입력하세요"
+                value={email}
+                onChange={handleEmailChange}
+              />
             </cm.DivVertical>
             <cm.DivVertical>
               <sl.InputTitle>비밀번호 *</sl.InputTitle>
-              <sl.InputBox type="password" placeholder="비밀번호를 입력하세요" value={password} onChange={handlePasswordChange} />
+              <sl.InputBox
+                type="password"
+                placeholder="비밀번호를 입력하세요"
+                value={password}
+                onChange={handlePasswordChange}
+              />
             </cm.DivVertical>
             <cm.DivHorizon>
               <cm.LeftDiv>
-                <sl.CheckboxInput id="checkbox" checked={rememberMe} onChange={handleRememberMe} />
-                <sl.CheckboxLabel htmlFor="checkbox">로그인 상태 유지하기</sl.CheckboxLabel>
+                <sl.CheckboxInput
+                  id="checkbox"
+                  checked={rememberMe}
+                  onChange={handleRememberMe}
+                />
+                <sl.CheckboxLabel htmlFor="checkbox">
+                  로그인 상태 유지하기
+                </sl.CheckboxLabel>
               </cm.LeftDiv>
               <cm.RightDiv>
                 <cm.LinkNone to={"/forgot-password"}>
-                  <sl.BlueBoldText style={{ marginRight: "10px" }}>비밀번호 찾기</sl.BlueBoldText>
+                  <sl.BlueBoldText style={{ marginRight: "10px" }}>
+                    비밀번호 찾기
+                  </sl.BlueBoldText>
                 </cm.LinkNone>
               </cm.RightDiv>
             </cm.DivHorizon>
@@ -135,7 +159,9 @@ const LoginPage = () => {
               </cm.LeftDiv>
               <cm.RightDiv>
                 <cm.LinkNone to={"/signup"}>
-                  <sl.BlueBoldText style={{ marginRight: "10px" }}>서베인에 가입하기</sl.BlueBoldText>
+                  <sl.BlueBoldText style={{ marginRight: "10px" }}>
+                    서베인에 가입하기
+                  </sl.BlueBoldText>
                 </cm.LinkNone>
               </cm.RightDiv>
             </cm.DivHorizon>

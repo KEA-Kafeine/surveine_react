@@ -17,7 +17,13 @@ import { useNavigate } from "react-router-dom";
 import EnqSetIcon from "../img/workspace/enqSetting.svg";
 import FolderSettings from "../components/workspace/FolderSettings";
 import { GPSBlank } from "../components/workspace/GPSBlank";
-import { memNameToken, cbListToken, abListToken, boxToken, CorAToken } from "../components/TokenAtom";
+import {
+  memNameToken,
+  cbListToken,
+  abListToken,
+  boxToken,
+  CorAToken,
+} from "../components/TokenAtom";
 
 // const {kakao} = window;
 import KakaoMap from "../components/workspace/KakaoMap";
@@ -33,7 +39,8 @@ function Workspace() {
     alert("검색 클릭");
   };
 
-  const memName = useRecoilValue(memNameToken);
+  // const memName = useRecoilValue(memNameToken);
+  const [memName, setMemName] = useRecoilState(memNameToken);
   const [cbList, setCbList] = useRecoilState(cbListToken);
   const [abList, setAbList] = useRecoilState(abListToken);
   // const [box, setBox] = useRecoilState(boxToken);
@@ -68,7 +75,7 @@ function Workspace() {
           console.log(response.data);
           console.log(response.data.result);
 
-          // setMemName(response.data.result.memberName);
+          setMemName(response.data.result.memName);
           setCbList(response.data.result.cboxList);
           setAbList(response.data.result.aboxList);
 
@@ -111,14 +118,14 @@ function Workspace() {
     console.log(box);
   }, [box]);
 
-  const [folderSet, setFolderSet] = useState(false); 
+  const [folderSet, setFolderSet] = useState(false);
   const clickSettings = (boxId) => {
     // alert(boxId + " click settings");
     setFolderSet(true);
   };
   const closeModal = () => {
     setFolderSet(false);
-  }
+  };
 
   // const userLocation = {
   //   lat: 37.45521937066099,
@@ -135,12 +142,33 @@ function Workspace() {
 
   return (
     <WorkspaceContainer>
-      <SideNaviContainer>{memName && <SideNavi memberName={memName} cbList={cbList} abList={abList} onChangeLat={handleChangeLat} onChangeLng={handleChangeLng} onFolderDataChange={handleFolderDataChange} />}</SideNaviContainer>
+      <SideNaviContainer>
+        {memName && (
+          <SideNavi
+            memberName={memName}
+            cbList={cbList}
+            abList={abList}
+            onChangeLat={handleChangeLat}
+            onChangeLng={handleChangeLng}
+            onFolderDataChange={handleFolderDataChange}
+          />
+        )}
+      </SideNaviContainer>
       <TopBarContainer>
         <cm.TopBarWhite>
           <cm.TopBar_menu style={{ marginLeft: "5rem" }}>
-            <cm.TopBar_menu_item style={{cursor: "pointer"}} onClick={() => navigate("/workspace")}>Work Space</cm.TopBar_menu_item>
-            <cm.TopBar_menu_item style={{cursor: "pointer"}} onClick={() => navigate("/sandbox")}>Sand Box</cm.TopBar_menu_item>
+            <cm.TopBar_menu_item
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/workspace")}
+            >
+              Work Space
+            </cm.TopBar_menu_item>
+            <cm.TopBar_menu_item
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/sandbox")}
+            >
+              Sand Box
+            </cm.TopBar_menu_item>
           </cm.TopBar_menu>
           <cm.TranslateBtn_dark />
         </cm.TopBarWhite>
@@ -151,13 +179,13 @@ function Workspace() {
             <div>
               제작함
               <h3>{box.cboxName}</h3>
-            </div>  
+            </div>
           )}
           {box.hasOwnProperty("aboxId") && (
             <div>
               참여함
               <h3>{box.aboxName}</h3>
-            </div>  
+            </div>
           )}
           {box.hasOwnProperty("GPSBox") && (
             <div>
@@ -173,11 +201,21 @@ function Workspace() {
               <StyledSerachBtn src={SearchIcon} />
             </SearchBtn>
           </SearchDiv>
-          {((box.cboxName !== "기본 제작함") && (box.aboxName !== "기본 참여함")) && (
+          {box.cboxName !== "기본 제작함" && box.aboxName !== "기본 참여함" && (
             <div>
-              <StyledSetBtn src={EnqSetIcon} onClick={() => clickSettings(box.cboxName ? box.cboxId : box.aboxId)} />
+              <StyledSetBtn
+                src={EnqSetIcon}
+                onClick={() =>
+                  clickSettings(box.cboxName ? box.cboxId : box.aboxId)
+                }
+              />
               {folderSet && (
-                <FolderSettings onClose={closeModal} boxId={box.cboxName ? box.cboxId : box.aboxId} boxName={box.cboxName ? box.cboxName : box.aboxName} type={box.cboxName ? "cbox" : "abox"} />
+                <FolderSettings
+                  onClose={closeModal}
+                  boxId={box.cboxName ? box.cboxId : box.aboxId}
+                  boxName={box.cboxName ? box.cboxName : box.aboxName}
+                  type={box.cboxName ? "cbox" : "abox"}
+                />
               )}
             </div>
           )}
@@ -185,26 +223,44 @@ function Workspace() {
       </MiddleContainer>
 
       <CoffeeBeanListContainer>
-        {box.hasOwnProperty("cboxId") && Object.keys(box).length != 0 &&
+        {box.hasOwnProperty("cboxId") &&
+          Object.keys(box).length != 0 &&
           (box.enqList.length != 0 ? (
             // <CoffeeBeanList cboxId={box.cboxId} enqList={box.enqList} cbList={CorA === "cbox" ? cbList : undefined} abList={CorA === "abox" ? abList : undefined} />
-            <CoffeeBeanList boxType="cbox" boxId={box.cboxId} boxList={box.enqList} cbList={cbList} abList={undefined} />
+            <CoffeeBeanList
+              boxType="cbox"
+              boxId={box.cboxId}
+              boxList={box.enqList}
+              cbList={cbList}
+              abList={undefined}
+            />
           ) : (
             <CboxBlank cboxId={box.cboxId} />
           ))}
-        {box.hasOwnProperty("aboxId") && Object.keys(box).length != 0 &&
+        {box.hasOwnProperty("aboxId") &&
+          Object.keys(box).length != 0 &&
           (box.ansList.length != 0 ? (
             // <CoffeeBeanList boxType="abox" boxId={box.aboxId} boxList={box.ansList} cbList={CorA === "cbox" ? cbList : undefined} abList={CorA === "abox" ? abList : undefined} />
-            <CoffeeBeanList boxType="abox" boxId={box.aboxId} boxList={box.ansList} cbList={undefined} abList={abList} />
+            <CoffeeBeanList
+              boxType="abox"
+              boxId={box.aboxId}
+              boxList={box.ansList}
+              cbList={undefined}
+              abList={abList}
+            />
           ) : (
             <AboxBlank aboxId={box.aboxId} />
           ))}
         {box.hasOwnProperty("GPSBox") && (
           <div>
             {box.GPSBox.length != 0 ? (
-              <CoffeeBeanList boxType="gbox" boxList={box.GPSBox} abList={abList} />
-              ) : (
-                <GPSBlank />
+              <CoffeeBeanList
+                boxType="gbox"
+                boxList={box.GPSBox}
+                abList={abList}
+              />
+            ) : (
+              <GPSBlank />
             )}
             <SubInfoBottomContainer>
               <KakaoMap lat={lat} lng={lng} />

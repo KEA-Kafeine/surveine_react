@@ -422,7 +422,7 @@ function FormCreation() {
       ALL.enqCont = qstArr;
 
       axios
-        .put("/api/enq/save", ALL, {
+        .put("/api/enq/create", ALL, {
           headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
