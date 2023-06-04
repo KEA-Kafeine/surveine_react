@@ -22,6 +22,7 @@ import TooltipNode from "../components/Form/TooltipNode";
 import CustomNode from "../components/Form/CustomNode";
 import { useNavigate } from "react-router-dom";
 import DnDFlow from "../components/Form/DnDFlow";
+import PickModal from "../components/Form/PickModal";
 const ALL = {};
 const DATA = [];
 const colors = [
@@ -90,6 +91,7 @@ function FormCreation() {
   const [nodes, setNodes] = useState([]); //플로우 노드에 질문 추가
   const [edges, setEdges] = useState([]); // 플로우 관계 추가
   const [distribute, setDistribute] = useState(false); //플로우 노드에 질문 추가
+  const [pick, setPick] = useState(false);
   const [title, setTitle] = useState(""); // 설문 제목
 
   const [name, setName] = useState(""); // 커피콩에 보일 제목
@@ -297,6 +299,10 @@ function FormCreation() {
   const clickDistriubtion = (e) => {
     postEnq();
     setDistribute(!distribute);
+  };
+
+  const clickPick = (e) => {
+    setPick(!pick);
   };
   //질문 타입 설정
   const selectType = (e) => {
@@ -580,8 +586,7 @@ function FormCreation() {
                 </QstBtn>
                 <QstBtn>
                   <t.ResponseStatus>
-                    <t.FormButton>응답</t.FormButton>
-                    <t.ResponseNumber>3</t.ResponseNumber>
+                    <t.FormButton onClick={clickPick}>추첨</t.FormButton>
                   </t.ResponseStatus>
                 </QstBtn>
                 <QstBtn>
@@ -869,6 +874,8 @@ function FormCreation() {
           enqId={enqResponseId}
         />
       ) : null}
+
+      {pick ? <PickModal /> : null}
     </>
   );
 }
