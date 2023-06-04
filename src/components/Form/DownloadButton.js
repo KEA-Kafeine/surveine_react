@@ -44,7 +44,7 @@ function downloadImage(dataUrl) {
 const imageWidth = 1024;
 const imageHeight = 768;
 
-function DownloadButton() {
+function DownloadButton(props) {
   const { getNodes } = useReactFlow();
   const onClick = () => {
     // we calculate a transform for the nodes so that all nodes are visible
@@ -69,6 +69,11 @@ function DownloadButton() {
     }).then(downloadImage);
   };
 
+  const onSave = (nodes) => {
+    console.log(nodes);
+    props.editNodes(nodes);
+  };
+
   return (
     <Panel position="top-right">
       <Modal>
@@ -84,6 +89,7 @@ function DownloadButton() {
         <Button className="download-btn" onClick={onClick}>
           Download
         </Button>
+        <Button onClick={() => onSave(props.nodes)}>Save</Button>
       </Modal>
     </Panel>
   );

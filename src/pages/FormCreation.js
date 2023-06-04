@@ -176,7 +176,9 @@ function FormCreation() {
 
             position: {
               // 브랜치일 경우 부모 노드의 x 값  - 220 만큼 x값을 이동 시킴
-              x: nodes.find((node) => node.id === qst.branchQst)
+              x: nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.x
+                : nodes.find((node) => node.id === qst.branchQst)
                 ? nodes.find((node) => node.id === qst.branchQst).position.x +
                   -40 * index
                 : (index % 5) * -20,
@@ -202,8 +204,12 @@ function FormCreation() {
               qst: qst,
             },
             position: {
-              x: 400, // 공통 질문일 경우에는 x값이 400으로 고정됨
-              y: 250 * count++,
+              x: nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.x
+                : 400, // 공통 질문일 경우에는 x값이 400으로 고정됨
+              y: nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.y
+                : 100 * index,
             },
             type: "tooltip",
           };
@@ -228,7 +234,6 @@ function FormCreation() {
                   ?.options.find((opt) => opt.optionId === qst.branchOpt)
                   ?.optionContent || "옵션없음"
               : "부모없음",
-            type: "straight",
             arrowHeadType: "arrowclosed",
             style: {
               stroke:
@@ -251,7 +256,6 @@ function FormCreation() {
             source: qst.qstId,
             target: qstArr[maxIndex] ? qstArr[maxIndex].qstId : null,
             label: "공통질문",
-            type: "staright",
             style: {
               stroke: "#1a2051",
               strokeWidth: 3,
@@ -262,6 +266,10 @@ function FormCreation() {
       })
     );
   }, [qstArr]);
+
+  function editNodes(nodes) {
+    setNodes(nodes);
+  }
 
   //브랜치 설정
   const onToggle = (e) => {
@@ -863,7 +871,7 @@ function FormCreation() {
                 </ReactFlow>
               </div>
             </ReactFlowProvider> */}
-            <DnDFlow nodes={nodes} edges={edges} />
+            <DnDFlow nodes={nodes} edges={edges} editNodes={editNodes} />
           </FlowFrame>
         )}
       </FormMain>
