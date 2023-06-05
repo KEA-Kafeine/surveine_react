@@ -151,6 +151,7 @@ function FormCreation() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [inputEditOption, setInputEditOption] = useState("");
   const [enqStatus, setEnqStatus] = useState("ENQ_MAKE");
+  const [blur, setBlur] = useState(false);
 
   useEffect(() => {
     if (enqId != null) {
@@ -343,10 +344,13 @@ function FormCreation() {
 
   const clickDistriubtion = (e) => {
     postEnq();
+    setBlur(!blur);
+    setShowFlow(false);
     setDistribute(!distribute);
   };
 
   const clickPick = (e) => {
+    setBlur(!blur);
     setPick(!pick);
   };
   //질문 타입 설정
@@ -609,7 +613,8 @@ function FormCreation() {
 
   return (
     <>
-      <FormMain distribute={distribute}>
+      {blur && <GrayBackground />}
+      <FormMain blur={blur}>
         <FormSection>
           <Header>
             <HeaderHalf direction="left">
@@ -626,20 +631,16 @@ function FormCreation() {
             <HeaderHalf direction="right">
               <HeadBtn>
                 <QstBtn>
-                  <t.FormButton onClick={onShowFlow}>Flow</t.FormButton>
+                  <t.FormButton onClick={onShowFlow}>그래프</t.FormButton>
                 </QstBtn>
                 <QstBtn>
                   <t.FormButton onClick={postEnq}>저장</t.FormButton>
                 </QstBtn>
                 <QstBtn>
-                  <t.ResponseStatus>
-                    <t.FormButton onClick={clickPick}>추첨</t.FormButton>
-                  </t.ResponseStatus>
+                  <t.FormButton onClick={clickPick}>추첨</t.FormButton>
                 </QstBtn>
                 <QstBtn>
-                  <t.ResponseStatus>
-                    <t.FormButton onClick={openResult}>결과분석</t.FormButton>
-                  </t.ResponseStatus>
+                  <t.FormButton onClick={openResult}>결과분석</t.FormButton>
                 </QstBtn>
                 <QstBtn>
                   <t.Export onClick={clickDistriubtion}>배포</t.Export>
@@ -922,7 +923,7 @@ function FormCreation() {
         />
       ) : null}
 
-      {pick ? <PickModal /> : null}
+      {pick ? <PickModal clickPick={clickPick} /> : null}
     </>
   );
 }
@@ -938,22 +939,31 @@ const FlowFrame = styled.div`
   border: 1px solid black;
   overflow: hidden;
 `;
-
 const FormMain = styled.div`
-  background: #f5f5f5;
+  background: ${({ blur }) => (blur ? "#f5f5f5" : "none")};
   width: 100vw;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: ${({ blur }) => (blur ? "hidden" : "auto")};
   &::-webkit-scrollbar {
     display: none;
   }
   scrollbar-width: none;
   -ms-overflow-style: none;
-  ${({ distribute }) => distribute && `filter: blur(2px);`}
+  pointer-events: ${({ blur }) => (blur ? "none" : "auto")};
+`;
+
+const GrayBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: grey;
+  opacity: 0.8;
+  pointer-events: none;
 `;
 
 const FormSection = styled.div`

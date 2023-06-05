@@ -11,10 +11,10 @@ import { useParams } from "react-router";
 import { uToken } from "../components/TokenAtom";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-import { Redirect } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 let ALL = {};
 const DATA = [];
+
 const FormQuestion = (props) => {
   const [text, setText] = useState("");
 
@@ -318,19 +318,12 @@ function FormAnswer() {
             <HeaderHalf direction="right">
               <HeadBtn>
                 <QstBtn>
-                  <t.FormButton onClick={onShowFlow}>Flow</t.FormButton>
-                </QstBtn>
-                <QstBtn>
                   <t.FormButton onClick={postAns}>저장</t.FormButton>
                 </QstBtn>
                 <QstBtn>
-                  <t.ResponseStatus>
-                    <t.FormButton>응답</t.FormButton>
-                    <t.ResponseNumber>3</t.ResponseNumber>
-                  </t.ResponseStatus>
+                  <t.Export>제출</t.Export>
                 </QstBtn>
 
-                <QstBtn></QstBtn>
                 <QstBtn>
                   <t.Dots src={Dots} alt="Dots" />
                 </QstBtn>
