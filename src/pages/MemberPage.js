@@ -9,6 +9,7 @@ import LeftArrow from "../img/memberPage/left_arrow.svg";
 import * as cm from "../components/Common";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { RedoOutlined } from '@ant-design/icons';
 
 const {kakao} = window;
 
@@ -51,10 +52,74 @@ function MemberPage() {
   //   },
   // };
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const temp_lat = position.coords.latitude;
+        const temp_lng = position.coords.longitude;
+        getAddress(temp_lat, temp_lng);
+      },
+      (error) => {
+        console.log("[ERROR] GPS: ", error);
+        alert("현재 위치를 확인하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해주세요.");
+      }
+    );
+  }, []);
+
+  const clickGPS = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const temp_lat = position.coords.latitude;
+        const temp_lng = position.coords.longitude;
+        getAddress(temp_lat, temp_lng);
+      },
+      (error) => {
+        console.log("[ERROR] GPS: ", error);
+        alert("현재 위치를 확인하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해주세요.");
+      }
+    );
+  };
+  const [lat, setLat] = useState(0);
+  const [lng, setLng] = useState(0);
+  const [address, setAddress] = useState("알 수 없음");
+  const getAddress = (lat, lng) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+    fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      setLat(lat);
+      setLng(lng);
+      setAddress(data.display_name);
+    })
+    .catch((error) => {
+      console.error("[ERROR] Reverse geocoding error: ", error);
+    });
+  };
+  const [detailAddress, setDetailAddress] = useState("알 수 없음");
+  useEffect(() => {
+    if(address !== "알 수 없음") {
+      const addressArray = address.split(",");
+      let firstEle = addressArray[0].trim();
+      let cityEle = addressArray.find((element) => element.trim().endsWith("시"));
+      let secondEle = addressArray.find((element) => element.trim().endsWith("동"));
+      if(cityEle) {
+        cityEle = cityEle.trim();
+      }
+      if(secondEle) {
+        secondEle = secondEle.trim();
+      }
+      if(firstEle) {
+        firstEle = firstEle.trim();
+      }
+      const combine = `${cityEle} ${secondEle} ${firstEle}`;
+      console.log("address: ", combine);
+      setDetailAddress(combine);
+    }
+  }, [address]);
   const NowMemberLocation = {
-    address: "경기도 성남시 복정동 가천대학교 AI관",
-    lat: 37.45521937066099,
-    lng: 127.13396513505703,
+    address: detailAddress,
+    lat: lat,
+    lng: lng,
   };
 
   const clickLeftArrowBtn = () => {
@@ -85,8 +150,7 @@ function MemberPage() {
       position: markerPosition
     });
     marker.setMap(map);
-  }, []);
-  
+  }, [lat, lng]);
 
   return (
     <MemberPageContainer>
@@ -170,7 +234,10 @@ function MemberPage() {
               </SocialBox>
             </WsandSocialContainer>
             <LocationInfoContainer>
-              <LocationTitle>현재 위치</LocationTitle>
+              <LocationTop>
+                <LocationTitle>현재 위치</LocationTitle>
+                <RedoOutlined style={{marginLeft: "0.8rem", marginTop: "1.4rem"}} onClick={clickGPS} />
+              </LocationTop>
               <LocationAddress>{NowMemberLocation.address}</LocationAddress>
               <LocationLatLng>
                 <LatLngText>
@@ -363,13 +430,14 @@ const LocationTitle = styled.p`
 `;
 
 const LocationAddress = styled.p`
+  margin-top: 0.3vh;
   margin-left: 2vw;
   font-size: 2vh;
   font-weight: 500;
 `;
 
 const LocationLatLng = styled.div`
-  margin-top: 3.8vh;
+  margin-top: 3.5vh;
   margin-left: 2vw;
 `;
 
@@ -390,6 +458,11 @@ const SubInfoBottomContainer = styled.div`
   height: 41vh;
 
   background: #81c147;
+`;
+
+const LocationTop = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 export default MemberPage;
