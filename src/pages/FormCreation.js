@@ -297,15 +297,13 @@ function FormCreation() {
   // 위치 변경된 flow 저장 , 저장할때마다 적용
   function editNodes(nodes) {
     setNodes(nodes);
-    console.log(nodes);
-
     setPosNodes(
       nodes.map((node) => ({
         id: node.id,
         position: node.position,
       }))
     );
-    console.log(posNodes);
+
     alert("설문 그래프가 저장되었습니다.");
   }
 
@@ -367,7 +365,6 @@ function FormCreation() {
   const selectBranchOpt = (e) => {
     const selectedOption = qstArr.find((qst) => qst.qstId === branchQst)
       .options[e.target.selectedIndex - 1];
-    console.log(selectedOption.optionId);
     setBranchOpt(selectedOption.optionId);
     setOptionIndex(e.target.selectedIndex);
   };
@@ -458,7 +455,7 @@ function FormCreation() {
       setQstArr(reorderQst);
     } else {
       setQstArr([...qstArr, newQst]);
-      console.log(newQst);
+      // console.log(newQst);
     }
 
     setQstTitle("");
@@ -477,6 +474,9 @@ function FormCreation() {
       ALL.enqName = name;
       ALL.enqTitle = title;
       ALL.enqCont = qstArr;
+
+      //그래프 위치 저장
+      ALL.nodes = posNodes;
 
       axios
         .put("/api/enq/create", ALL, {
