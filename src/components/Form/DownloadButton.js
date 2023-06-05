@@ -47,9 +47,15 @@ const imageHeight = 768;
 function DownloadButton(props) {
   const { getNodes } = useReactFlow();
   useEffect(() => {
-    if (props.nodes) {
-      onSave(props.nodes);
-    }
+    const interval = setInterval(() => {
+      if (props.nodes) {
+        onSave(props.nodes);
+      }
+    }, 300);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [props.nodes]);
 
   const onClick = () => {
