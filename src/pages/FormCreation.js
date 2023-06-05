@@ -303,8 +303,6 @@ function FormCreation() {
         position: node.position,
       }))
     );
-
-    alert("설문 그래프가 저장되었습니다.");
   }
 
   //브랜치 설정

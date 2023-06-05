@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Panel,
   useReactFlow,
@@ -46,6 +46,12 @@ const imageHeight = 768;
 
 function DownloadButton(props) {
   const { getNodes } = useReactFlow();
+  useEffect(() => {
+    if (props.nodes) {
+      onSave(props.nodes);
+    }
+  }, [props.nodes]);
+
   const onClick = () => {
     // we calculate a transform for the nodes so that all nodes are visible
     // we then overwrite the transform of the `.react-flow__viewport` element
