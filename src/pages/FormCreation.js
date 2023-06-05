@@ -83,20 +83,50 @@ const nodeTypes = {
   tooltip: TooltipNode,
   custom: CustomNode,
 };
+//저장
 
+const initialNodes2 = [
+  {
+    id: "Q-gt64hEhpXvuL_-lgIuHph",
+    position: {
+      x: 666.2302680956254,
+      y: 110.28325416034312,
+    },
+  },
+];
+
+const firstQst = [
+  {
+    qstId: "Q-gt64hEhpXvuL_-lgIuHph",
+    qstTitle: "",
+    qstType: "체크박스",
+    options: [],
+    qstImg: "",
+    anonymous: false,
+    essential: false,
+    branch: false,
+    branchQst: "",
+    branchOpt: "",
+    qstNum: 1,
+    optionIndex: 0,
+  },
+];
 function FormCreation() {
   const navigate = useNavigate();
   const tokenValue = useRecoilValue(uToken);
   let { cboxId, enqId } = useParams();
   const [nodes, setNodes] = useState([]); //플로우 노드에 질문 추가
   const [edges, setEdges] = useState([]); // 플로우 관계 추가
-  const [distribute, setDistribute] = useState(false); //플로우 노드에 질문 추가
+  const [posNodes, setPosNodes] = useState([]);
+
+  const [distribute, setDistribute] = useState(false);
+
   const [pick, setPick] = useState(false);
   const [title, setTitle] = useState(""); // 설문 제목
 
   const [name, setName] = useState(""); // 커피콩에 보일 제목
 
-  const [qstArr, setQstArr] = useState(DATA); // 질문 배열
+  const [qstArr, setQstArr] = useState(firstQst); // 질문 배열
 
   const [type, setType] = useState("체크박스"); // 질문 타입
   const [qstTitle, setQstTitle] = useState("");
@@ -161,12 +191,6 @@ function FormCreation() {
           return {
             id: qst.qstId,
             data: {
-              label: `${qst.anonymous ? "[익명] " : ""}${
-                qst.essential ? "[필수] " : ""
-              }${qst.qstTitle.slice(0, 40)}`,
-              tags: `${qst.anonymous ? "[익명] " : ""}${
-                qst.essential ? "[필수] " : ""
-              }${qst.qstTitle.slice(0, 40)}`,
               qst: qst,
               color:
                 colors[
@@ -180,15 +204,15 @@ function FormCreation() {
                 ? nodes.find((node) => node.id === qst.qstId).position.x
                 : nodes.find((node) => node.id === qst.branchQst)
                 ? nodes.find((node) => node.id === qst.branchQst).position.x +
-                  -40 * index
-                : (index % 5) * -20,
+                  -30 * (index % 5)
+                : -100,
               //브랜치일 경우 부모 노드의 y값 + 100 + 질문번호 * 30 만큼 y값을 이동시킴
-              y:
-                150 +
-                (nodes.find((node) => node.id === qst.branchQst)
-                  ? nodes.find((node) => node.id === qst.branchQst).position.y +
-                    index * 20
-                  : (index % 10) * 20),
+              y: nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.y
+                : 150 + nodes.find((node) => node.id === qst.branchQst)
+                ? nodes.find((node) => node.id === qst.branchQst).position.y +
+                  100
+                : 100,
             },
             type: "tooltip",
           };
@@ -204,12 +228,16 @@ function FormCreation() {
               qst: qst,
             },
             position: {
-              x: nodes.find((node) => node.id === qst.qstId)
+              x: initialNodes2.find((node) => node.id === qst.qstId)
+                ? initialNodes2.find((node) => node.id === qst.qstId).position.x
+                : nodes.find((node) => node.id === qst.qstId)
                 ? nodes.find((node) => node.id === qst.qstId).position.x
                 : 400, // 공통 질문일 경우에는 x값이 400으로 고정됨
               y: nodes.find((node) => node.id === qst.qstId)
                 ? nodes.find((node) => node.id === qst.qstId).position.y
-                : 100 * index,
+                : nodes[index - 1]
+                ? nodes[index - 1].position.y + 200
+                : 100,
             },
             type: "tooltip",
           };
@@ -267,8 +295,20 @@ function FormCreation() {
     );
   }, [qstArr]);
 
+  // 저장용 nodes 생성
+
+  // 위치 변경된 flow 저장
   function editNodes(nodes) {
     setNodes(nodes);
+    console.log(nodes);
+
+    setPosNodes(
+      nodes.map((node) => ({
+        id: node.id,
+        position: node.position,
+      }))
+    );
+    console.log(posNodes);
   }
 
   //브랜치 설정
@@ -331,6 +371,7 @@ function FormCreation() {
     setOptionIndex(e.target.selectedIndex);
   };
 
+  // 질문 편집
   function editOption(event, option) {
     event.preventDefault();
     const editOptionList = options.map((opt) => {
@@ -416,6 +457,7 @@ function FormCreation() {
       setQstArr(reorderQst);
     } else {
       setQstArr([...qstArr, newQst]);
+      console.log(newQst);
     }
 
     setQstTitle("");

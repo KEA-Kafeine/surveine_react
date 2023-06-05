@@ -15,7 +15,6 @@ const Tooltip = styled.div`
 `;
 const TooltipNode = (props) => {
   const [isVisible, setVisible] = useState(false);
-  console.log(props);
   return (
     <div
       onMouseEnter={() => setVisible(true)}
