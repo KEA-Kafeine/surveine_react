@@ -85,32 +85,32 @@ const nodeTypes = {
 };
 //저장
 
-const initialNodes2 = [
-  {
-    id: "Q-gt64hEhpXvuL_-lgIuHph",
-    position: {
-      x: 666.2302680956254,
-      y: 110.28325416034312,
-    },
-  },
-];
+// const initialNodes2 = [
+//   {
+//     id: "Q-gt64hEhpXvuL_-lgIuHph",
+//     position: {
+//       x: 666.2302680956254,
+//       y: 110.28325416034312,
+//     },
+//   },
+// ];
 
-const firstQst = [
-  {
-    qstId: "Q-gt64hEhpXvuL_-lgIuHph",
-    qstTitle: "",
-    qstType: "체크박스",
-    options: [],
-    qstImg: "",
-    anonymous: false,
-    essential: false,
-    branch: false,
-    branchQst: "",
-    branchOpt: "",
-    qstNum: 1,
-    optionIndex: 0,
-  },
-];
+// const firstQst = [
+//   {
+//     qstId: "Q-gt64hEhpXvuL_-lgIuHph",
+//     qstTitle: "",
+//     qstType: "체크박스",
+//     options: [],
+//     qstImg: "",
+//     anonymous: false,
+//     essential: false,
+//     branch: false,
+//     branchQst: "",
+//     branchOpt: "",
+//     qstNum: 1,
+//     optionIndex: 0,
+//   },
+// ];
 function FormCreation() {
   const navigate = useNavigate();
   const tokenValue = useRecoilValue(uToken);
@@ -126,7 +126,7 @@ function FormCreation() {
 
   const [name, setName] = useState(""); // 커피콩에 보일 제목
 
-  const [qstArr, setQstArr] = useState(firstQst); // 질문 배열
+  const [qstArr, setQstArr] = useState(DATA); // 질문 배열
 
   const [type, setType] = useState("체크박스"); // 질문 타입
   const [qstTitle, setQstTitle] = useState("");
@@ -228,9 +228,7 @@ function FormCreation() {
               qst: qst,
             },
             position: {
-              x: initialNodes2.find((node) => node.id === qst.qstId)
-                ? initialNodes2.find((node) => node.id === qst.qstId).position.x
-                : nodes.find((node) => node.id === qst.qstId)
+              x: nodes.find((node) => node.id === qst.qstId)
                 ? nodes.find((node) => node.id === qst.qstId).position.x
                 : 400, // 공통 질문일 경우에는 x값이 400으로 고정됨
               y: nodes.find((node) => node.id === qst.qstId)
@@ -249,7 +247,7 @@ function FormCreation() {
     setEdges(
       //질문 배열 을 map
       qstArr.map((qst, index) => {
-        if (qst.branch && qst.branchQst != "" && qst.branchOpt != "") {
+        if (qst.branch && qst.branchQst !== "" && qst.branchOpt !== "") {
           // 만약 브랜치일 경우에는
           return {
             id: qst.qstId,
@@ -295,9 +293,7 @@ function FormCreation() {
     );
   }, [qstArr]);
 
-  // 저장용 nodes 생성
-
-  // 위치 변경된 flow 저장
+  // 위치 변경된 flow 저장 , 저장할때마다 적용
   function editNodes(nodes) {
     setNodes(nodes);
     console.log(nodes);
