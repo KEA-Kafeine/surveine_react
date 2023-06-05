@@ -27,12 +27,12 @@ const ALL = {};
 const DATA = [];
 const colors = [
   "#FF6384",
-  "#4BC0C0",
-  "#FFCE56",
-  "#E7E9ED",
+  "#dd524f",
+  "#f28613",
+  "#331a99",
   "#36A2EB",
-  "#FF7F50",
-  "#BA55D3",
+  "#ff56cc",
+  "#565fff",
   "#32CD32",
   "#FFD700",
   "#40E0D0",

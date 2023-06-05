@@ -13,11 +13,13 @@ const TooltipNode = (props) => {
     >
       <NodeToolbar isVisible={isVisible} position={props.toolbarPosition}>
         <Tooltip>
-          <TooltipTitle textLength={props.data.qst.qstTitle.length}>
-            {props.data.qst.qstTitle.length > 30
-              ? `${props.data.qst.qstTitle.slice(0, 30)}...`
-              : props.data.qst.qstTitle}{" "}
-          </TooltipTitle>
+          {props.data.qst.qstTitle.length > 0 && (
+            <TooltipTitle textLength={props.data.qst.qstTitle.length}>
+              {props.data.qst.qstTitle.length > 30
+                ? `${props.data.qst.qstTitle.slice(0, 30)}...`
+                : props.data.qst.qstTitle}{" "}
+            </TooltipTitle>
+          )}
           {props.data.qst.qstType === "서술형 질문" && (
             <TextLine>서술형 질문입니다. </TextLine>
           )}
@@ -101,14 +103,14 @@ const NodeStyled = styled.div`
   justify-content: center;
   align-items: center;
   padding: 10px;
-  background-color: #e7ebf0;
+  background-color: #1a2051;
   background-blend-mode: soft-light, normal;
   box-shadow: -2.5px -2.5px 5px #fafbff, 2.5px 2.5px 5px #a6abbd;
   border-radius: 20px;
   font-weight: 700;
   border-radius: 13px;
   font-size: 10px;
-  color: black;
+  color: white;
 `;
 
 const NodeBranchStyled = styled.div`
@@ -124,7 +126,7 @@ const NodeBranchStyled = styled.div`
   font-weight: 700;
   border-radius: 13px;
   font-size: 10px;
-  color: black;
+  color: white;
 `;
 
 const Tag = styled.div`
@@ -143,7 +145,7 @@ const TagEssen = styled.div`
   display: inline-block;
   font-size: 30px;
   border-radius: 3px;
-  color: red;
+  color: white;
 `;
 // Tooltip Nodes
 const Tooltip = styled.div`
