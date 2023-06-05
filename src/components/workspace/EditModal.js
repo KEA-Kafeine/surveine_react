@@ -196,9 +196,13 @@ const EditModal = (props) => {
 
     // 커피콩 복제: cbox에서만 가능 (abox에 관한 것 따로 구현 X)
     axios
-      .put(`/api/enq/replic/${props.enqId}`, {
-        headers: { Authorization: "Bearer " + String(tokenValue) },
-      })
+      .put(
+        `/api/enq/replic/${props.enqId}`,
+        {},
+        {
+          headers: { Authorization: "Bearer " + String(tokenValue) },
+        }
+      )
       .then((response) => {
         console.log("Enquete is replicated: ", response.data);
       })
