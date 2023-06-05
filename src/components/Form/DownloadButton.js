@@ -76,7 +76,6 @@ function DownloadButton(props) {
   };
 
   const onSave = (nodes) => {
-    console.log(nodes);
     props.editNodes(nodes);
   };
 
@@ -92,7 +91,7 @@ function DownloadButton(props) {
           <RyanImg src={Ryan} alt="" />: 실명
         </div>
         <div>⚠️ : 필수</div>
-        <Button onClick={() => onSave(props.nodes)}>그래프 저장</Button>
+        {/* <Button onClick={() => onSave(props.nodes)}>그래프 저장</Button> */}
         <Button className="download-btn" onClick={onClick}>
           그래프 다운
         </Button>
