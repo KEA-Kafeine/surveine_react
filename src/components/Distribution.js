@@ -307,7 +307,8 @@ const Distribution = (props) => {
 
                     <Space size={12}>
                         {selectedOption === "1" && (
-                        <div style={{marginTop: "1rem"}}>
+                        <div>
+                            <GuideSetTime>* 날짜를 설정하지 않을 경우 즉시 배포되며, 직접 배포를 종료할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
                             <RangePicker
                                 showTime={{
                                     format: 'HH:mm',
@@ -321,7 +322,7 @@ const Distribution = (props) => {
                         )}
                         {selectedOption === "2" && (
                         <div>
-                            <GuideSetTime>* 종료일을 설정하지 않으면 강제로 배포종료를 선택할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
+                            <GuideSetTime>* 시작일만 설정할 경우 직접 배포를 종료할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
                                 <DatePicker
                                     showTime={{
                                         format: "HH:mm",
@@ -336,7 +337,7 @@ const Distribution = (props) => {
                         )}
                         {selectedOption === "3" && (
                         <div>
-                            <GuideSetTime>* 시작일을 설정하지 않으면 즉시 배포됩니다.</GuideSetTime>
+                            <GuideSetTime>* 종료일만 설정할 경우 즉시 배포됩니다.</GuideSetTime>
                                 <DatePicker
                                     showTime={{
                                         format: "HH:mm",
@@ -401,7 +402,7 @@ const Modal = styled.div`
 
   flex-direction: column;
 
-  width: 470px;
+  width: 500px;
   height: 590px;
 
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;

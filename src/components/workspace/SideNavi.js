@@ -124,13 +124,13 @@ export function SideNavi(props) {
   useEffect(() => {
     if(lat && lng) {
       // // TODO: Back
-      // axios.put("/api/wspace/gps", {"lat": lat, "lng": lng}, {
+      // axios.post("/api/wspace/gbox", {"lat": lat, "lng": lng}, {
       //   headers: { Authorization: "Bearer " + String(tokenValue) },
       // })
       // .then((response) => {
       //   if(response.data.isSuccess) {
       //     let GPSBoxData = [];
-      //     GPSBoxData = response.data.result.GPSBox;
+      //     GPSBoxData = response.data.result;
       //     props.onFolderDataChange(GPSBoxData);
       //     props.onChangeLat(lat);
       //     props.onChangeLng(lng);
@@ -403,6 +403,16 @@ const FolderContainerTop = styled.div`
   margin-bottom: 20px;
   overflow-y: scroll;
   cursor: pointer;
+  /* Hide the scrollbar */
+  &::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: transparent;
+  }
+
+  /* Hide the scrollbar thumb */
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
 `;
 
 const FolderContainerBottom = styled.div`
@@ -414,4 +424,14 @@ const FolderContainerBottom = styled.div`
   margin-bottom: 20px;
   overflow-y: scroll;
   cursor: pointer;
+  /* Hide the scrollbar */
+  &::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: transparent;
+  }
+
+  /* Hide the scrollbar thumb */
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
 `;

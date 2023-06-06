@@ -25,8 +25,9 @@ import {
   CorAToken,
 } from "../components/TokenAtom";
 
-// const {kakao} = window;
 import KakaoMap from "../components/workspace/KakaoMap";
+import { Button } from "antd";
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 
 function Workspace() {
   const tokenValue = useRecoilValue(uToken);
@@ -127,10 +128,6 @@ function Workspace() {
     setFolderSet(false);
   };
 
-  // const userLocation = {
-  //   lat: 37.45521937066099,
-  //   lng: 127.13396513505703,
-  // };
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   const handleChangeLat = (changeLat) => {
@@ -140,6 +137,12 @@ function Workspace() {
     setLng(changeLng);
   };
 
+  // 아래 추가
+  const [isExpanded, setIsExpanded] = useState(true);
+  const handleZoomToggle = () => {
+    setIsExpanded(prevExpanded => !prevExpanded);
+  };
+  
   return (
     <WorkspaceContainer>
       <SideNaviContainer>
@@ -262,9 +265,25 @@ function Workspace() {
             ) : (
               <GPSBlank />
             )}
-            <SubInfoBottomContainer>
-              <KakaoMap lat={lat} lng={lng} />
-            </SubInfoBottomContainer>
+            <MapWrapper isExpanded={isExpanded}>
+              <MapTitle isExpanded={isExpanded}>
+                <div style={{marginLeft: "1.4rem"}}>Kakao</div>
+                <div style={{marginLeft: "0.5rem", color: "#FFFFFF", fontWeight: "800"}}>Map</div>
+
+                {isExpanded ? (
+                  <div style={{marginLeft: "14.3rem"}}>
+                    <DownOutlined onClick={handleZoomToggle} />
+                  </div>
+                ) : (
+                  <div style={{marginLeft: "14.3rem"}}>
+                    <UpOutlined onClick={handleZoomToggle} />
+                  </div>
+                )}
+              </MapTitle>
+              <MapContainer isExpanded={isExpanded}>
+                <KakaoMap lat={lat} lng={lng} />
+              </MapContainer>
+            </MapWrapper>
           </div>
         )}
       </CoffeeBeanListContainer>
@@ -385,14 +404,48 @@ const StyledSetBtn = styled.img`
   margin: 0.4rem 1.5rem 3.2rem 0.5rem;
 `;
 
-const SubInfoBottomContainer = styled.div`
+const SubInfoBottom = styled.div`
   position: absolute;
   right: 2rem;
   top: 27rem;
   height: 10vh;
   width: 25vw;
+`;
 
-  // border-radius: 12px;
-  // box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
-  // background: #81c147;
+const MapWrapper = styled.div`
+  position: absolute;
+  right: 2rem;
+  bottom: 2vh;
+  width: 25vw;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background: #1a2051;
+  z-index: 3;
+  
+  height: ${props => props.isExpanded ? "40vh" : "5vh"};
+  transition: height 0.3s ease;
+`;
+
+const MapTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: 4vh;
+  align-items: center;
+  font-weight: 700;
+  // color: #FFFFFF;
+  color: #FFE400;;
+
+  // justify-content: ${props => props.isExpanded ? "space-between" : "center"};
+`;
+
+const MapContainer = styled.div`
+  flex: 1;
+  overflow: hidden;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+  display: ${props => props.isExpanded ? "block" : "none"};
 `;
