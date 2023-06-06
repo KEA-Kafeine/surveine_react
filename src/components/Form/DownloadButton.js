@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Panel,
   useReactFlow,
@@ -44,8 +44,20 @@ function downloadImage(dataUrl) {
 const imageWidth = 1024;
 const imageHeight = 768;
 
-function DownloadButton() {
+function DownloadButton(props) {
   const { getNodes } = useReactFlow();
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (props.nodes) {
+        onSave(props.nodes);
+      }
+    }, 300);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [props.nodes]);
+
   const onClick = () => {
     // we calculate a transform for the nodes so that all nodes are visible
     // we then overwrite the transform of the `.react-flow__viewport` element
@@ -69,6 +81,10 @@ function DownloadButton() {
     }).then(downloadImage);
   };
 
+  const onSave = (nodes) => {
+    props.editNodes(nodes);
+  };
+
   return (
     <Panel position="top-right">
       <Modal>
@@ -81,8 +97,9 @@ function DownloadButton() {
           <RyanImg src={Ryan} alt="" />: 실명
         </div>
         <div>⚠️ : 필수</div>
+        {/* <Button onClick={() => onSave(props.nodes)}>그래프 저장</Button> */}
         <Button className="download-btn" onClick={onClick}>
-          Download
+          그래프 다운
         </Button>
       </Modal>
     </Panel>

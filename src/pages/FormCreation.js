@@ -22,16 +22,17 @@ import TooltipNode from "../components/Form/TooltipNode";
 import CustomNode from "../components/Form/CustomNode";
 import { useNavigate } from "react-router-dom";
 import DnDFlow from "../components/Form/DnDFlow";
+import PickModal from "../components/Form/PickModal";
 const ALL = {};
 const DATA = [];
 const colors = [
   "#FF6384",
-  "#4BC0C0",
-  "#FFCE56",
-  "#E7E9ED",
+  "#dd524f",
+  "#f28613",
+  "#331a99",
   "#36A2EB",
-  "#FF7F50",
-  "#BA55D3",
+  "#ff56cc",
+  "#565fff",
   "#32CD32",
   "#FFD700",
   "#40E0D0",
@@ -82,14 +83,45 @@ const nodeTypes = {
   tooltip: TooltipNode,
   custom: CustomNode,
 };
+//저장
 
+// const initialNodes2 = [
+//   {
+//     id: "Q-gt64hEhpXvuL_-lgIuHph",
+//     position: {
+//       x: 666.2302680956254,
+//       y: 110.28325416034312,
+//     },
+//   },
+// ];
+
+// const firstQst = [
+//   {
+//     qstId: "Q-gt64hEhpXvuL_-lgIuHph",
+//     qstTitle: "",
+//     qstType: "체크박스",
+//     options: [],
+//     qstImg: "",
+//     anonymous: false,
+//     essential: false,
+//     branch: false,
+//     branchQst: "",
+//     branchOpt: "",
+//     qstNum: 1,
+//     optionIndex: 0,
+//   },
+// ];
 function FormCreation() {
   const navigate = useNavigate();
   const tokenValue = useRecoilValue(uToken);
   let { cboxId, enqId } = useParams();
   const [nodes, setNodes] = useState([]); //플로우 노드에 질문 추가
   const [edges, setEdges] = useState([]); // 플로우 관계 추가
-  const [distribute, setDistribute] = useState(false); //플로우 노드에 질문 추가
+  const [posNodes, setPosNodes] = useState([]);
+
+  const [distribute, setDistribute] = useState(false);
+
+  const [pick, setPick] = useState(false);
   const [title, setTitle] = useState(""); // 설문 제목
 
   const [name, setName] = useState(""); // 커피콩에 보일 제목
@@ -119,6 +151,7 @@ function FormCreation() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [inputEditOption, setInputEditOption] = useState("");
   const [enqStatus, setEnqStatus] = useState("ENQ_MAKE");
+  const [blur, setBlur] = useState(false);
 
   useEffect(() => {
     if (enqId != null) {
@@ -136,9 +169,10 @@ function FormCreation() {
           console.log(response.data.result.enqStatus);
           const newQstArr = response.data.result.cont; // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
           setQstArr(newQstArr);
-
+          setPosNodes(response.data.result.nodes);
           setName(response.data.result.name);
           setEnqStatus(response.data.result.enqStatus);
+          setTitle(response.data.result.enqTitle);
         });
     } else {
     }
@@ -159,12 +193,6 @@ function FormCreation() {
           return {
             id: qst.qstId,
             data: {
-              label: `${qst.anonymous ? "[익명] " : ""}${
-                qst.essential ? "[필수] " : ""
-              }${qst.qstTitle.slice(0, 40)}`,
-              tags: `${qst.anonymous ? "[익명] " : ""}${
-                qst.essential ? "[필수] " : ""
-              }${qst.qstTitle.slice(0, 40)}`,
               qst: qst,
               color:
                 colors[
@@ -174,17 +202,23 @@ function FormCreation() {
 
             position: {
               // 브랜치일 경우 부모 노드의 x 값  - 220 만큼 x값을 이동 시킴
-              x: nodes.find((node) => node.id === qst.branchQst)
+              x: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.x
+                : nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.x
+                : nodes.find((node) => node.id === qst.branchQst)
                 ? nodes.find((node) => node.id === qst.branchQst).position.x +
-                  -40 * index
-                : (index % 5) * -20,
+                  -30 * (index % 5)
+                : -100,
               //브랜치일 경우 부모 노드의 y값 + 100 + 질문번호 * 30 만큼 y값을 이동시킴
-              y:
-                150 +
-                (nodes.find((node) => node.id === qst.branchQst)
-                  ? nodes.find((node) => node.id === qst.branchQst).position.y +
-                    index * 20
-                  : (index % 10) * 20),
+              y: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.y
+                : nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.y
+                : 150 + nodes.find((node) => node.id === qst.branchQst)
+                ? nodes.find((node) => node.id === qst.branchQst).position.y +
+                  100
+                : 100,
             },
             type: "tooltip",
           };
@@ -200,8 +234,18 @@ function FormCreation() {
               qst: qst,
             },
             position: {
-              x: 400, // 공통 질문일 경우에는 x값이 400으로 고정됨
-              y: 250 * count++,
+              x: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.x
+                : nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.x
+                : 400, // 공통 질문일 경우에는 x값이 400으로 고정됨
+              y: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.y
+                : nodes.find((node) => node.id === qst.qstId)
+                ? nodes.find((node) => node.id === qst.qstId).position.y
+                : nodes[index - 1]
+                ? nodes[index - 1].position.y + 200
+                : 100,
             },
             type: "tooltip",
           };
@@ -213,7 +257,7 @@ function FormCreation() {
     setEdges(
       //질문 배열 을 map
       qstArr.map((qst, index) => {
-        if (qst.branch && qst.branchQst != "" && qst.branchOpt != "") {
+        if (qst.branch && qst.branchQst !== "" && qst.branchOpt !== "") {
           // 만약 브랜치일 경우에는
           return {
             id: qst.qstId,
@@ -226,7 +270,6 @@ function FormCreation() {
                   ?.options.find((opt) => opt.optionId === qst.branchOpt)
                   ?.optionContent || "옵션없음"
               : "부모없음",
-            type: "straight",
             arrowHeadType: "arrowclosed",
             style: {
               stroke:
@@ -249,7 +292,6 @@ function FormCreation() {
             source: qst.qstId,
             target: qstArr[maxIndex] ? qstArr[maxIndex].qstId : null,
             label: "공통질문",
-            type: "staright",
             style: {
               stroke: "#1a2051",
               strokeWidth: 3,
@@ -260,6 +302,17 @@ function FormCreation() {
       })
     );
   }, [qstArr]);
+
+  // 위치 변경된 flow 저장 , 저장할때마다 적용
+  function editNodes(nodes) {
+    setNodes(nodes);
+    setPosNodes(
+      nodes.map((node) => ({
+        id: node.id,
+        position: node.position,
+      }))
+    );
+  }
 
   //브랜치 설정
   const onToggle = (e) => {
@@ -296,7 +349,14 @@ function FormCreation() {
 
   const clickDistriubtion = (e) => {
     postEnq();
+    setBlur(!blur);
+    setShowFlow(false);
     setDistribute(!distribute);
+  };
+
+  const clickPick = (e) => {
+    setBlur(!blur);
+    setPick(!pick);
   };
   //질문 타입 설정
   const selectType = (e) => {
@@ -312,11 +372,11 @@ function FormCreation() {
   const selectBranchOpt = (e) => {
     const selectedOption = qstArr.find((qst) => qst.qstId === branchQst)
       .options[e.target.selectedIndex - 1];
-    console.log(selectedOption.optionId);
     setBranchOpt(selectedOption.optionId);
     setOptionIndex(e.target.selectedIndex);
   };
 
+  // 질문 편집
   function editOption(event, option) {
     event.preventDefault();
     const editOptionList = options.map((opt) => {
@@ -402,6 +462,7 @@ function FormCreation() {
       setQstArr(reorderQst);
     } else {
       setQstArr([...qstArr, newQst]);
+      // console.log(newQst);
     }
 
     setQstTitle("");
@@ -421,13 +482,16 @@ function FormCreation() {
       ALL.enqTitle = title;
       ALL.enqCont = qstArr;
 
+      //그래프 위치 저장
+      ALL.nodes = posNodes;
+
       axios
         .put("/api/enq/create", ALL, {
           headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
           setEnqResponseId(response.data.result.enqId);
-          alert("저장되었습니다");
+          alert("설문이 저장되었습니다");
         });
       console.log(tokenValue);
       console.log(JSON.stringify(ALL));
@@ -435,6 +499,8 @@ function FormCreation() {
       ALL.enqName = name;
       ALL.enqId = enqResponseId;
       ALL.enqCont = qstArr;
+      ALL.nodes = posNodes;
+      ALL.enqTitle = title;
 
       enqId = enqResponseId;
       axios
@@ -443,6 +509,7 @@ function FormCreation() {
         })
         .then((response) => {
           console.log(response);
+          alert("설문이 저장되었습니다.");
         });
     }
   };
@@ -556,7 +623,8 @@ function FormCreation() {
 
   return (
     <>
-      <FormMain distribute={distribute}>
+      {blur && <GrayBackground />}
+      <FormMain blur={blur}>
         <FormSection>
           <Header>
             <HeaderHalf direction="left">
@@ -573,21 +641,16 @@ function FormCreation() {
             <HeaderHalf direction="right">
               <HeadBtn>
                 <QstBtn>
-                  <t.FormButton onClick={onShowFlow}>Flow</t.FormButton>
+                  <t.FormButton onClick={onShowFlow}>그래프</t.FormButton>
                 </QstBtn>
                 <QstBtn>
                   <t.FormButton onClick={postEnq}>저장</t.FormButton>
                 </QstBtn>
                 <QstBtn>
-                  <t.ResponseStatus>
-                    <t.FormButton>응답</t.FormButton>
-                    <t.ResponseNumber>3</t.ResponseNumber>
-                  </t.ResponseStatus>
+                  <t.FormButton onClick={clickPick}>추첨</t.FormButton>
                 </QstBtn>
                 <QstBtn>
-                  <t.ResponseStatus>
-                    <t.FormButton onClick={openResult}>결과분석</t.FormButton>
-                  </t.ResponseStatus>
+                  <t.FormButton onClick={openResult}>결과분석</t.FormButton>
                 </QstBtn>
                 <QstBtn>
                   <t.Export onClick={clickDistriubtion}>배포</t.Export>
@@ -858,7 +921,7 @@ function FormCreation() {
                 </ReactFlow>
               </div>
             </ReactFlowProvider> */}
-            <DnDFlow nodes={nodes} edges={edges} />
+            <DnDFlow nodes={nodes} edges={edges} editNodes={editNodes} />
           </FlowFrame>
         )}
       </FormMain>
@@ -869,6 +932,8 @@ function FormCreation() {
           enqId={enqResponseId}
         />
       ) : null}
+
+      {pick ? <PickModal clickPick={clickPick} /> : null}
     </>
   );
 }
@@ -880,26 +945,38 @@ const FlowFrame = styled.div`
   height: 92%;
   background-color: white;
   border-radius: 2rem 2rem 2rem 2rem;
-
-  border: 1px solid black;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 15px 2px;
+  z-index: -0.1;
   overflow: hidden;
+  margin-left: 0.2rem;
+  margin-right: 0.5rem;
 `;
-
 const FormMain = styled.div`
-  background: #f5f5f5;
+  background: ${({ blur }) => (blur ? "#f5f5f5" : "none")};
   width: 100vw;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: ${({ blur }) => (blur ? "hidden" : "auto")};
   &::-webkit-scrollbar {
     display: none;
   }
   scrollbar-width: none;
   -ms-overflow-style: none;
-  ${({ distribute }) => distribute && `filter: blur(2px);`}
+  background-color: #eef3ff;
+  pointer-events: ${({ blur }) => (blur ? "none" : "auto")};
+`;
+
+const GrayBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: grey;
+  opacity: 0.8;
+  pointer-events: none;
 `;
 
 const FormSection = styled.div`
@@ -915,6 +992,7 @@ const FormSection = styled.div`
   &::-webkit-scrollbar-thumb {
     display: none;
   }
+  margin-left: 0.5rem;
 `;
 
 const Header = styled.div`
