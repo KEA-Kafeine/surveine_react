@@ -248,7 +248,7 @@ export function SideNavi(props) {
   };
 
   return (
-    <>
+    <MainWrapper>
       <Wrapper>
         <TopWapper>
           <Link to="/">
@@ -356,31 +356,42 @@ export function SideNavi(props) {
       <Link to="/contact">
         <WrapperBottom>문의하기</WrapperBottom>
       </Link>
-    </>
+    </MainWrapper>
   );
 }
 
+const MainWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: #111536;
+  font-family: "Poppins";
+  display: flex;
+  flex-direction: column;
+  color: white;
+`;
+
 const Wrapper = styled.div`
   width: 100%;
-  height: 95vh;
+  height: 100vh;
   background-color: #111536;
   flex-direction: column;
   align-items: center;
   vertical-align: center;
   font-family: "Poppins";
+  position: relative;
   color: white;
 `;
 
 const WrapperBottom = styled.div`
   width: 100%;
-  height: 5vh;
   background-color: #111536;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  vertical-align: center;
   font-family: "Poppins";
   color: white;
+  padding-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  bottom: 0;
 `;
 
 const TopWapper = styled.div`
