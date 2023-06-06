@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import * as t from "../Form/FromStyled";
 import Arrow from "../../img/form/Arrow.svg";
+import Ximg from "../../img/sideNavi/xImg.svg";
 const PickModal = (props) => {
   const [num, setNum] = useState(0);
   const [type, setType] = useState("선착순");
@@ -15,10 +16,14 @@ const PickModal = (props) => {
     setNum(e.target.value);
     console.log(num);
   };
+  const closeModal = () => {
+    props.clickPick();
+  };
   return (
     <>
       <Modal>
         <Main>
+          <XImg src={Ximg} onClick={closeModal} />
           <Menu>
             <NumberDropDown onChange={onChangeNum} />
             <TypeDropDown onChange={selectType}>
@@ -159,4 +164,10 @@ export const SelectOption = styled.select`
   margin-bottom: 1rem;
   margin-top: 0rem;
   appearance: none;
+`;
+const XImg = styled.img`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
 `;

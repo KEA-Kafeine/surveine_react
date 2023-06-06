@@ -32,6 +32,10 @@ const DnDFlow = (props) => {
   const [edges, setEdges, onEdgesChange] = useEdgesState();
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
+  const changeClick = () => {
+    console.log("바뀌었음");
+  };
+
   useEffect(() => {
     setNodes(props.nodes);
     setEdges(props.edges);
@@ -70,6 +74,8 @@ const DnDFlow = (props) => {
         data: { label: `${type} node` },
       };
 
+      // props.editNodes(getId(), position);
+      changeClick();
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance]
@@ -92,7 +98,7 @@ const DnDFlow = (props) => {
             fitView
           ></ReactFlow>
 
-          <DownloadButton />
+          <DownloadButton nodes={nodes} editNodes={props.editNodes} />
         </div>
       </ReactFlowProvider>
       <Modal />
