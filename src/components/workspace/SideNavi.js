@@ -130,7 +130,7 @@ export function SideNavi(props) {
         .then((response) => {
           if (response.data.isSuccess) {
             let GPSBoxData = [];
-            GPSBoxData = response.data.result.GPSBox;
+            GPSBoxData = response.data.result;
             props.onFolderDataChange(GPSBoxData);
             props.onChangeLat(lat);
             props.onChangeLng(lng);
