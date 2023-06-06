@@ -5,61 +5,77 @@ import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { DatePicker, Space, Button, Dropdown, Menu } from 'antd';
 import Ximg from "../img/sideNavi/xImg.svg";
-
-const { RangePicker } = DatePicker;
-const onChange = (value, dateString) => {
-  console.log('Selected Time: ', value);
-  console.log('Formatted Selected Time: ', dateString);
-};
-const onOk = (value) => {
-  console.log('onOk: ', value);
-};
-
-const items = [
-  {
-    key: "1",
-    label: "시작일과 종료일 설정"
-  },
-  {
-    key: "2",
-    label: "시작일만 설정"
-  },
-  {
-    key: "3",
-    label: "종료일만 설정"
-  }
-];
-
-const gps_ranges = [
-    {
-        key: "1",
-        label: "100m"
-    },
-    {
-        key: "2",
-        label: "200m"
-    },
-    {
-        key: "3",
-        label: "300m"
-    },
-    {
-        key: "4",
-        label: "400m"
-    },
-    {
-        key: "5",
-        label: "500m"
-    }
-];
+import { nanoid } from "nanoid";
 
 const Distribution = (props) => {
     const tokenValue = useRecoilValue(uToken);
-
+    
     useEffect(() => {
         console.log("==DISTRIBUTE===");
         console.log(props);
     }, []);
+
+    const { RangePicker } = DatePicker;
+    const [firstDateStr, setFirstDateStr] = useState("");
+    const [secondDateStr, setSecondDateStr] = useState("");
+    const onChange = (value, dateString) => {
+      console.log('Selected Time: ', value);
+      console.log('Formatted Selected Time: ', dateString);
+      console.log(typeof(dateString));
+      if(typeof dateString === "string") {
+        setFirstDateStr(dateString);
+        setSecondDateStr("");
+      } else if(typeof dateString === "object") {
+        setFirstDateStr(dateString[0]);
+        setSecondDateStr(dateString[1]);
+      }
+    };
+    useEffect(() => {
+        console.log("====Date String====");
+        console.log(firstDateStr);
+        console.log(secondDateStr);
+    }, [firstDateStr, secondDateStr]);
+    const onOk = (value) => {
+      console.log('onOk: ', value);
+    };
+    
+    const items = [
+      {
+        key: "1",
+        label: "시작일과 종료일 설정"
+      },
+      {
+        key: "2",
+        label: "시작일만 설정"
+      },
+      {
+        key: "3",
+        label: "종료일만 설정"
+      }
+    ];
+    
+    const gps_ranges = [
+        {
+            key: "100",
+            label: "100m"
+        },
+        {
+            key: "200",
+            label: "200m"
+        },
+        {
+            key: "300",
+            label: "300m"
+        },
+        {
+            key: "400",
+            label: "400m"
+        },
+        {
+            key: "500",
+            label: "500m"
+        }
+    ];
 
     const closeModal = () => {
         props.clickDistriubtion();
@@ -78,7 +94,7 @@ const Distribution = (props) => {
         console.log("selected option: ", selectedOption);
     }, [selectedOption]);
 
-    const [rangeOption, setRangeOption] = useState("1");
+    const [rangeOption, setRangeOption] = useState("100");
     const [rangeName, setRangeName] = useState("100m");
     const handleRangeSelect = (option) => {
         setRangeOption(option.key);
@@ -135,33 +151,102 @@ const Distribution = (props) => {
     }, [isLink]);
 
     const clickDistribute = (enqId) => {
-        alert(enqId + ": click distribute");
-        // if(isLink === true) {
-            
-        // }
-        // let reqData = {
-        //     "distType": 
-        // };
+        let reqData = {};
+        let distType = "LINK";
+        if(isLink === false) {
+            distType = "GPS";
+        }
+        
+        let startTime = "";
+        let endTime = "";
+        if(selectedOption === "1") {
+            startTime = firstDateStr;
+            endTime = secondDateStr;
+            console.log("SET start time: ", startTime);
+            console.log("SET end time: ", endTime);
+        } else if(selectedOption === "2") {
+            startTime = firstDateStr
+            endTime = "";
+            console.log("SET start time: ", startTime);
+            console.log("SET end time: ", endTime);
+        } else if(selectedOption === "3") {
+            startTime = "";
+            endTime = firstDateStr
+            console.log("SET start time: ", startTime);
+            console.log("SET end time: ", endTime);
+        }
+        
+        if(distType === "GPS") {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    reqData = {
+                        "distType": distType,
+                        "distInfo": {
+                            "quota": quota,
+                            "startDateTime": startTime,
+                            "endDateTime": endTime,
+                            "lat": lat,
+                            "lng": lng,
+                            "distRange": rangeOption
+                        }
+                    };
 
-        // axios.put(`/api/wspace/enq/dist/${enqId}`, reqData, {
-        //     headers: { Authorization: "Bearer " + String(tokenValue) },
-        // })
-        // .then((response) => {
-        //     if(response.data.isSuccess) {
-        //         console.log("Distribute Enquete: ", response.data);
-        //     } else {
-        //         alert("failed to");
-        //     }
-        // })
-        // .catch(error => {
-        //     console.error("[ERROR] distribute enquete: ", error);
-        // });
+                    axios.put(`/api/enq/dist/${enqId}`, reqData, {
+                        headers: { Authorization: "Bearer " + String(tokenValue) },
+                    })
+                    .then((response) => {
+                        if(response.data.isSuccess) {
+                            console.log("Distribute Enquete: ", response.data);
+                        } else {
+                            alert("failed to");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("[ERROR] distribute enquete: ", error);
+                    });
+                },
+                (error) => {
+                    console.log("[ERROR] GPS: ", error);
+                    alert("GPS 배포를 하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해줘야 합니다.");
+                }
+            );
+        } else if(distType === "LINK") {
+            let distLink = nanoid();
+            reqData = {
+                "distType": distType,
+                "distInfo": {
+                    "quota": quota,
+                    "startDateTime": startTime,
+                    "endDateTime": endTime,
+                    "distLink": distLink
+                }
+            };
+            axios.put(`/api/enq/dist/${enqId}`, reqData, {
+                headers: { Authorization: "Bearer " + String(tokenValue) },
+            })
+            .then((response) => {
+                if(response.data.isSuccess) {
+                    console.log("Distribute Enquete: ", response.data);
+                } else {
+                    alert("failed to");
+                }
+            })
+            .catch(error => {
+                console.error("[ERROR] distribute enquete: ", error);
+            });
+        }
+
+        props.clickDistriubtion();
     };
     const clickDeleteDist = (enqId) => {
         alert(enqId + ": click delete distribute");
+        props.clickDistriubtion();
     };
     const clickSaveDist = (enqId) => {
         alert(enqId + ": click save distribute");
+        props.clickDistriubtion();
     };
 
     return (
@@ -238,7 +323,11 @@ const Distribution = (props) => {
                         <div>
                             <GuideSetTime>* 종료일을 설정하지 않으면 강제로 배포종료를 선택할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
                                 <DatePicker
-                                    showTime
+                                    showTime={{
+                                        format: "HH:mm",
+                                        showSecond: false,
+                                    }}
+                                    format="YYYY-MM-DD HH:mm"
                                     onChange={onChange}
                                     onOk={onOk}
                                     placeholder="Start Date and Time"
@@ -249,7 +338,11 @@ const Distribution = (props) => {
                         <div>
                             <GuideSetTime>* 시작일을 설정하지 않으면 즉시 배포됩니다.</GuideSetTime>
                                 <DatePicker
-                                    showTime
+                                    showTime={{
+                                        format: "HH:mm",
+                                        showSecond: false,
+                                    }}
+                                    format="YYYY-MM-DD HH:mm"
                                     onChange={onChange}
                                     onOk={onOk}
                                     placeholder="End Date and Time"
