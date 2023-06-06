@@ -14,7 +14,7 @@ const LinkCopyModal = (props) => {
     enqId = props.enqId;
     console.log(enqId);
     axios
-      .get(`/api/wspace/enq/url/${enqId}`, {
+      .get(`/api/wspace/enq/url/4`, {
         headers: { Authorization: "Bearer " + String(tokenValue) },
       })
       .then((response) => {
