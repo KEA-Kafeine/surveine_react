@@ -169,9 +169,10 @@ function FormCreation() {
           console.log(response.data.result.enqStatus);
           const newQstArr = response.data.result.cont; // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
           setQstArr(newQstArr);
-
+          setPosNodes(response.data.result.nodes);
           setName(response.data.result.name);
           setEnqStatus(response.data.result.enqStatus);
+          setTitle(response.data.result.enqTitle);
         });
     } else {
     }
@@ -201,14 +202,18 @@ function FormCreation() {
 
             position: {
               // 브랜치일 경우 부모 노드의 x 값  - 220 만큼 x값을 이동 시킴
-              x: nodes.find((node) => node.id === qst.qstId)
+              x: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.x
+                : nodes.find((node) => node.id === qst.qstId)
                 ? nodes.find((node) => node.id === qst.qstId).position.x
                 : nodes.find((node) => node.id === qst.branchQst)
                 ? nodes.find((node) => node.id === qst.branchQst).position.x +
                   -30 * (index % 5)
                 : -100,
               //브랜치일 경우 부모 노드의 y값 + 100 + 질문번호 * 30 만큼 y값을 이동시킴
-              y: nodes.find((node) => node.id === qst.qstId)
+              y: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.y
+                : nodes.find((node) => node.id === qst.qstId)
                 ? nodes.find((node) => node.id === qst.qstId).position.y
                 : 150 + nodes.find((node) => node.id === qst.branchQst)
                 ? nodes.find((node) => node.id === qst.branchQst).position.y +
@@ -229,10 +234,14 @@ function FormCreation() {
               qst: qst,
             },
             position: {
-              x: nodes.find((node) => node.id === qst.qstId)
+              x: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.x
+                : nodes.find((node) => node.id === qst.qstId)
                 ? nodes.find((node) => node.id === qst.qstId).position.x
                 : 400, // 공통 질문일 경우에는 x값이 400으로 고정됨
-              y: nodes.find((node) => node.id === qst.qstId)
+              y: posNodes.find((node) => node.id === qst.qstId)
+                ? posNodes.find((node) => node.id === qst.qstId).position.y
+                : nodes.find((node) => node.id === qst.qstId)
                 ? nodes.find((node) => node.id === qst.qstId).position.y
                 : nodes[index - 1]
                 ? nodes[index - 1].position.y + 200
@@ -482,7 +491,7 @@ function FormCreation() {
         })
         .then((response) => {
           setEnqResponseId(response.data.result.enqId);
-          alert("저장되었습니다");
+          alert("설문이 저장되었습니다");
         });
       console.log(tokenValue);
       console.log(JSON.stringify(ALL));
@@ -490,6 +499,8 @@ function FormCreation() {
       ALL.enqName = name;
       ALL.enqId = enqResponseId;
       ALL.enqCont = qstArr;
+      ALL.nodes = posNodes;
+      ALL.enqTitle = title;
 
       enqId = enqResponseId;
       axios
@@ -498,6 +509,7 @@ function FormCreation() {
         })
         .then((response) => {
           console.log(response);
+          alert("설문이 저장되었습니다.");
         });
     }
   };
@@ -933,9 +945,11 @@ const FlowFrame = styled.div`
   height: 92%;
   background-color: white;
   border-radius: 2rem 2rem 2rem 2rem;
-
-  border: 1px solid black;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 15px 2px;
+  z-index: -0.1;
   overflow: hidden;
+  margin-left: 0.2rem;
+  margin-right: 0.5rem;
 `;
 const FormMain = styled.div`
   background: ${({ blur }) => (blur ? "#f5f5f5" : "none")};
@@ -950,6 +964,7 @@ const FormMain = styled.div`
   }
   scrollbar-width: none;
   -ms-overflow-style: none;
+  background-color: #eef3ff;
   pointer-events: ${({ blur }) => (blur ? "none" : "auto")};
 `;
 
@@ -977,6 +992,7 @@ const FormSection = styled.div`
   &::-webkit-scrollbar-thumb {
     display: none;
   }
+  margin-left: 0.5rem;
 `;
 
 const Header = styled.div`
