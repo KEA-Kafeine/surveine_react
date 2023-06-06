@@ -14,6 +14,7 @@ import MemberPage from "./pages/MemberPage";
 import SandBoxPage from "./pages/SandBoxPage";
 import FormResult from "./pages/FormResult";
 import DnDFlow from "./components/Form/DnDFlow";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/sandbox" element={<SandBoxPage />} />
         <Route path="/result/:enqId" element={<FormResult />} />
         <Route path="/flow" element={<DnDFlow />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         {/* 구현 후 아래로 변경 (랜딩페이지가 제일 먼저 오게)*/}
 
