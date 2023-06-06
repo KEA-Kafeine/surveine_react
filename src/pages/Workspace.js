@@ -268,7 +268,7 @@ function Workspace() {
             <MapWrapper isExpanded={isExpanded}>
               <MapTitle isExpanded={isExpanded}>
                 <div style={{marginLeft: "1.4rem"}}>Kakao</div>
-                <div style={{marginLeft: "0.5rem", color: "#FFFFFF", fontWeight: "800"}}>Map</div>
+                <div style={{marginLeft: "0.3rem", color: "#FFFFFF", fontWeight: "800"}}>Map</div>
 
                 {isExpanded ? (
                   <div style={{marginLeft: "14.3rem"}}>
