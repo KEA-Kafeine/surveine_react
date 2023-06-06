@@ -270,7 +270,7 @@ function FormAnswer() {
       console.log("token - " + tokenValue);
 
       axios
-        .post("/api/wspace/ans/save", ALL, {
+        .post("/api/ans/save", ALL, {
           headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
@@ -286,7 +286,7 @@ function FormAnswer() {
       ALL.ansCont = answerArr;
       console.log("and Id는" + ansId);
       axios
-        .put(`/api/wspace/ans/update/${ansId}`, ALL, {
+        .put(`/api/ans/update/${ansId}`, ALL, {
           headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {

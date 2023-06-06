@@ -10,11 +10,14 @@ const LinkCopyModal = (props) => {
   const tokenValue = useRecoilValue(uToken);
   const [link, setLink] = useState("No Link");
 
+  const onClickX = () => {
+    props.showLinkModal();
+  };
   useEffect(() => {
     enqId = props.enqId;
     console.log(enqId);
     axios
-      .get(`/api/wspace/enq/url/4`, {
+      .get(`/api/enq/dist/link/${enqId}`, {
         headers: { Authorization: "Bearer " + String(tokenValue) },
       })
       .then((response) => {
@@ -25,7 +28,7 @@ const LinkCopyModal = (props) => {
 
   return (
     <Wrapper>
-      <XImg src={Ximg} />
+      <XImg src={Ximg} onClick={onClickX} />
       <InputWrapper>{link}</InputWrapper>
     </Wrapper>
   );
@@ -38,12 +41,15 @@ const Wrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ffffff;
-  width: 300px;
-  padding: 20px;
+  width: 400px;
+  padding: 30px;
   z-index: 3;
   color: #1a2051;
   box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.25);
   border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const XImg = styled.img`
@@ -54,12 +60,15 @@ const XImg = styled.img`
 
 const InputWrapper = styled.div`
   width: 90%;
-  height: 10px;
+  height: 20px;
   padding: 10px;
   margin-bottom: 10px;
   margin-right: 10px;
   border: 1.5px solid #1a2051;
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const SaveBtn = styled.button`

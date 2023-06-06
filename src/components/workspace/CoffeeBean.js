@@ -296,7 +296,9 @@ const CoffeeBean = (props) => {
         </div>
       )}
 
-      {showLink && <LinkCopyModal enqId={props.cbId} />}
+      {showLink && (
+        <LinkCopyModal enqId={props.cbId} showLinkModal={showLinkModal} />
+      )}
     </CoffeeBox>
   );
 };

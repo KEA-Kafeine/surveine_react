@@ -141,7 +141,7 @@ function Workspace() {
   };
 
   return (
-    <WorkspaceContainer folderSet={folderSet}>
+    <WorkspaceContainer>
       <SideNaviContainer>
         {memName && (
           <SideNavi
@@ -284,7 +284,6 @@ const WorkspaceContainer = styled.div`
     "header contains";
   width: 100vw;
   height: 100vh;
-  pointer-events: ${({ folderSet }) => (folderSet ? "none" : "auto")};
 `;
 
 const MiddleContainer = styled.div`
