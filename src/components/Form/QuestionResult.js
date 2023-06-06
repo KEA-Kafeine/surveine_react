@@ -7,6 +7,7 @@ import AnonyTrue from "../../img/form/on.svg";
 import AnonyFalse from "../../img/form/off.svg";
 import ResultChart from "../Form/ResultChart";
 import ResultBarChart from "./ResultBarChart";
+import { PropaneSharp } from "@mui/icons-material";
 
 const QuestionResult = (props) => {
   return (
@@ -33,7 +34,7 @@ const QuestionResult = (props) => {
         <t.QstTitle>{props.qstTitle}</t.QstTitle>
       </t.QstFrame>
       <t.OptList>
-        {props.qstType === "체크박스" && (
+        {(props.qstType === "체크박스" || props.qstType === "객관식 질문") && (
           <>
             <ChartMainWrapper>
               <ChartWrapper>
