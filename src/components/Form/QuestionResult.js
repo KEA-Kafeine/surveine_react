@@ -41,9 +41,10 @@ const QuestionResult = (props) => {
                 <ResultChart
                   options={props.options.map((option) => option.optionContent)}
                   category={"전체응답"}
-                  result={props.result.qstAnsKind.all.map(
-                    (option) => option.optCnt
-                  )}
+                  result={
+                    props.result &&
+                    props.result.qstAnsKind.all.map((option) => option.optCnt)
+                  }
                 />
               </ChartWrapper>
               <ChartWrapperChild>
@@ -53,9 +54,12 @@ const QuestionResult = (props) => {
                     options={props.options.map(
                       (option) => option.optionContent
                     )}
-                    result={props.result.qstAnsKind.gender.man.map(
-                      (option) => option.optCnt
-                    )}
+                    result={
+                      props.result &&
+                      props.result.qstAnsKind.gender.man.map(
+                        (option) => option.optCnt
+                      )
+                    }
                     category={"남자"}
                   />
                 </Child>
@@ -64,9 +68,12 @@ const QuestionResult = (props) => {
                     options={props.options.map(
                       (option) => option.optionContent
                     )}
-                    result={props.result.qstAnsKind.gender.woman.map(
-                      (option) => option.optCnt
-                    )}
+                    result={
+                      props.result &&
+                      props.result.qstAnsKind.gender.woman.map(
+                        (option) => option.optCnt
+                      )
+                    }
                     category={"여자"}
                   />
                 </ChildT>
@@ -74,7 +81,7 @@ const QuestionResult = (props) => {
             </ChartMainWrapper>
             <BarChartWrapper>
               <ResultBarChart
-                age={props.result.qstAnsKind.age}
+                age={props.result && props.result.qstAnsKind.age}
                 qst={props.options}
               />
             </BarChartWrapper>
@@ -89,11 +96,10 @@ const QuestionResult = (props) => {
                 />
                 <t.OptionContent>{option.optionContent}</t.OptionContent>
                 <t.OptionContent>
-                  {
+                  {props.result &&
                     props.result.qstAnsKind.all.find(
                       (obj) => obj.optId === option.optionId
-                    )?.optCnt
-                  }
+                    )?.optCnt}
                 </t.OptionContent>
               </t.OptionListItem>
             ))}
@@ -110,14 +116,14 @@ const QuestionResult = (props) => {
             ))}
           </>
         )}
-        {/* 
+
         {props.qstType === "서술형 질문" && (
           <t.AnswerBox>
-            {props.result.qstAnsKind.map((qst) => {
+            {props.result.qstAns.map((qst) => {
               return <p>{qst}</p>;
             })}
           </t.AnswerBox>
-        )} */}
+        )}
       </t.OptList>
 
       <t.Bottom>

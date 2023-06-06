@@ -242,6 +242,7 @@ function FormAnswer() {
         console.log("아이디" + response.data.result.id);
         setMemberId(response.data.result.member_id);
         setEnqId(response.data.result.id);
+        setTitle(response.data.result.enqTitle);
 
         const newQstArr = response.data.result.cont; // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
         setQstArr(newQstArr);
@@ -277,7 +278,8 @@ function FormAnswer() {
           console.log(response);
           alert("저장되었습니다");
           setAnsId(response.data.result.id);
-          ALL = {};
+          console.log("제발" + ansId);
+          return ansId;
         });
       console.log(JSON.stringify(ALL));
     } else {
@@ -292,21 +294,24 @@ function FormAnswer() {
         .then((response) => {
           console.log(response);
           alert("저장되었습니다");
+          console.log("제발" + ansId);
         });
     }
   };
 
-  const submitAns = () => {
-    postAns();
-
-    axios
-      .put(`/api/ans/submit/${ansId}`, null, {
-        headers: { Authorization: "Bearer " + String(tokenValue) },
-      })
-      .then((response) => {
-        console.log(response);
-        alert("제출되었습니다.");
-      });
+  const submitAns = async () => {
+    if (ansId != "") {
+      axios
+        .put(`/api/ans/submit/${ansId}`, null, {
+          headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+          console.log(response);
+          alert("제출되었습니다.");
+        });
+    } else {
+      alert("설문을 저장해주세요");
+    }
   };
 
   return (
