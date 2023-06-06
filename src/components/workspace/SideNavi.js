@@ -121,7 +121,7 @@ export function SideNavi(props) {
       };
 
       axios
-        .get("/api/wspace/gbox", reqLatLng, {
+        .post("/api/wspace/gbox", reqLatLng, {
           headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
