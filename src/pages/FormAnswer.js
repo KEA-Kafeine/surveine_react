@@ -296,8 +296,17 @@ function FormAnswer() {
     }
   };
 
-  // 제출시 저ㅇ
-  const submitAns = async () => {};
+  const submitAns = async () => {
+    postAns();
+    axios
+      .put(`/api/ans/submit/${ansId}`, null, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        console.log(response);
+        alert("제출되었습니다.");
+      });
+  };
 
   return (
     <>
@@ -321,7 +330,7 @@ function FormAnswer() {
                   <t.FormButton onClick={postAns}>저장</t.FormButton>
                 </QstBtn>
                 <QstBtn>
-                  <t.Export>제출</t.Export>
+                  <t.Export onClick={submitAns}>제출</t.Export>
                 </QstBtn>
 
                 <QstBtn>
