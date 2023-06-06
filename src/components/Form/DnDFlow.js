@@ -8,10 +8,12 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import TooltipNode from "./TooltipNode";
+import ResultNode from "./ResultNode";
 import DownloadButton from "../Form/DownloadButton";
 import styled from "styled-components";
 const nodeTypes = {
   tooltip: TooltipNode,
+  result: ResultNode,
 };
 
 const initialNodes = [

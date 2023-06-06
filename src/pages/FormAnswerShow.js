@@ -12,6 +12,7 @@ import { uToken } from "../components/TokenAtom";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+
 let ALL = {};
 const DATA = [];
 
@@ -201,11 +202,9 @@ const FormQuestion = (props) => {
 function FormAnswer() {
   const [answerArr, setAnswerArr] = useState([]);
   const tokenValue = useRecoilValue(uToken);
-  const { url } = useParams();
+  const { aboxId, ansId } = useParams();
   const [title, setTitle] = useState(""); // 설문 제목
-  const [ansId, setAnsId] = useState("");
   const [enqId, setEnqId] = useState("");
-
   const [name, setName] = useState(""); // 커피콩에 보일 제목
   const [qstArr, setQstArr] = useState(DATA); // 질문 배열
   const [memberId, setMemberId] = useState("");
@@ -215,6 +214,8 @@ function FormAnswer() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // console.log(aboxId);
+  // console.log(ansId);
   const handleArrayUpdate = (updatedArr) => {
     setAnswerArr(updatedArr);
   };
@@ -228,25 +229,24 @@ function FormAnswer() {
       return; // 로그인 페이지로
     }
 
-    console.log(url);
-    console.log(tokenValue);
+    // console.log(url);
+    // console.log(tokenValue);
 
-    axios
-      .get(`/api/enq/url/${url}`, {
-        headers: { Authorization: "Bearer " + String(tokenValue) },
-      })
-      .then((response) => {
-        console.log(response);
-        console.log(response.data.result.enqTitle);
-        console.log(response.data.result.cont);
-        console.log("아이디" + response.data.result.id);
-        setMemberId(response.data.result.member_id);
-        setEnqId(response.data.result.id);
-        setTitle(response.data.result.enqTitle);
+    // axios
+    //   .get(`/api/enq/url/${url}`, {
+    //     headers: { Authorization: "Bearer " + String(tokenValue) },
+    //   })
+    //   .then((response) => {
+    //     console.log(response);
+    //     console.log(response.data.result.enqTitle);
+    //     console.log(response.data.result.cont);
+    //     console.log("아이디" + response.data.result.id);
+    //     setMemberId(response.data.result.member_id);
+    //     setEnqId(response.data.result.id);
 
-        const newQstArr = response.data.result.cont; // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
-        setQstArr(newQstArr);
-      });
+    //     const newQstArr = response.data.result.cont; // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
+    //     setQstArr(newQstArr);
+    //   });
   }, []);
 
   //제목 설정
@@ -277,9 +277,8 @@ function FormAnswer() {
         .then((response) => {
           console.log(response);
           alert("저장되었습니다");
-          setAnsId(response.data.result.id);
-          console.log("제발" + ansId);
-          return ansId;
+
+          ALL = {};
         });
       console.log(JSON.stringify(ALL));
     } else {
@@ -294,24 +293,21 @@ function FormAnswer() {
         .then((response) => {
           console.log(response);
           alert("저장되었습니다");
-          console.log("제발" + ansId);
         });
     }
   };
 
-  const submitAns = async () => {
-    if (ansId != "") {
-      axios
-        .put(`/api/ans/submit/${ansId}`, null, {
-          headers: { Authorization: "Bearer " + String(tokenValue) },
-        })
-        .then((response) => {
-          console.log(response);
-          alert("제출되었습니다.");
-        });
-    } else {
-      alert("설문을 저장해주세요");
-    }
+  const submitAns = () => {
+    postAns();
+
+    axios
+      .put(`/api/ans/submit/${ansId}`, null, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        console.log(response);
+        alert("제출되었습니다.");
+      });
   };
 
   return (

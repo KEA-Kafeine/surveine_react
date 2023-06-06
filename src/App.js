@@ -9,11 +9,13 @@ import FormCreation from "./pages/FormCreation";
 //import Distributionpage from "./pages/DistributionPage";
 import Distribution from "./components/Distribution";
 import Answer from "./pages/FormAnswer";
+import ShowAnswer from "./pages/FormAnswerShow";
 import { RecoilRoot } from "recoil";
 import MemberPage from "./pages/MemberPage";
 import SandBoxPage from "./pages/SandBoxPage";
 import FormResult from "./pages/FormResult";
 import DnDFlow from "./components/Form/DnDFlow";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -30,9 +32,11 @@ function App() {
         <Route path="/create/:cboxId/:enqId" element={<FormCreation />} />
         <Route path="/distribution" element={<Distribution />} />
         <Route path="/answer/:url" element={<Answer />} />
+        <Route path="/showanswer/:aboxId/:ansId" element={<ShowAnswer />} />
         <Route path="/sandbox" element={<SandBoxPage />} />
         <Route path="/result/:enqId" element={<FormResult />} />
         <Route path="/flow" element={<DnDFlow />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         {/* 구현 후 아래로 변경 (랜딩페이지가 제일 먼저 오게)*/}
 

@@ -15,14 +15,18 @@ function LandingPage() {
 
   useEffect(() => {
     function handleScroll() {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
 
       if (scrollTop === 0) {
         window.scrollTo(0, 0);
       }
 
       const landingView = document.getElementById("landing-view");
-      if(landingView && scrollTop > landingView.offsetTop - window.innerHeight/2) {
+      if (
+        landingView &&
+        scrollTop > landingView.offsetTop - window.innerHeight / 2
+      ) {
         setFadeIn(true);
       }
     }
@@ -39,7 +43,7 @@ function LandingPage() {
       <cm.TopBarDark>
         <cm.TopBar_Menu_left>
           {" "}
-          <cm.WLogo />
+          <cm.WLogoLand />
         </cm.TopBar_Menu_left>
 
         <cm.TopBar_Menu_right>
@@ -55,8 +59,10 @@ function LandingPage() {
             <h2>Welcome to </h2>
             <cm.BLogo style={{ margin: "10px" }} />
           </div>
-          <h2 style={{ margin: "0px", FontFace: "Inter" }}>Powerful Form Creation Service.</h2>
-          <GradationAnimation style={{display: "flex", marginTop: "50px"}}>
+          <h2 style={{ margin: "0px", FontFace: "Inter" }}>
+            Powerful Form Creation Service.
+          </h2>
+          <GradationAnimation style={{ display: "flex", marginTop: "50px" }}>
             <MemoPad />
             <H1Text2 style={{ marginLeft: "100px" }}>
               <br />
@@ -138,7 +144,14 @@ function LandingPage() {
           </div>
         </LandingView>
         <LandingView id="landing-view" fadeIn={fadeIn}>
-          <img src={lpimg} style={{ width: "90vw", alignContent: "center", marginBottom: "10rem" }} />
+          <img
+            src={lpimg}
+            style={{
+              width: "90vw",
+              alignContent: "center",
+              marginBottom: "10rem",
+            }}
+          />
           <img src={lpimg2} style={{ width: "90vw", alignContent: "center" }} />
         </LandingView>
       </div>
@@ -197,7 +210,7 @@ const LandingView = styled.div`
 
   opacity: 0;
   visibility: hidden;
-  ${({fadeIn}) =>
+  ${({ fadeIn }) =>
     fadeIn &&
     css`
       animation: ${FadeInAnimation} 1s ease-in-out forwards;

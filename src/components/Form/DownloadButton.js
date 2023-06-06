@@ -25,7 +25,7 @@ const Button = styled.div`
   border: 1.5px solid black;
   padding: 3px;
   border-radius: 3px;
-  margin-top: 2px;
+  margin-top: 12px;
   font-weight: 800;
   cursor: pointer; /* Add this line */
   &:hover {
