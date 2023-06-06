@@ -30,7 +30,7 @@ function FormResult() {
       setQstArr(newQstArr); // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
     });
 
-    axios.get(`/api/result/${enqId}`).then((response) => {
+    axios.get(`/api/enq/result/${enqId}`).then((response) => {
       console.log(response.data);
       setResult(response.data.result);
     });
