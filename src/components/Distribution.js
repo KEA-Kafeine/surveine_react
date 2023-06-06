@@ -165,13 +165,13 @@ const Distribution = (props) => {
             console.log("SET start time: ", startTime);
             console.log("SET end time: ", endTime);
         } else if(selectedOption === "2") {
-            startTime = firstDateStr.slice(0, -3);
+            startTime = firstDateStr
             endTime = "";
             console.log("SET start time: ", startTime);
             console.log("SET end time: ", endTime);
         } else if(selectedOption === "3") {
             startTime = "";
-            endTime = firstDateStr.slice(0, -3);
+            endTime = firstDateStr
             console.log("SET start time: ", startTime);
             console.log("SET end time: ", endTime);
         }
@@ -323,7 +323,11 @@ const Distribution = (props) => {
                         <div>
                             <GuideSetTime>* 종료일을 설정하지 않으면 강제로 배포종료를 선택할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
                                 <DatePicker
-                                    showTime
+                                    showTime={{
+                                        format: "HH:mm",
+                                        showSecond: false,
+                                    }}
+                                    format="YYYY-MM-DD HH:mm"
                                     onChange={onChange}
                                     onOk={onOk}
                                     placeholder="Start Date and Time"
@@ -334,7 +338,11 @@ const Distribution = (props) => {
                         <div>
                             <GuideSetTime>* 시작일을 설정하지 않으면 즉시 배포됩니다.</GuideSetTime>
                                 <DatePicker
-                                    showTime
+                                    showTime={{
+                                        format: "HH:mm",
+                                        showSecond: false,
+                                    }}
+                                    format="YYYY-MM-DD HH:mm"
                                     onChange={onChange}
                                     onOk={onOk}
                                     placeholder="End Date and Time"
