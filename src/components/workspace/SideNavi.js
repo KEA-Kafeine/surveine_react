@@ -115,15 +115,18 @@ export function SideNavi(props) {
   useEffect(() => {
     if (lat && lng) {
       // TODO: Back
-      let reqLatLng = {
-        lat: lat,
-        lng: lng,
-      };
-
       axios
-        .get("/api/wspace/gbox", reqLatLng, {
-          headers: { Authorization: "Bearer " + String(tokenValue) },
-        })
+        .post(
+          `/api/wspace/gbox`,
+          {
+            lat: lat,
+            lng: lng,
+          },
+
+          {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+          }
+        )
         .then((response) => {
           if (response.data.isSuccess) {
             let GPSBoxData = [];
