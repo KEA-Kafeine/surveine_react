@@ -126,6 +126,11 @@ const SignUpPage = () => {
     // 생년월일 필드 검증
     const today = new Date();
     const birthdayDate = new Date(birthday);
+
+    if (!birthday) {
+      alert("생년월일을 입력해주세요.");
+      return;
+    }
     if (birthdayDate >= today) {
       alert("생년월일은 현재 날짜보다 작아야 합니다.");
       return;
