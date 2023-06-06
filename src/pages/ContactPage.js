@@ -49,6 +49,14 @@ const ContactPage = () => {
               <sl.Line height="22px" />
             </cm.DivHorizon>
             <cm.DivVertical>
+              <sl.InputTitle>이메일 *</sl.InputTitle>
+              <InputEmail
+                type="email"
+                placeholder="이메일을 입력하세요"
+                onChange={onChangeEmail}
+              />
+            </cm.DivVertical>
+            <cm.DivVertical>
               <sl.InputTitle>제목 *</sl.InputTitle>
               <sl.InputBox
                 placeholder="제목을 입력하세요"
@@ -62,14 +70,7 @@ const ContactPage = () => {
                 onChange={onChangeContent}
               ></InputBox>
             </cm.DivVertical>
-            <cm.DivVertical>
-              <sl.InputTitle>이메일 *</sl.InputTitle>
-              <InputEmail
-                type="email"
-                placeholder="이메일을 입력하세요"
-                onChange={onChangeEmail}
-              />
-            </cm.DivVertical>
+
             <cm.BtnBlue className="cancel">문의하기</cm.BtnBlue>
           </sl.Modal_main>
           <sl.Modal_footer />
@@ -99,6 +100,7 @@ export const InputBox = styled.textarea`
   &:focus {
     border-color: black;
   }
+  margin-bottom: 20px;
 `;
 
 export const InputEmail = styled.input`
@@ -115,8 +117,6 @@ export const InputEmail = styled.input`
   &:focus {
     border-color: black;
   }
-
-  margin-bottom: 20px;
 `;
 export const GrayText = styled.p`
   color: hsla(213, 14%, 43%, 1);
