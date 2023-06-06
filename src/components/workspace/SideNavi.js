@@ -353,7 +353,9 @@ export function SideNavi(props) {
           </Container>
         </BottomWapper>
       </Wrapper>
-      <WrapperBottom>문의하기</WrapperBottom>
+      <Link to="/contact">
+        <WrapperBottom>문의하기</WrapperBottom>
+      </Link>
     </>
   );
 }
