@@ -20,22 +20,22 @@ const TooltipNode = (props) => {
                 : props.data.qst.qstTitle}{" "}
             </TooltipTitle>
           )}
-          {props.data.qst.qstType === "서술형 질문" && (
+          {props.data.qst.qstType === "서술형 질문" ? (
             <TextLine>서술형 질문입니다. </TextLine>
+          ) : (
+            props.data.qst.options.map((option) => (
+              <OptStyled key={option.optionId}>
+                {props.data.qst.qstType === "객관식 질문" && (
+                  <input type="radio" />
+                )}
+                {props.data.qst.qstType === "체크박스" && (
+                  <input type="checkbox" />
+                )}
+
+                {option.optionContent}
+              </OptStyled>
+            ))
           )}
-
-          {props.data.qst.options.map((option) => (
-            <OptStyled key={option.optionId}>
-              {props.data.qst.qstType === "객관식 질문" && (
-                <input type="radio" />
-              )}
-              {props.data.qst.qstType === "체크박스" && (
-                <input type="checkbox" />
-              )}
-
-              {option.optionContent}
-            </OptStyled>
-          ))}
         </Tooltip>
       </NodeToolbar>
       {props.data.qst.branch ? (
