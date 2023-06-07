@@ -97,6 +97,7 @@ export function SideNavi(props) {
     axios
       .get(url, {
         headers: { Authorization: "Bearer " + String(tokenValue) },
+        baseURL: "http://localhost:3000",
       })
       .then((response) => {
         if (response.data) {
@@ -116,7 +117,7 @@ export function SideNavi(props) {
       });
 
     // <cm.TopBar_menu_item onClick={() => navigate("/workspace")}>Work Space</cm.TopBar_menu_item>
-    // navigate(`/workspace/${}`)
+    // navigate(`/workspace/${folderId}`);
   };
 
   const [lat, setLat] = useState(0);

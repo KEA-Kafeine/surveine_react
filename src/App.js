@@ -25,8 +25,9 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotpwPage />} />
-        <Route path="/workspace" element={<Workspace />} />
-        {/* <Route path="/workspace/:boxId" element={<Workspace />} /> */}
+        {/* <Route path="/workspace" exact element={<Workspace />} /> */}
+        <Route path="/workspace/cbox/:boxId" element={<Workspace />} />
+        <Route path="/workspace/abox/:boxId" element={<Workspace />} />
         <Route path="/mypage" element={<MemberPage />} />
         <Route path="/create/:cboxId" element={<FormCreation />} />
         <Route path="/create/:cboxId/:enqId" element={<FormCreation />} />
@@ -37,16 +38,6 @@ function App() {
         <Route path="/result/:enqId" element={<FormResult />} />
         <Route path="/flow" element={<DnDFlow />} />
         <Route path="/contact" element={<ContactPage />} />
-
-        {/* 구현 후 아래로 변경 (랜딩페이지가 제일 먼저 오게)*/}
-
-        {/* <Route path="/" element={<LandingPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/forgot-password" element={<ForgotpwPage />} />
-      <Route path="/workspace" element={<Workspace />} />
-      <Route path="/create" element={<FormCreation />} />
-      <Route path="/check" element={<FormCheck />} /> */}
       </Routes>
     </RecoilRoot>
   );
