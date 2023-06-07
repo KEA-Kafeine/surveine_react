@@ -82,8 +82,14 @@ const FormQuestion = (props) => {
       (answer) => answer.qstId === qstId
     );
     if (answerIndex !== -1) {
+      const removedArr = props.answerArr.filter(
+        (answer) => answer.qstId !== qstId
+      );
+      console.log("왜안돼");
+      console.log(removedArr);
+      props.onUpdateArray([...removedArr, newAnswer]);
     } else {
-      props.onUpdateArray([...props.answerArr, newAnswer]);
+      props.onUpdateArray([...props.qstArr, newAnswer]);
     }
 
     console.log(props.answerArr);
@@ -92,6 +98,7 @@ const FormQuestion = (props) => {
   const onChange = (e) => {
     e.preventDefault();
     setText(e.target.value);
+    console.log(e.target.value);
   };
 
   return (
