@@ -221,32 +221,23 @@ function FormAnswer() {
   };
 
   useEffect(() => {
-    if (tokenValue == "") {
-      console.log("로그인하세요");
-      const from = location.pathname;
-      console.log(from);
-      navigate("/login", { state: { from } });
-      return; // 로그인 페이지로
-    }
+    axios
+      .get(`/api/ans/ans/${ansId}`, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        console.log(response);
+        console.log(response.data.result.enqTitle);
+        console.log(response.data.result.cont);
+        console.log("아이디" + response.data.result.id);
+        setMemberId(response.data.result.member_id);
+        setEnqId(response.data.result.id);
+        setTitle(response.data.result.enq.title);
+        setAnswerArr(response.data.result.ans.cont);
 
-    // console.log(url);
-    // console.log(tokenValue);
-
-    // axios
-    //   .get(`/api/enq/url/${url}`, {
-    //     headers: { Authorization: "Bearer " + String(tokenValue) },
-    //   })
-    //   .then((response) => {
-    //     console.log(response);
-    //     console.log(response.data.result.enqTitle);
-    //     console.log(response.data.result.cont);
-    //     console.log("아이디" + response.data.result.id);
-    //     setMemberId(response.data.result.member_id);
-    //     setEnqId(response.data.result.id);
-
-    //     const newQstArr = response.data.result.cont; // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
-    //     setQstArr(newQstArr);
-    //   });
+        const newQstArr = response.data.result.enq.cont; // 기존의 qstArr 배열을 새로운 배열로 복사합니다.
+        setQstArr(newQstArr);
+      });
   }, []);
 
   //제목 설정
@@ -316,15 +307,7 @@ function FormAnswer() {
         <FormSection>
           <Header>
             <HeaderHalf direction="left">
-              <Menu>
-                {" "}
-                <NameField
-                  type="text"
-                  value={name}
-                  placeholder="파일 이름을 입력하세요"
-                  onChange={onChangeName}
-                />
-              </Menu>
+              <Menu></Menu>
             </HeaderHalf>
             <HeaderHalf direction="right">
               <HeadBtn>

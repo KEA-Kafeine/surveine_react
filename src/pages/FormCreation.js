@@ -157,7 +157,7 @@ function FormCreation() {
 
   useEffect(() => {
     if (enqId != null) {
-      console.log(enqId);
+      console.log(tokenValue);
       setEnqResponseId(enqId);
 
       axios
@@ -177,6 +177,7 @@ function FormCreation() {
           setTitle(response.data.result.enqTitle);
         });
     } else {
+      console.log(tokenValue);
     }
   }, []);
 

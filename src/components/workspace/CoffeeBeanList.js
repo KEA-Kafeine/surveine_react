@@ -1,4 +1,4 @@
-  import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Route, useNavigate } from "react-router-dom";
 import CoffeeBean from "./CoffeeBean";
 import styled from "styled-components";
@@ -90,7 +90,7 @@ function CoffeeBeanList(props) {
               <CBContainer
                 onDoubleClick={() => {
                   // navigate(`/answer/${boxId}/${coffeeBean.ansId}`);
-                  navigate(`/answer`);
+                  navigate(`/showanswer/${boxId}/${coffeeBean.ansId}`);
                 }}
                 key={coffeeBean.ansId}
               >
@@ -105,7 +105,6 @@ function CoffeeBeanList(props) {
                   abList={aboxList}
                   type="abox"
                 />
-
               </CBContainer>
             ))}
         </FormList>
@@ -114,9 +113,7 @@ function CoffeeBeanList(props) {
       {props.boxType === "sbox" && (
         <FormList>
           {data.map((coffeeBean) => (
-            <SBContainer
-              key={coffeeBean.enqId}
-            >
+            <SBContainer key={coffeeBean.enqId}>
               <CoffeeBean
                 cbId={coffeeBean.enqId}
                 cbName={coffeeBean.enqName}
@@ -133,9 +130,7 @@ function CoffeeBeanList(props) {
       {props.boxType === "gbox" && (
         <FormList>
           {data.map((coffeeBean) => (
-            <CBContainer
-              key={coffeeBean.enqId}
-            >
+            <CBContainer key={coffeeBean.enqId}>
               <CoffeeBean
                 cbId={coffeeBean.enqId}
                 cbName={coffeeBean.enqName}
@@ -149,7 +144,6 @@ function CoffeeBeanList(props) {
           ))}
         </FormList>
       )}
-
     </Wrapper>
   );
 }
