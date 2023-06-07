@@ -9,10 +9,53 @@ import { nanoid } from "nanoid";
 
 const Distribution = (props) => {
     const tokenValue = useRecoilValue(uToken);
+
+    const [startDateTime, setStartDateTime] = useState("Start Date and Time");
+    const [endDateTime, setEndDateTime] = useState("End Date and Time");
     
     useEffect(() => {
         console.log("==DISTRIBUTE===");
         console.log(props);
+
+        axios.get(`/api/enq/dist/${props.enqId}`, {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+            if(response.data.isSuccess) {
+                console.log("distribution info: ", response.data);
+                // 기존 배포 정보 저장
+                if(response.data.result.quota !== 0) {
+                    setLimitQuota(true);
+                    setQuota(response.data.result.quota);
+                }
+                if(response.data.result.distType === "GPS") {
+                    setIsLink(false);
+                }
+                if(response.data.result.startDateTime === null && response.data.result.endDateTime !== null) {
+                    setSelectedOption("3");
+                    setButtonName("종료일만 설정");
+                    setEndDateTime(response.data.result.endDateTime.replace("T", " "));
+                } else if(response.data.result.startDateTime !== null && response.data.result.endDateTime === null) {
+                    setSelectedOption("2");
+                    setButtonName("시작일만 설정");
+                    setStartDateTime(response.data.result.startDateTime.replace("T", " "));
+                } else if(response.data.result.startDateTime !== null && response.data.result.endDateTime !== null) {
+                    setStartDateTime(response.data.result.startDateTime.replace("T", " "));
+                    setEndDateTime(response.data.result.endDateTime.replace("T", " "));
+                }
+                if(response.data.result.distRange !== null) {
+                    setRangeOption(response.data.result.distRange);
+                    let distRangeName = response.data.result.distRange;
+                    distRangeName += "m";
+                    setRangeName(distRangeName);
+                }
+            } else {
+                alert("failed to");
+            }
+        })
+        .catch(error => {
+            console.error("[ERROR] get distribution information: ", error);
+        });
     }, []);
 
     const { RangePicker } = DatePicker;
@@ -176,7 +219,7 @@ const Distribution = (props) => {
             console.log("SET end time: ", endTime);
         }
         
-        if(distType === "GPS") {
+        if(isLink === false) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
@@ -212,7 +255,7 @@ const Distribution = (props) => {
                     alert("GPS 배포를 하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해줘야 합니다.");
                 }
             );
-        } else if(distType === "LINK") {
+        } else if(isLink === true) {
             let distLink = nanoid();
             reqData = {
                 "distType": distType,
@@ -265,7 +308,7 @@ const Distribution = (props) => {
                     </RightToggle>
                     {limitQuota && (
                         <InputBox>
-                        <Input onChange={handleQuotaChange} onKeyPress={handleKeyPress} />
+                        <Input onChange={handleQuotaChange} onKeyPress={handleKeyPress} placeholder={quota} />
                         <InnerTitle
                             style={{ marginRight: "15px", marginLeft: "0px" }}
                         >
@@ -307,7 +350,8 @@ const Distribution = (props) => {
 
                     <Space size={12}>
                         {selectedOption === "1" && (
-                        <div style={{marginTop: "1rem"}}>
+                        <div>
+                            <GuideSetTime>* 날짜를 설정하지 않을 경우 즉시 배포되며, 직접 배포를 종료할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
                             <RangePicker
                                 showTime={{
                                     format: 'HH:mm',
@@ -315,13 +359,14 @@ const Distribution = (props) => {
                                 format="YYYY-MM-DD HH:mm"
                                 onChange={onChange}
                                 onOk={onOk}
-                                placeholder={["Start Date and Time", "End Date and Time"]}
+                                // placeholder={["Start Date and Time", "End Date and Time"]}
+                                placeholder={[startDateTime, endDateTime]}
                             />
                         </div>
                         )}
                         {selectedOption === "2" && (
                         <div>
-                            <GuideSetTime>* 종료일을 설정하지 않으면 강제로 배포종료를 선택할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
+                            <GuideSetTime>* 시작일만 설정할 경우 직접 배포를 종료할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
                                 <DatePicker
                                     showTime={{
                                         format: "HH:mm",
@@ -330,13 +375,14 @@ const Distribution = (props) => {
                                     format="YYYY-MM-DD HH:mm"
                                     onChange={onChange}
                                     onOk={onOk}
-                                    placeholder="Start Date and Time"
+                                    // placeholder="Start Date and Time"
+                                    placeholder={startDateTime}
                                 />
                         </div>
                         )}
                         {selectedOption === "3" && (
                         <div>
-                            <GuideSetTime>* 시작일을 설정하지 않으면 즉시 배포됩니다.</GuideSetTime>
+                            <GuideSetTime>* 종료일만 설정할 경우 즉시 배포됩니다.</GuideSetTime>
                                 <DatePicker
                                     showTime={{
                                         format: "HH:mm",
@@ -345,7 +391,8 @@ const Distribution = (props) => {
                                     format="YYYY-MM-DD HH:mm"
                                     onChange={onChange}
                                     onOk={onOk}
-                                    placeholder="End Date and Time"
+                                    // placeholder="End Date and Time"
+                                    placeholder={endDateTime}
                                 />
                         </div>
                         )}
@@ -401,7 +448,7 @@ const Modal = styled.div`
 
   flex-direction: column;
 
-  width: 470px;
+  width: 500px;
   height: 590px;
 
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;

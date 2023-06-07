@@ -122,114 +122,54 @@ export function SideNavi(props) {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   useEffect(() => {
-    if (lat && lng) {
-      // // TODO: Back
-      // axios.put("/api/wspace/gps", {"lat": lat, "lng": lng}, {
-      //   headers: { Authorization: "Bearer " + String(tokenValue) },
-      // })
-      // .then((response) => {
-      //   if(response.data.isSuccess) {
-      //     let GPSBoxData = [];
-      //     GPSBoxData = response.data.result.GPSBox;
-      //     props.onFolderDataChange(GPSBoxData);
-      //     props.onChangeLat(lat);
-      //     props.onChangeLng(lng);
-      //   } else {
-      //     alert("failed to");
-      //   }
-      // })
-      // .catch((error) => {
-      //   console.error("[ERROR] get GPS coffeebean list", error);
-      // });
+    if(lat && lng) {
+      // TODO: Back
+      axios.post("/api/wspace/gbox", {"lat": lat, "lng": lng}, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        if(response.data.isSuccess) {
+          let GPSBoxData = [];
+          GPSBoxData = response.data.result;
+          props.onFolderDataChange(GPSBoxData);
+          props.onChangeLat(lat);
+          props.onChangeLng(lng);
+        } else {
+          alert("failed to");
+        }
+      })
+      .catch((error) => {
+        console.error("[ERROR] get GPS coffeebean list", error);
+      });
 
-      // 하드코딩
-      let GPSData = {
-        result: {
-          // "abList": [
-          //   {"aboxId": 1, "aboxName": "기본 참여함", "ansCnt": 2},
-          //   {"aboxId": 2, "aboxName": "배고파", "ansCnt": 0}
-          // ],
-          GPSBox: [
-            {
-              enqId: 1,
-              enqName: "설문지1",
-              enqStatus: "SAVE",
-              updateDate: "2023.5.31",
-            },
-            {
-              enqId: 2,
-              enqName: "설문지2",
-              enqStatus: "SUBMIT",
-              updateDate: "2023.6.2",
-            },
-            {
-              enqId: 3,
-              enqName: "설문지3",
-              enqStatus: "WAIT",
-              updateDate: "2023.6.3",
-            },
-            {
-              enqId: 4,
-              enqName: "설문지4",
-              enqStatus: "WAIT",
-              updateDate: "2023.6.3",
-            },
-            {
-              enqId: 5,
-              enqName: "설문지1",
-              enqStatus: "SAVE",
-              updateDate: "2023.5.31",
-            },
-            {
-              enqId: 6,
-              enqName: "설문지2",
-              enqStatus: "SUBMIT",
-              updateDate: "2023.6.2",
-            },
-            {
-              enqId: 7,
-              enqName: "설문지3",
-              enqStatus: "WAIT",
-              updateDate: "2023.6.3",
-            },
-            {
-              enqId: 8,
-              enqName: "설문지4",
-              enqStatus: "WAIT",
-              updateDate: "2023.6.3",
-            },
-            {
-              enqId: 9,
-              enqName: "설문지1",
-              enqStatus: "SAVE",
-              updateDate: "2023.5.31",
-            },
-            {
-              enqId: 10,
-              enqName: "설문지2",
-              enqStatus: "SUBMIT",
-              updateDate: "2023.6.2",
-            },
-            {
-              enqId: 11,
-              enqName: "설문지3",
-              enqStatus: "WAIT",
-              updateDate: "2023.6.3",
-            },
-            {
-              enqId: 12,
-              enqName: "설문지3",
-              enqStatus: "WAIT",
-              updateDate: "2023.6.3",
-            },
-          ],
-        },
-      };
-      let GPSBoxData = {};
-      GPSBoxData = GPSData.result;
-      props.onFolderDataChange(GPSBoxData);
-      props.onChangeLat(lat);
-      props.onChangeLng(lng);
+      // // 하드코딩
+      // let GPSData = {
+      //   "result": {
+      //     // "abList": [
+      //     //   {"aboxId": 1, "aboxName": "기본 참여함", "ansCnt": 2},
+      //     //   {"aboxId": 2, "aboxName": "배고파", "ansCnt": 0}
+      //     // ],
+      //     "GPSBox": [
+      //       {"enqId": 1, "enqName": "설문지1", "enqStatus": "SAVE", "updateDate": "2023.5.31"},
+      //       {"enqId": 2, "enqName": "설문지2", "enqStatus": "SUBMIT", "updateDate": "2023.6.2"},
+      //       {"enqId": 3, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+      //       {"enqId": 4, "enqName": "설문지4", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+      //       {"enqId": 5, "enqName": "설문지1", "enqStatus": "SAVE", "updateDate": "2023.5.31"},
+      //       {"enqId": 6, "enqName": "설문지2", "enqStatus": "SUBMIT", "updateDate": "2023.6.2"},
+      //       {"enqId": 7, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+      //       {"enqId": 8, "enqName": "설문지4", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+      //       {"enqId": 9, "enqName": "설문지1", "enqStatus": "SAVE", "updateDate": "2023.5.31"},
+      //       {"enqId": 10, "enqName": "설문지2", "enqStatus": "SUBMIT", "updateDate": "2023.6.2"},
+      //       {"enqId": 11, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"},
+      //       {"enqId": 12, "enqName": "설문지3", "enqStatus": "WAIT", "updateDate": "2023.6.3"}
+      //     ]
+      //   }
+      // };
+      // let GPSBoxData = {};
+      // GPSBoxData = GPSData.result;
+      // props.onFolderDataChange(GPSBoxData);
+      // props.onChangeLat(lat);
+      // props.onChangeLng(lng);
     }
   }, [lat, lng]);
 
@@ -512,6 +452,16 @@ const FolderContainerTop = styled.div`
   margin-bottom: 20px;
   overflow-y: scroll;
   cursor: pointer;
+  /* Hide the scrollbar */
+  &::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: transparent;
+  }
+
+  /* Hide the scrollbar thumb */
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
 `;
 
 const FolderContainerBottom = styled.div`
@@ -523,11 +473,14 @@ const FolderContainerBottom = styled.div`
   margin-bottom: 20px;
   overflow-y: scroll;
   cursor: pointer;
-`;
+  /* Hide the scrollbar */
+  &::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: transparent;
+  }
 
-const ContactContainer = styled.div`
-  width: 100%;
-  bottom: 0;
-  margin-top: auto;
-  margin-bottom: 20px;
+  /* Hide the scrollbar thumb */
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
 `;

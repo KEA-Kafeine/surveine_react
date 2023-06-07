@@ -194,7 +194,8 @@ const EditModal = (props) => {
 
         // TODO: cbox인지 abox인지 구분해야해 -> abox에서의 delete 구현 필요
         // 아래는 cbox에서의 delete만 해당 (abox에서의 delete은 다르게 구현)
-        axios.delete(`/api/wspace/enq/delete/${props.enqId}`, {
+        // /api/enq/{enqId}
+        axios.delete(`/api/enq/${props.enqId}`, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
@@ -382,8 +383,8 @@ const EditModal = (props) => {
         console.log(selectedFolder);
         console.log("id: ", selectedFolder.aboxId);
         
-        // axios
-        axios.post("/api/wspace/gps/resp", {"enqId": props.enqId, "aboxId": selectedFolder.aboxId}, {
+        // /api/ans/gps/resp
+        axios.post("/api/ans/gps/resp", {"enqId": props.enqId, "aboxId": selectedFolder.aboxId}, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
