@@ -160,7 +160,10 @@ const FormQuestion = (props) => {
             <t.QstAnswer
               type="text"
               value={text}
-              placeholder="질문에 대한 답변을 입력해주세요"
+              placeholder={
+                props.answerArr.find((answer) => answer.qstId == props.qstId)
+                  .answerText
+              }
               onChange={onChange}
               onBlur={() => handleBlur(props.qstId, props.qstType)}
             />
