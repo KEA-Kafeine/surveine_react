@@ -24,14 +24,16 @@ import {
   boxToken,
   CorAToken,
 } from "../components/TokenAtom";
+import { useParams } from "react-router";
 
 import KakaoMap from "../components/workspace/KakaoMap";
 import { Button } from "antd";
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 
 function Workspace() {
   const tokenValue = useRecoilValue(uToken);
   const navigate = useNavigate();
+  let { boxId } = useParams();
 
   // back이랑 소통할 때!
   const [resp, setResp] = useState({});
@@ -64,17 +66,17 @@ function Workspace() {
   // const [box, setBox] = useState({});
   // const [CorA, setCorA] = useState("");
 
-  // // back이랑 소통할 때!
-  // useEffect(() => {
-  //   axios
-  //     .get("/api/wspace/cbox/0", {
-  //       headers: { Authorization: "Bearer " + String(tokenValue) },
-  //     })
-  //     .then((response) => {
-  //       if (response.data) {
-  //         console.log("====FIRST====");
-  //         console.log(response.data);
-  //         console.log(response.data.result);
+  // back이랑 소통할 때!
+  useEffect(() => {
+    axios
+      .get(`/api/wspace/cbox/${boxId}`, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        if (response.data) {
+          console.log("====FIRST====");
+          console.log(response.data);
+          console.log(response.data.result);
 
   //         setMemName(response.data.result.memName);
   //         setCbList(response.data.result.cboxList);
@@ -100,23 +102,16 @@ function Workspace() {
     console.log(folderData);
     setUpFolderData(folderData);
 
-    // // URL: workspace/${folderId}
-    // if(folderData.hasOwnProperty("cboxId")) {
-    //   // setBoxId(folderData.cboxId);
-    //   // console.log("FOLDER ID: ", folderData.cboxId);
-    //   navigate(`/workspace/cbox/${folderData.cboxId}`);
-    // } else if(folderData.hasOwnProperty("aboxId")) {
-    //   // setBoxId(folderData.aboxId);
-    //   navigate(`/workspace/abox/${folderData.aboxId}`);
-    // }
-  };
-  useEffect(() => {
-    if(upFolderData.hasOwnProperty("cboxId")) {
-      navigate(`/workspace/cbox/${upFolderData.cboxId}`);
-    } else if(upFolderData.hasOwnProperty("aboxId")) {
-      navigate(`/workspace/abox/${upFolderData.aboxId}`);
+    // URL: workspace/${folderId}
+    if (folderData.hasOwnProperty("cboxId")) {
+      // setBoxId(folderData.cboxId);
+      // console.log("FOLDER ID: ", folderData.cboxId);
+      navigate(`/workspace/cbox/${folderData.cboxId}`);
+    } else if (folderData.hasOwnProperty("aboxId")) {
+      // setBoxId(folderData.aboxId);
+      navigate(`/workspace/abox/${folderData.aboxId}`);
     }
-  }, [upFolderData, navigate]);
+  };
 
   useEffect(() => {
     console.log("===YEAH===");
@@ -149,9 +144,9 @@ function Workspace() {
   // 아래 추가
   const [isExpanded, setIsExpanded] = useState(true);
   const handleZoomToggle = () => {
-    setIsExpanded(prevExpanded => !prevExpanded);
+    setIsExpanded((prevExpanded) => !prevExpanded);
   };
-  
+
   return (
     <WorkspaceContainer>
       <SideNaviContainer>
@@ -276,15 +271,23 @@ function Workspace() {
             )}
             <MapWrapper isExpanded={isExpanded}>
               <MapTitle isExpanded={isExpanded}>
-                <div style={{marginLeft: "1.4rem"}}>Kakao</div>
-                <div style={{marginLeft: "0.3rem", color: "#FFFFFF", fontWeight: "800"}}>Map</div>
+                <div style={{ marginLeft: "1.4rem" }}>Kakao</div>
+                <div
+                  style={{
+                    marginLeft: "0.3rem",
+                    color: "#FFFFFF",
+                    fontWeight: "800",
+                  }}
+                >
+                  Map
+                </div>
 
                 {isExpanded ? (
-                  <div style={{marginLeft: "14.3rem"}}>
+                  <div style={{ marginLeft: "14.3rem" }}>
                     <DownOutlined onClick={handleZoomToggle} />
                   </div>
                 ) : (
-                  <div style={{marginLeft: "14.3rem"}}>
+                  <div style={{ marginLeft: "14.3rem" }}>
                     <UpOutlined onClick={handleZoomToggle} />
                   </div>
                 )}
@@ -433,8 +436,8 @@ const MapWrapper = styled.div`
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   background: #1a2051;
   z-index: 3;
-  
-  height: ${props => props.isExpanded ? "40vh" : "5vh"};
+
+  height: ${(props) => (props.isExpanded ? "40vh" : "5vh")};
   transition: height 0.3s ease;
 `;
 
@@ -445,9 +448,10 @@ const MapTitle = styled.div`
   align-items: center;
   font-weight: 700;
   // color: #FFFFFF;
-  color: #FFE400;;
+  color: #ffe400;
 
-  // justify-content: ${props => props.isExpanded ? "space-between" : "center"};
+  // justify-content: ${(props) =>
+    props.isExpanded ? "space-between" : "center"};
 `;
 
 const MapContainer = styled.div`
@@ -456,5 +460,5 @@ const MapContainer = styled.div`
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 
-  display: ${props => props.isExpanded ? "block" : "none"};
+  display: ${(props) => (props.isExpanded ? "block" : "none")};
 `;

@@ -346,12 +346,7 @@ function FormAnswer() {
             </HeaderHalf>
           </Header>
           <TitleInput>
-            <TitleField
-              type="text"
-              value={title}
-              placeholder="설문 제목을 입력하세요"
-              onChange={onChangeInput}
-            />
+            <TitleField>{title}</TitleField>
           </TitleInput>
           {qstArr.map((qst, index) => {
             if (qst.branch) {
@@ -484,13 +479,17 @@ const TitleInput = styled.div`
   margin-bottom: 1rem;
 `;
 
-const TitleField = styled.input`
+const TitleField = styled.div`
   width: 30rem;
   height: 3em;
   display: block;
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.1rem;
   border-radius: 1rem;
+  border: 1px solid grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const NameField = styled.input`

@@ -7,6 +7,7 @@ import AnonyTrue from "../../img/form/on.svg";
 import AnonyFalse from "../../img/form/off.svg";
 import ResultChart from "../Form/ResultChart";
 import ResultBarChart from "./ResultBarChart";
+import { PropaneSharp } from "@mui/icons-material";
 
 const QuestionResult = (props) => {
   return (
@@ -105,13 +106,74 @@ const QuestionResult = (props) => {
             ))}
           </>
         )}
-
         {props.qstType === "객관식 질문" && (
           <>
+            <ChartMainWrapper>
+              <ChartWrapper>
+                {" "}
+                <ResultChart
+                  options={props.options.map((option) => option.optionContent)}
+                  category={"전체응답"}
+                  result={
+                    props.result &&
+                    props.result.qstAnsKind.all.map((option) => option.optCnt)
+                  }
+                />
+              </ChartWrapper>
+              <ChartWrapperChild>
+                {" "}
+                <Child>
+                  <ResultChart
+                    options={props.options.map(
+                      (option) => option.optionContent
+                    )}
+                    result={
+                      props.result &&
+                      props.result.qstAnsKind.gender.man.map(
+                        (option) => option.optCnt
+                      )
+                    }
+                    category={"남자"}
+                  />
+                </Child>
+                <ChildT>
+                  <ResultChart
+                    options={props.options.map(
+                      (option) => option.optionContent
+                    )}
+                    result={
+                      props.result &&
+                      props.result.qstAnsKind.gender.woman.map(
+                        (option) => option.optCnt
+                      )
+                    }
+                    category={"여자"}
+                  />
+                </ChildT>
+              </ChartWrapperChild>
+            </ChartMainWrapper>
+            <BarChartWrapper>
+              <ResultBarChart
+                age={props.result && props.result.qstAnsKind.age}
+                qst={props.options}
+              />
+            </BarChartWrapper>
             {props.options.map((option, index) => (
               <t.OptionListItem key={index}>
-                <input type="radio" value={option.optionId} />
+                <input
+                  type="radio"
+                  value={option.optionId}
+                  checked={props.answerArr.some(
+                    (answer) => answer.optionId === option.optionId
+                  )}
+                />
                 <t.OptionContent>{option.optionContent}</t.OptionContent>
+                <t.OptionContent>
+                  {props.result &&
+                    props.result.qstAnsKind.all.find(
+                      (obj) => obj.optId === option.optionId
+                    )?.optCnt}
+                </t.OptionContent>
               </t.OptionListItem>
             ))}
           </>
