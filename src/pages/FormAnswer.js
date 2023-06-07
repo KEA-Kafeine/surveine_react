@@ -265,7 +265,6 @@ function FormAnswer() {
   const postAns = async () => {
     if (ansId == "") {
       // ALL.memberId = memberId;
-      ALL.aboxId = 1;
       ALL.enqId = enqId;
       ALL.ansCont = answerArr;
       console.log("token - " + tokenValue);
