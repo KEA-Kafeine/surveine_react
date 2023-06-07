@@ -15,18 +15,14 @@ function LandingPage() {
 
   useEffect(() => {
     function handleScroll() {
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
       if (scrollTop === 0) {
         window.scrollTo(0, 0);
       }
 
       const landingView = document.getElementById("landing-view");
-      if (
-        landingView &&
-        scrollTop > landingView.offsetTop - window.innerHeight / 2
-      ) {
+      if (landingView && scrollTop > landingView.offsetTop - window.innerHeight / 2) {
         setFadeIn(true);
       }
     }
@@ -43,7 +39,7 @@ function LandingPage() {
       <cm.TopBarDark>
         <cm.TopBar_Menu_left>
           {" "}
-          <cm.WLogoLand />
+          <cm.WLogo />
         </cm.TopBar_Menu_left>
 
         <cm.TopBar_Menu_right>
@@ -59,9 +55,7 @@ function LandingPage() {
             <h2>Welcome to </h2>
             <cm.BLogo style={{ margin: "10px" }} />
           </div>
-          <h2 style={{ margin: "0px", FontFace: "Inter" }}>
-            Powerful Form Creation Service.
-          </h2>
+          <h2 style={{ margin: "0px", FontFace: "Inter" }}>Powerful Form Creation Service.</h2>
           <GradationAnimation style={{ display: "flex", marginTop: "50px" }}>
             <MemoPad />
             <H1Text2 style={{ marginLeft: "100px" }}>
@@ -85,7 +79,7 @@ function LandingPage() {
                 <br />
               </H1Text2>
               <cm.LinkNone
-                to="https://beneficial-structure-ef5.notion.site/How-to-Make-SurVeine-93d3249b77d94d34ba2ff006d2c0b1cd"
+                to="https://beneficial-structure-ef5.notion.site/Surveine-4f561f4e21a742c1a3ecdb23db9b3ac7?pvs=4"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -122,11 +116,7 @@ function LandingPage() {
                 <br />
                 설문 공유
               </H1Text2>
-              <cm.LinkNone
-                to="https://beneficial-structure-ef5.notion.site/How-to-Make-SurVeine-93d3249b77d94d34ba2ff006d2c0b1cd"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <cm.LinkNone to="https://beneficial-structure-ef5.notion.site/a49db4ffe60e499ba0b74409c036a366" target="_blank" rel="noopener noreferrer">
                 <cm.BtnBlue
                   style={{
                     width: "20rem",
@@ -144,14 +134,7 @@ function LandingPage() {
           </div>
         </LandingView>
         <LandingView id="landing-view" fadeIn={fadeIn}>
-          <img
-            src={lpimg}
-            style={{
-              width: "90vw",
-              alignContent: "center",
-              marginBottom: "10rem",
-            }}
-          />
+          <img src={lpimg} style={{ width: "90vw", alignContent: "center", marginBottom: "10rem" }} />
           <img src={lpimg2} style={{ width: "90vw", alignContent: "center" }} />
         </LandingView>
       </div>
