@@ -360,6 +360,11 @@ function FormCreation() {
     setShowFlow(false);
     setDistribute(!distribute);
   };
+  const closeDistribute = () => {
+    setBlur(!blur);
+    setDistribute(false);
+    alert("설문이 배포되었습니다");
+  };
 
   const clickPick = (e) => {
     setBlur(!blur);
@@ -516,7 +521,7 @@ function FormCreation() {
         })
         .then((response) => {
           console.log(response);
-          alert("설문이 저장되었습니다.");
+          alert("설문이 수정되었습니다.");
         });
     }
   };
@@ -939,6 +944,7 @@ function FormCreation() {
       {distribute ? (
         <Distribution
           clickDistriubtion={clickDistriubtion}
+          closeDistribute={closeDistribute}
           enqStatus={enqStatus}
           enqId={enqResponseId}
         />
