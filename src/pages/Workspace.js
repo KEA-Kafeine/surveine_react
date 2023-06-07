@@ -78,22 +78,22 @@ function Workspace() {
           console.log(response.data);
           console.log(response.data.result);
 
-  //         setMemName(response.data.result.memName);
-  //         setCbList(response.data.result.cboxList);
-  //         setAbList(response.data.result.aboxList);
+          setMemName(response.data.result.memName);
+          setCbList(response.data.result.cboxList);
+          setAbList(response.data.result.aboxList);
 
-  //         if (response.data.result.hasOwnProperty("cbox")) {
-  //           setBox(response.data.result.cbox);
-  //           setCorA("cbox");
-  //         } else if (response.data.result.hasOwnProperty("abox")) {
-  //           setBox(response.data.result.abox);
-  //           setCorA("abox");
-  //         }
-  //       } else {
-  //         alert("failed to");
-  //       }
-  //     });
-  // }, []);
+          if (response.data.result.hasOwnProperty("cbox")) {
+            setBox(response.data.result.cbox);
+            setCorA("cbox");
+          } else if (response.data.result.hasOwnProperty("abox")) {
+            setBox(response.data.result.abox);
+            setCorA("abox");
+          }
+        } else {
+          alert("failed to");
+        }
+      });
+  }, []);
 
   const [upFolderData, setUpFolderData] = useState({});
   // const [boxId, setBoxId] = useState(0);
