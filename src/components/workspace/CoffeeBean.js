@@ -325,9 +325,13 @@ const EnqState = styled.div`
   display: inline-block;
   width: 4rem;
   height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   vertical-align: center;
   background-color: hsl(234, 52%, 14%);
+
   color: white;
   font-family: "Noto Sans";
   font-style: normal;
@@ -337,10 +341,7 @@ const EnqState = styled.div`
   height: 1.5rem;
   border: 2px solid #2b234a;
   border-radius: 25px;
-  padding-top: 5px;
   margin-left: 1rem;
-  align-items: center;
-  justify-content: center;
 `;
 
 const EnqPreview = styled.p`

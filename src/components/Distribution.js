@@ -3,436 +3,477 @@ import React, { useState, useEffect } from "react";
 import { uToken } from "../components/TokenAtom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { DatePicker, Space, Button, Dropdown, Menu } from 'antd';
+import { DatePicker, Space, Button, Dropdown, Menu } from "antd";
 import Ximg from "../img/sideNavi/xImg.svg";
 import { nanoid } from "nanoid";
 
 const Distribution = (props) => {
-    const tokenValue = useRecoilValue(uToken);
+  const tokenValue = useRecoilValue(uToken);
 
-    const [startDateTime, setStartDateTime] = useState("Start Date and Time");
-    const [endDateTime, setEndDateTime] = useState("End Date and Time");
-    
-    useEffect(() => {
-        console.log("==DISTRIBUTE===");
-        console.log(props);
+  const [startDateTime, setStartDateTime] = useState("Start Date and Time");
+  const [endDateTime, setEndDateTime] = useState("End Date and Time");
 
-        axios.get(`/api/enq/dist/${props.enqId}`, {
-            headers: { Authorization: "Bearer " + String(tokenValue) },
-        })
-        .then((response) => {
-            if(response.data.isSuccess) {
-                console.log("distribution info: ", response.data);
-                // 기존 배포 정보 저장
-                if(response.data.result.quota !== 0) {
-                    setLimitQuota(true);
-                    setQuota(response.data.result.quota);
-                }
-                if(response.data.result.distType === "GPS") {
-                    setIsLink(false);
-                }
-                if(response.data.result.startDateTime === null && response.data.result.endDateTime !== null) {
-                    setSelectedOption("3");
-                    setButtonName("종료일만 설정");
-                    setEndDateTime(response.data.result.endDateTime.replace("T", " "));
-                } else if(response.data.result.startDateTime !== null && response.data.result.endDateTime === null) {
-                    setSelectedOption("2");
-                    setButtonName("시작일만 설정");
-                    setStartDateTime(response.data.result.startDateTime.replace("T", " "));
-                } else if(response.data.result.startDateTime !== null && response.data.result.endDateTime !== null) {
-                    setStartDateTime(response.data.result.startDateTime.replace("T", " "));
-                    setEndDateTime(response.data.result.endDateTime.replace("T", " "));
-                }
-                if(response.data.result.distRange !== null) {
-                    setRangeOption(response.data.result.distRange);
-                    let distRangeName = response.data.result.distRange;
-                    distRangeName += "m";
-                    setRangeName(distRangeName);
-                }
-            } else {
-                alert("failed to");
-            }
-        })
-        .catch(error => {
-            console.error("[ERROR] get distribution information: ", error);
-        });
-    }, []);
+  useEffect(() => {
+    console.log("==DISTRIBUTE===");
+    console.log(props);
 
-    const { RangePicker } = DatePicker;
-    const [firstDateStr, setFirstDateStr] = useState("");
-    const [secondDateStr, setSecondDateStr] = useState("");
-    const onChange = (value, dateString) => {
-      console.log('Selected Time: ', value);
-      console.log('Formatted Selected Time: ', dateString);
-      console.log(typeof(dateString));
-      if(typeof dateString === "string") {
-        setFirstDateStr(dateString);
-        setSecondDateStr("");
-      } else if(typeof dateString === "object") {
-        setFirstDateStr(dateString[0]);
-        setSecondDateStr(dateString[1]);
-      }
-    };
-    useEffect(() => {
-        console.log("====Date String====");
-        console.log(firstDateStr);
-        console.log(secondDateStr);
-    }, [firstDateStr, secondDateStr]);
-    const onOk = (value) => {
-      console.log('onOk: ', value);
-    };
-    
-    const items = [
-      {
-        key: "1",
-        label: "시작일과 종료일 설정"
-      },
-      {
-        key: "2",
-        label: "시작일만 설정"
-      },
-      {
-        key: "3",
-        label: "종료일만 설정"
-      }
-    ];
-    
-    const gps_ranges = [
-        {
-            key: "100",
-            label: "100m"
-        },
-        {
-            key: "200",
-            label: "200m"
-        },
-        {
-            key: "300",
-            label: "300m"
-        },
-        {
-            key: "400",
-            label: "400m"
-        },
-        {
-            key: "500",
-            label: "500m"
-        }
-    ];
-
-    const closeModal = () => {
-        props.clickDistriubtion();
-    };
-
-    const [selectedOption, setSelectedOption] = useState("1");
-    const [buttonName, setButtonName] = useState("시작일과 종료일 설정");
-    const handleOptionSelect = (option) => {
-        setSelectedOption(option.key);
-        const selectedLabel = items.find(item => item.key === option.key)?.label;
-        if (selectedLabel) {
-            setButtonName(selectedLabel);
-        }
-    };
-    useEffect(() => {
-        console.log("selected option: ", selectedOption);
-    }, [selectedOption]);
-
-    const [rangeOption, setRangeOption] = useState("100");
-    const [rangeName, setRangeName] = useState("100m");
-    const handleRangeSelect = (option) => {
-        setRangeOption(option.key);
-        const rangeSelectedLabel = gps_ranges.find(item => item.key === option.key)?.label;
-        if(rangeSelectedLabel) {
-            setRangeName(rangeSelectedLabel);
-        }
-    };
-    useEffect(() => {
-        console.log("selected range: ", rangeOption);
-    }, [rangeOption]);
-
-    const [limitQuota, setLimitQuota] = useState(false);
-    const [quota, setQuota] = useState(0); // 인원 제한 수를 저장하는 state
-    const handleNoLimitQuota = () => {
-        setLimitQuota(false);
-        setQuota(0);
-    };
-    const handleLimitQuota = () => {
-        setLimitQuota(true);
-    };
-    const handleQuotaChange = (e) => {
-        const parsedValue = parseInt(e.target.value);
-        if(parsedValue < 1) {
-            alert("1 이상의 숫자를 입력해주세요.");
-            e.target.value = "";
-        } else {
-            setQuota(parsedValue);
-        }
-    };
-    const handleKeyPress = (e) => {
-        const keyCode = e.keyCode || e.which;
-        const keyValue = String.fromCharCode(keyCode);
-        const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(keyValue);
-        const isSpecialChar = /[+\-=]/.test(keyValue);
-
-        if (isKorean || isSpecialChar) {
-            e.preventDefault();
-        }
-    };
-    useEffect(() => {
-        console.log("quota: ", quota);
-    }, [quota]);
-
-    const [isLink, setIsLink] = useState(true); // 링크배포 클릭 시 true / GPS 배포 클릭 시 false
-    const handleLink = () => {
-        setIsLink(true);
-    };
-    const handleGPS = () => {
-        setIsLink(false);
-    };
-    useEffect(() => {
-        console.log("isLink: ", isLink);
-    }, [isLink]);
-
-    const clickDistribute = (enqId) => {
-        let reqData = {};
-        let distType = "LINK";
-        if(isLink === false) {
-            distType = "GPS";
-        }
-        
-        let startTime = "";
-        let endTime = "";
-        if(selectedOption === "1") {
-            startTime = firstDateStr;
-            endTime = secondDateStr;
-            console.log("SET start time: ", startTime);
-            console.log("SET end time: ", endTime);
-        } else if(selectedOption === "2") {
-            startTime = firstDateStr
-            endTime = "";
-            console.log("SET start time: ", startTime);
-            console.log("SET end time: ", endTime);
-        } else if(selectedOption === "3") {
-            startTime = "";
-            endTime = firstDateStr
-            console.log("SET start time: ", startTime);
-            console.log("SET end time: ", endTime);
-        }
-        
-        if(isLink === false) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    reqData = {
-                        "distType": distType,
-                        "distInfo": {
-                            "quota": quota,
-                            "startDateTime": startTime,
-                            "endDateTime": endTime,
-                            "lat": lat,
-                            "lng": lng,
-                            "distRange": rangeOption
-                        }
-                    };
-
-                    axios.put(`/api/enq/dist/${enqId}`, reqData, {
-                        headers: { Authorization: "Bearer " + String(tokenValue) },
-                    })
-                    .then((response) => {
-                        if(response.data.isSuccess) {
-                            console.log("Distribute Enquete: ", response.data);
-                        } else {
-                            alert("failed to");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("[ERROR] distribute enquete: ", error);
-                    });
-                },
-                (error) => {
-                    console.log("[ERROR] GPS: ", error);
-                    alert("GPS 배포를 하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해줘야 합니다.");
-                }
+    axios
+      .get(`/api/enq/dist/${props.enqId}`, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        if (response.data.isSuccess) {
+          console.log("distribution info: ", response.data);
+          // 기존 배포 정보 저장
+          if (response.data.result.quota !== 0) {
+            setLimitQuota(true);
+            setQuota(response.data.result.quota);
+          }
+          if (response.data.result.distType === "GPS") {
+            setIsLink(false);
+          }
+          if (
+            response.data.result.startDateTime === null &&
+            response.data.result.endDateTime !== null
+          ) {
+            setSelectedOption("3");
+            setButtonName("종료일만 설정");
+            setEndDateTime(response.data.result.endDateTime.replace("T", " "));
+          } else if (
+            response.data.result.startDateTime !== null &&
+            response.data.result.endDateTime === null
+          ) {
+            setSelectedOption("2");
+            setButtonName("시작일만 설정");
+            setStartDateTime(
+              response.data.result.startDateTime.replace("T", " ")
             );
-        } else if(isLink === true) {
-            let distLink = nanoid();
-            reqData = {
-                "distType": distType,
-                "distInfo": {
-                    "quota": quota,
-                    "startDateTime": startTime,
-                    "endDateTime": endTime,
-                    "distLink": distLink
-                }
-            };
-            axios.put(`/api/enq/dist/${enqId}`, reqData, {
-                headers: { Authorization: "Bearer " + String(tokenValue) },
+          } else if (
+            response.data.result.startDateTime !== null &&
+            response.data.result.endDateTime !== null
+          ) {
+            setStartDateTime(
+              response.data.result.startDateTime.replace("T", " ")
+            );
+            setEndDateTime(response.data.result.endDateTime.replace("T", " "));
+          }
+          if (response.data.result.distRange !== null) {
+            setRangeOption(response.data.result.distRange);
+            let distRangeName = response.data.result.distRange;
+            distRangeName += "m";
+            setRangeName(distRangeName);
+          }
+        } else {
+          alert("failed to");
+        }
+      })
+      .catch((error) => {
+        console.error("[ERROR] get distribution information: ", error);
+      });
+  }, []);
+
+  const { RangePicker } = DatePicker;
+  const [firstDateStr, setFirstDateStr] = useState("");
+  const [secondDateStr, setSecondDateStr] = useState("");
+  const onChange = (value, dateString) => {
+    console.log("Selected Time: ", value);
+    console.log("Formatted Selected Time: ", dateString);
+    console.log(typeof dateString);
+    if (typeof dateString === "string") {
+      setFirstDateStr(dateString);
+      setSecondDateStr("");
+    } else if (typeof dateString === "object") {
+      setFirstDateStr(dateString[0]);
+      setSecondDateStr(dateString[1]);
+    }
+  };
+  useEffect(() => {
+    console.log("====Date String====");
+    console.log(firstDateStr);
+    console.log(secondDateStr);
+  }, [firstDateStr, secondDateStr]);
+  const onOk = (value) => {
+    console.log("onOk: ", value);
+  };
+
+  const items = [
+    {
+      key: "1",
+      label: "시작일과 종료일 설정",
+    },
+    {
+      key: "2",
+      label: "시작일만 설정",
+    },
+    {
+      key: "3",
+      label: "종료일만 설정",
+    },
+  ];
+
+  const gps_ranges = [
+    {
+      key: "100",
+      label: "100m",
+    },
+    {
+      key: "200",
+      label: "200m",
+    },
+    {
+      key: "300",
+      label: "300m",
+    },
+    {
+      key: "400",
+      label: "400m",
+    },
+    {
+      key: "500",
+      label: "500m",
+    },
+  ];
+
+  const closeModal = () => {
+    props.clickDistriubtion();
+  };
+
+  const [selectedOption, setSelectedOption] = useState("1");
+  const [buttonName, setButtonName] = useState("시작일과 종료일 설정");
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option.key);
+    const selectedLabel = items.find((item) => item.key === option.key)?.label;
+    if (selectedLabel) {
+      setButtonName(selectedLabel);
+    }
+  };
+  useEffect(() => {
+    console.log("selected option: ", selectedOption);
+  }, [selectedOption]);
+
+  const [rangeOption, setRangeOption] = useState("100");
+  const [rangeName, setRangeName] = useState("100m");
+  const handleRangeSelect = (option) => {
+    setRangeOption(option.key);
+    const rangeSelectedLabel = gps_ranges.find(
+      (item) => item.key === option.key
+    )?.label;
+    if (rangeSelectedLabel) {
+      setRangeName(rangeSelectedLabel);
+    }
+  };
+  useEffect(() => {
+    console.log("selected range: ", rangeOption);
+  }, [rangeOption]);
+
+  const [limitQuota, setLimitQuota] = useState(false);
+  const [quota, setQuota] = useState(0); // 인원 제한 수를 저장하는 state
+  const handleNoLimitQuota = () => {
+    setLimitQuota(false);
+    setQuota(0);
+  };
+  const handleLimitQuota = () => {
+    setLimitQuota(true);
+  };
+  const handleQuotaChange = (e) => {
+    const parsedValue = parseInt(e.target.value);
+    if (parsedValue < 1) {
+      alert("1 이상의 숫자를 입력해주세요.");
+      e.target.value = "";
+    } else {
+      setQuota(parsedValue);
+    }
+  };
+  const handleKeyPress = (e) => {
+    const keyCode = e.keyCode || e.which;
+    const keyValue = String.fromCharCode(keyCode);
+    const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(keyValue);
+    const isSpecialChar = /[+\-=]/.test(keyValue);
+
+    if (isKorean || isSpecialChar) {
+      e.preventDefault();
+    }
+  };
+  useEffect(() => {
+    console.log("quota: ", quota);
+  }, [quota]);
+
+  const [isLink, setIsLink] = useState(true); // 링크배포 클릭 시 true / GPS 배포 클릭 시 false
+  const handleLink = () => {
+    setIsLink(true);
+  };
+  const handleGPS = () => {
+    setIsLink(false);
+  };
+  useEffect(() => {
+    console.log("isLink: ", isLink);
+  }, [isLink]);
+
+  const clickDistribute = (enqId) => {
+    let reqData = {};
+    let distType = "LINK";
+    if (isLink === false) {
+      distType = "GPS";
+    }
+
+    let startTime = "";
+    let endTime = "";
+    if (selectedOption === "1") {
+      startTime = firstDateStr;
+      endTime = secondDateStr;
+      console.log("SET start time: ", startTime);
+      console.log("SET end time: ", endTime);
+    } else if (selectedOption === "2") {
+      startTime = firstDateStr;
+      endTime = "";
+      console.log("SET start time: ", startTime);
+      console.log("SET end time: ", endTime);
+    } else if (selectedOption === "3") {
+      startTime = "";
+      endTime = firstDateStr;
+      console.log("SET start time: ", startTime);
+      console.log("SET end time: ", endTime);
+    }
+
+    if (isLink === false) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          reqData = {
+            distType: distType,
+            distInfo: {
+              quota: quota,
+              startDateTime: startTime,
+              endDateTime: endTime,
+              lat: lat,
+              lng: lng,
+              distRange: rangeOption,
+            },
+          };
+
+          axios
+            .put(`/api/enq/dist/${enqId}`, reqData, {
+              headers: { Authorization: "Bearer " + String(tokenValue) },
             })
             .then((response) => {
-                if(response.data.isSuccess) {
-                    console.log("Distribute Enquete: ", response.data);
-                } else {
-                    alert("failed to");
-                }
+              if (response.data.isSuccess) {
+                console.log("Distribute Enquete: ", response.data);
+              } else {
+                alert("failed to");
+              }
             })
-            .catch(error => {
-                console.error("[ERROR] distribute enquete: ", error);
+            .catch((error) => {
+              console.error("[ERROR] distribute enquete: ", error);
             });
+        },
+        (error) => {
+          console.log("[ERROR] GPS: ", error);
+          alert(
+            "GPS 배포를 하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해줘야 합니다."
+          );
         }
+      );
+    } else if (isLink === true) {
+      let distLink = nanoid();
+      reqData = {
+        distType: distType,
+        distInfo: {
+          quota: quota,
+          startDateTime: startTime,
+          endDateTime: endTime,
+          distLink: distLink,
+        },
+      };
+      axios
+        .put(`/api/enq/dist/${enqId}`, reqData, {
+          headers: { Authorization: "Bearer " + String(tokenValue) },
+        })
+        .then((response) => {
+          if (response.data.isSuccess) {
+            console.log("Distribute Enquete: ", response.data);
+          } else {
+            alert("failed to");
+          }
+        })
+        .catch((error) => {
+          console.error("[ERROR] distribute enquete: ", error);
+        });
+    }
 
-        props.clickDistriubtion();
-    };
-    const clickDeleteDist = (enqId) => {
-        alert(enqId + ": click delete distribute");
-        props.clickDistriubtion();
-    };
-    const clickSaveDist = (enqId) => {
-        alert(enqId + ": click save distribute");
-        props.clickDistriubtion();
-    };
+    props.closeDistribute();
+  };
+  const clickDeleteDist = (enqId) => {
+    alert(enqId + ": click delete distribute");
+    props.clickDistriubtion();
+  };
+  const clickSaveDist = (enqId) => {
+    alert(enqId + ": click save distribute");
+    props.clickDistriubtion();
+  };
 
-    return (
-        <>
-        <Modal>
-            <XImg src={Ximg} onClick={closeModal} />
-            <NumWrapper>
-                <NumTitle>1. 인원제한</NumTitle>
-                <ToggleWrapper>
-                    <Toggle>
-                    <LeftToggle active={!limitQuota} onClick={handleNoLimitQuota}>
-                        제한없음
-                    </LeftToggle>
-                    <RightToggle active={limitQuota} onClick={handleLimitQuota}>
-                        제한있음
-                    </RightToggle>
-                    {limitQuota && (
-                        <InputBox>
-                        <Input onChange={handleQuotaChange} onKeyPress={handleKeyPress} placeholder={quota} />
-                        <InnerTitle
-                            style={{ marginRight: "15px", marginLeft: "0px" }}
-                        >
-                            명
-                        </InnerTitle>
-                        </InputBox>
-                    )}
-                    </Toggle>
-                </ToggleWrapper>
-            </NumWrapper>
+  return (
+    <>
+      <Modal>
+        <XImg src={Ximg} onClick={closeModal} />
+        <NumWrapper>
+          <NumTitle>1. 인원제한</NumTitle>
+          <ToggleWrapper>
+            <Toggle>
+              <LeftToggle active={!limitQuota} onClick={handleNoLimitQuota}>
+                제한없음
+              </LeftToggle>
+              <RightToggle active={limitQuota} onClick={handleLimitQuota}>
+                제한있음
+              </RightToggle>
+              {limitQuota && (
+                <InputBox>
+                  <Input
+                    onChange={handleQuotaChange}
+                    onKeyPress={handleKeyPress}
+                    placeholder={quota}
+                  />
+                  <InnerTitle
+                    style={{ marginRight: "15px", marginLeft: "0px" }}
+                  >
+                    명
+                  </InnerTitle>
+                </InputBox>
+              )}
+            </Toggle>
+          </ToggleWrapper>
+        </NumWrapper>
 
-            <NumWrapper>
-                <NumTitle style={{marginTop: "3rem"}}>2. 배포방식</NumTitle>
-                <ToggleWrapper>
-                    <Toggle>
-                        <LeftToggle active={isLink} onClick={handleLink}>
-                            링크배포
-                        </LeftToggle>
-                        <RightToggle active={!isLink} onClick={handleGPS}>
-                            GPS배포
-                        </RightToggle>
-                    </Toggle>
-                </ToggleWrapper>
+        <NumWrapper>
+          <NumTitle style={{ marginTop: "3rem" }}>2. 배포방식</NumTitle>
+          <ToggleWrapper>
+            <Toggle>
+              <LeftToggle active={isLink} onClick={handleLink}>
+                링크배포
+              </LeftToggle>
+              <RightToggle active={!isLink} onClick={handleGPS}>
+                GPS배포
+              </RightToggle>
+            </Toggle>
+          </ToggleWrapper>
 
-                <SetDateTime>
-                    <div>
-                        <Dropdown
-                            overlay={(
-                            <Menu onClick={handleOptionSelect}>
-                                {items.map(item => (
-                                <Menu.Item key={item.key}>{item.label}</Menu.Item>
-                                ))}
-                            </Menu>
-                            )}
-                        >
-                            <Button>{buttonName}</Button>
-                        </Dropdown>
-                    </div>
+          <SetDateTime>
+            <div>
+              <Dropdown
+                overlay={
+                  <Menu onClick={handleOptionSelect}>
+                    {items.map((item) => (
+                      <Menu.Item key={item.key}>{item.label}</Menu.Item>
+                    ))}
+                  </Menu>
+                }
+              >
+                <Button>{buttonName}</Button>
+              </Dropdown>
+            </div>
 
-                    <Space size={12}>
-                        {selectedOption === "1" && (
-                        <div>
-                            <GuideSetTime>* 날짜를 설정하지 않을 경우 즉시 배포되며, 직접 배포를 종료할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
-                            <RangePicker
-                                showTime={{
-                                    format: 'HH:mm',
-                                }}
-                                format="YYYY-MM-DD HH:mm"
-                                onChange={onChange}
-                                onOk={onOk}
-                                // placeholder={["Start Date and Time", "End Date and Time"]}
-                                placeholder={[startDateTime, endDateTime]}
-                            />
-                        </div>
-                        )}
-                        {selectedOption === "2" && (
-                        <div>
-                            <GuideSetTime>* 시작일만 설정할 경우 직접 배포를 종료할 때까지 배포가 종료되지 않습니다.</GuideSetTime>
-                                <DatePicker
-                                    showTime={{
-                                        format: "HH:mm",
-                                        showSecond: false,
-                                    }}
-                                    format="YYYY-MM-DD HH:mm"
-                                    onChange={onChange}
-                                    onOk={onOk}
-                                    // placeholder="Start Date and Time"
-                                    placeholder={startDateTime}
-                                />
-                        </div>
-                        )}
-                        {selectedOption === "3" && (
-                        <div>
-                            <GuideSetTime>* 종료일만 설정할 경우 즉시 배포됩니다.</GuideSetTime>
-                                <DatePicker
-                                    showTime={{
-                                        format: "HH:mm",
-                                        showSecond: false,
-                                    }}
-                                    format="YYYY-MM-DD HH:mm"
-                                    onChange={onChange}
-                                    onOk={onOk}
-                                    // placeholder="End Date and Time"
-                                    placeholder={endDateTime}
-                                />
-                        </div>
-                        )}
-                    </Space>
-                </SetDateTime>
-                {!isLink && (
-                    <SetGPSRange>
-                        <div>여기서부터 반경</div>
-                        <div style={{marginTop: "-0.4rem", marginLeft: "1rem"}}>
-                            <Dropdown
-                                overlay={(
-                                <Menu onClick={handleRangeSelect}>
-                                    {gps_ranges.map(item => (
-                                    <Menu.Item key={item.key}>{item.label}</Menu.Item>
-                                    ))}
-                                </Menu>
-                                )}
-                            >
-                                <Button>{rangeName}</Button>
-                            </Dropdown>
-                        </div>
-                    </SetGPSRange>
-                )}
-            </NumWrapper>
+            <Space size={12}>
+              {selectedOption === "1" && (
+                <div>
+                  <GuideSetTime>
+                    * 날짜를 설정하지 않을 경우 즉시 배포되며, 직접 배포를
+                    종료할 때까지 배포가 종료되지 않습니다.
+                  </GuideSetTime>
+                  <RangePicker
+                    showTime={{
+                      format: "HH:mm",
+                    }}
+                    format="YYYY-MM-DD HH:mm"
+                    onChange={onChange}
+                    onOk={onOk}
+                    // placeholder={["Start Date and Time", "End Date and Time"]}
+                    placeholder={[startDateTime, endDateTime]}
+                  />
+                </div>
+              )}
+              {selectedOption === "2" && (
+                <div>
+                  <GuideSetTime>
+                    * 시작일만 설정할 경우 직접 배포를 종료할 때까지 배포가
+                    종료되지 않습니다.
+                  </GuideSetTime>
+                  <DatePicker
+                    showTime={{
+                      format: "HH:mm",
+                      showSecond: false,
+                    }}
+                    format="YYYY-MM-DD HH:mm"
+                    onChange={onChange}
+                    onOk={onOk}
+                    // placeholder="Start Date and Time"
+                    placeholder={startDateTime}
+                  />
+                </div>
+              )}
+              {selectedOption === "3" && (
+                <div>
+                  <GuideSetTime>
+                    * 종료일만 설정할 경우 즉시 배포됩니다.
+                  </GuideSetTime>
+                  <DatePicker
+                    showTime={{
+                      format: "HH:mm",
+                      showSecond: false,
+                    }}
+                    format="YYYY-MM-DD HH:mm"
+                    onChange={onChange}
+                    onOk={onOk}
+                    // placeholder="End Date and Time"
+                    placeholder={endDateTime}
+                  />
+                </div>
+              )}
+            </Space>
+          </SetDateTime>
+          {!isLink && (
+            <SetGPSRange>
+              <div>여기서부터 반경</div>
+              <div style={{ marginTop: "-0.4rem", marginLeft: "1rem" }}>
+                <Dropdown
+                  overlay={
+                    <Menu onClick={handleRangeSelect}>
+                      {gps_ranges.map((item) => (
+                        <Menu.Item key={item.key}>{item.label}</Menu.Item>
+                      ))}
+                    </Menu>
+                  }
+                >
+                  <Button>{rangeName}</Button>
+                </Dropdown>
+              </div>
+            </SetGPSRange>
+          )}
+        </NumWrapper>
 
-            {props.enqStatus === "ENQ_MAKE" && (
-                <BtnWrapper>
-                    <SaveBtn onClick={() => clickDistribute(props.enqId)}>배포하기</SaveBtn>
-                </BtnWrapper>
-            )}
-            {props.enqStatus === "DIST_WAIT" && (
-                <BtnWrapper>
-                    <SaveBtn onClick={() => clickSaveDist(props.enqId)}>저장하기</SaveBtn>
-                    <SaveBtn style={{marginLeft: "1.5rem"}} onClick={() => clickDeleteDist(props.enqId)}>삭제하기</SaveBtn>
-                </BtnWrapper>
-            )}
-        </Modal>
-        </>
-    );
-}
+        {props.enqStatus === "ENQ_MAKE" && (
+          <BtnWrapper>
+            <SaveBtn onClick={() => clickDistribute(props.enqId)}>
+              배포하기
+            </SaveBtn>
+          </BtnWrapper>
+        )}
+        {props.enqStatus === "DIST_WAIT" && (
+          <BtnWrapper>
+            <SaveBtn onClick={() => clickSaveDist(props.enqId)}>
+              저장하기
+            </SaveBtn>
+            <SaveBtn
+              style={{ marginLeft: "1.5rem" }}
+              onClick={() => clickDeleteDist(props.enqId)}
+            >
+              삭제하기
+            </SaveBtn>
+          </BtnWrapper>
+        )}
+      </Modal>
+    </>
+  );
+};
 export default Distribution;
 
 const Modal = styled.div`
@@ -458,10 +499,10 @@ const Modal = styled.div`
 `;
 
 const XImg = styled.img`
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    cursor: pointer;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
 `;
 
 // 1번, 2번 wrapper
@@ -556,9 +597,9 @@ const InputBox = styled.div`
 const Input = styled.input.attrs({ type: "number", min: 1 })`
   width: 3em;
   height: 1.7em;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 10px;
-  border: 1px solid #BFBFBF;
+  border: 1px solid #bfbfbf;
   margin-left: 25px;
   text-align: center;
   font-size: 1rem;
@@ -572,40 +613,40 @@ const InnerTitle = styled.p`
 `;
 
 const SetDateTime = styled.div`
-    margin-top: 1.5rem;
-    margin-left: 4rem;
+  margin-top: 1.5rem;
+  margin-left: 4rem;
 `;
 
 const GuideSetTime = styled.div`
-    font-family: 'Noto Sans';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 7px;
-    line-height: 10px;
-    display: flex;
-    align-items: center;
-    color: #6F6A6A;
-    margin-bottom: 1rem;
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 7px;
+  line-height: 10px;
+  display: flex;
+  align-items: center;
+  color: #6f6a6a;
+  margin-bottom: 1rem;
 `;
 
 const SetGPSRange = styled.div`
-    display: flex;
-    flex-direction: row;
-    margin-top: 1.5rem;
-    margin-left: 4rem;
+  display: flex;
+  flex-direction: row;
+  margin-top: 1.5rem;
+  margin-left: 4rem;
 `;
 
 const BtnWrapper = styled.div`
-    margin: auto auto 2.5rem auto;
+  margin: auto auto 2.5rem auto;
 `;
 
 const SaveBtn = styled.button`
-    padding: 9px 21px;
-    background-color: #FFFFFF;
-    border: 1.5px solid #1A2051;
-    border-radius: 35px;
-    color: #1A2051;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
+  padding: 9px 21px;
+  background-color: #ffffff;
+  border: 1.5px solid #1a2051;
+  border-radius: 35px;
+  color: #1a2051;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
 `;
