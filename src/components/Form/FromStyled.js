@@ -136,14 +136,17 @@ export const QstTitle = styled.div`
 `;
 
 export const QstAnswer = styled.textarea`
-  width: 40rem;
+  width: 95%;
   height: 6rem;
-  border: none; /* 왼쪽 정렬을 설정합니다 */
+  border: none;
   vertical-align: top;
   margin-left: -1rem;
   outline: none;
+  resize: none; /* Disable resizing */
+  padding: 20px;
+  font-size: 15px;
+  border-radius: 10px;
 `;
-
 export const OptBox = styled.div`
   margin-left: 30px;
   margin-bottom: 10px;

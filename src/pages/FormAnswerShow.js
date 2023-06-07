@@ -12,7 +12,8 @@ import { uToken } from "../components/TokenAtom";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import LeftArrow from "../img/memberPage/left_arrow.svg";
 let ALL = {};
 const DATA = [];
 
@@ -82,8 +83,14 @@ const FormQuestion = (props) => {
       (answer) => answer.qstId === qstId
     );
     if (answerIndex !== -1) {
+      const removedArr = props.answerArr.filter(
+        (answer) => answer.qstId !== qstId
+      );
+      console.log("왜안돼");
+      console.log(removedArr);
+      props.onUpdateArray([...removedArr, newAnswer]);
     } else {
-      props.onUpdateArray([...props.answerArr, newAnswer]);
+      props.onUpdateArray([...props.qstArr, newAnswer]);
     }
 
     console.log(props.answerArr);
@@ -92,6 +99,7 @@ const FormQuestion = (props) => {
   const onChange = (e) => {
     e.preventDefault();
     setText(e.target.value);
+    console.log(e.target.value);
   };
 
   return (
@@ -310,7 +318,12 @@ function FormAnswer() {
         <FormSection>
           <Header>
             <HeaderHalf direction="left">
-              <Menu></Menu>
+              <Menu>
+                {" "}
+                <Link to={`/workspace/abox/${aboxId}`}>
+                  <ArrowNavButton src={LeftArrow} />
+                </Link>
+              </Menu>
             </HeaderHalf>
             <HeaderHalf direction="right">
               <HeadBtn>
@@ -495,4 +508,12 @@ const HeadBtn = styled.div`
 
 const QstBtn = styled.div`
   margin-left: 10px;
+`;
+const ArrowNavButton = styled.img`
+  margin-top: 34px;
+  margin-left: 2vw;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
 `;

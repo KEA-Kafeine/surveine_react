@@ -4,9 +4,14 @@ import styled from "styled-components";
 import * as t from "../Form/FromStyled";
 import Arrow from "../../img/form/Arrow.svg";
 import Ximg from "../../img/sideNavi/xImg.svg";
+import { useRecoilValue } from "recoil";
+import { uToken } from "../../components/TokenAtom";
+const ALL = {};
 const PickModal = (props) => {
   const [num, setNum] = useState(0);
   const [type, setType] = useState("선착순");
+  const tokenValue = useRecoilValue(uToken);
+  const enqId = props.enqId;
 
   const selectType = (e) => {
     setType(e.target.value);
@@ -18,6 +23,18 @@ const PickModal = (props) => {
   };
   const closeModal = () => {
     props.clickPick();
+  };
+
+  const onClickPick = () => {
+    ALL.enqId = enqId;
+    ALL.num = num;
+    axios
+      .post(`/api/ans/pick/order`, ALL, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        console.log(response);
+      });
   };
   return (
     <>
@@ -31,7 +48,7 @@ const PickModal = (props) => {
               <option id="checkBox">선착순</option>
               <option>랜덤</option>
             </TypeDropDown>
-            <PickButton>추첨</PickButton>
+            <PickButton onClick={onClickPick}>추첨</PickButton>
           </Menu>
           <PickedScreen />
         </Main>
