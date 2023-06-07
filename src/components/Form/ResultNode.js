@@ -6,6 +6,9 @@ import Ryan from "../../img/form/ryanface.png";
 import ResultNodeChart from "./ResultNodeChart";
 const ResultNode = (props) => {
   const [isVisible, setVisible] = useState(false);
+
+  console.log(props.data.qst.options);
+  console.log(props.data.qstResult);
   return (
     <div
       onMouseEnter={() => setVisible(true)}
@@ -40,33 +43,67 @@ const ResultNode = (props) => {
       </NodeToolbar>
       {props.data.qst.branch ? (
         <NodeBranchStyled backgroundColor={props.data.color}>
-          <Tag>
+          <TagEssen>
             {" "}
             {props.data.qst.anonymous ? (
               <RyanImg src={RyanAnony} alt="" />
             ) : (
               <RyanImg src={Ryan} alt="" />
             )}{" "}
-          </Tag>
-          <TagEssen> {props.data.qst.essential ? "⚠️" : ""}</TagEssen>
-          {props.data.qst.qstTitle.length > 15
-            ? `${props.data.qst.qstTitle.slice(0, 15)}...`
-            : props.data.qst.qstTitle}{" "}
+            {props.data.qst.essential ? "⚠️" : ""}
+          </TagEssen>
+          {props.data.qst.qstTitle}
+
+          {props.data.qst.options.map((option) => {
+            const resultIndex = props.data.qstResult.qstAnsKind.all.findIndex(
+              (result) => result.optId === option.optionId
+            );
+            const optionContent = option.optionContent;
+            const result =
+              resultIndex !== -1
+                ? props.data.qstResult.qstAnsKind.all[resultIndex].optCnt
+                : "";
+
+            return (
+              <p key={option.optionId}>
+                <ResultText textLength={optionContent.length}>
+                  {optionContent} <ResultCnt>{result}</ResultCnt>
+                </ResultText>
+              </p>
+            );
+          })}
         </NodeBranchStyled>
       ) : (
         <NodeStyled>
-          <Tag>
+          <TagEssen>
             {" "}
             {props.data.qst.anonymous ? (
               <RyanImg src={RyanAnony} alt="" />
             ) : (
               <RyanImg src={Ryan} alt="" />
             )}{" "}
-          </Tag>
-          <TagEssen> {props.data.qst.essential ? "⚠️" : ""}</TagEssen>
-          {props.data.qst.qstTitle.length > 15
-            ? `${props.data.qst.qstTitle.slice(0, 15)}...`
-            : props.data.qst.qstTitle}{" "}
+            {props.data.qst.essential ? "⚠️" : ""}
+          </TagEssen>
+          {props.data.qst.qstTitle}
+
+          {props.data.qst.options.map((option) => {
+            const resultIndex = props.data.qstResult.qstAnsKind.all.findIndex(
+              (result) => result.optId === option.optionId
+            );
+            const optionContent = option.optionContent;
+            const result =
+              resultIndex !== -1
+                ? props.data.qstResult.qstAnsKind.all[resultIndex].optCnt
+                : "";
+
+            return (
+              <p key={option.optionId}>
+                <ResultText>
+                  {optionContent} <ResultCnt>{result}</ResultCnt>
+                </ResultText>
+              </p>
+            );
+          })}
         </NodeStyled>
       )}
       <Handle type="target" position={Position.Bottom} />
@@ -98,12 +135,13 @@ const RyanImg = styled.img`
   height: 30px;
 `;
 const NodeStyled = styled.div`
-  height: 20px;
+  width: 150px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 10px;
-  background-color: red;
+  background-color: #1a2051;
   background-blend-mode: soft-light, normal;
   box-shadow: -2.5px -2.5px 5px #fafbff, 2.5px 2.5px 5px #a6abbd;
   border-radius: 20px;
@@ -114,8 +152,9 @@ const NodeStyled = styled.div`
 `;
 
 const NodeBranchStyled = styled.div`
-  height: 20px;
+  width: 150px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 10px;
@@ -139,10 +178,12 @@ const Tag = styled.div`
 `;
 
 const TagEssen = styled.div`
+  width: 100%;
   height: 30px;
   padding-right: 10px;
   padding-bottom: 5px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
   font-size: 30px;
   border-radius: 3px;
   color: white;
@@ -188,4 +229,28 @@ const Answer = styled.div`
   width: 140px;
 
   font-size: 10px;
+`;
+
+const ResultText = styled.div`
+  width: 150px;
+  font-size: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 3px;
+  padding: 3px;
+  color: black;
+`;
+const ResultCnt = styled.div`
+  margin-left: 10px;
+  width: 10px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  background-color: #b1bfc7;
+  color: black;
+  padding: 2px;
 `;
