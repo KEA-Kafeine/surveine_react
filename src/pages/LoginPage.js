@@ -51,7 +51,8 @@ const LoginPage = () => {
           if (state != null) {
             navigate(state.from);
           } else {
-            navigate("/workspace");
+            // navigate("/workspace");
+            navigate(`/workspace/cbox/0`);
           } // TODO: /workspace
         } else {
           // 로그인 실패

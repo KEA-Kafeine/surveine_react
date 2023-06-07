@@ -94,10 +94,10 @@ function SandBoxPage() {
       <cm.TopBarDark>
         <cm.TopBar_Menu_left>
           {" "}
-          <cm.WLogo style={{cursor: "pointer"}} onClick={() => navigate("/workspace")} />
+          <cm.WLogo style={{cursor: "pointer"}} onClick={() => navigate("/workspace/cbox/0")} />
         </cm.TopBar_Menu_left>
         <cm.TopBar_menu style={{ marginLeft: "5rem" }}>
-          <cm.TopBar_menu_item_dark style={{cursor: "pointer"}} onClick={() => navigate("/workspace")}>Work Space</cm.TopBar_menu_item_dark>
+          <cm.TopBar_menu_item_dark style={{cursor: "pointer"}} onClick={() => navigate("/workspace/cbox/0")}>Work Space</cm.TopBar_menu_item_dark>
           <cm.TopBar_menu_item_dark style={{cursor: "pointer"}} onClick={() => navigate("/sandbox")}>Sand Box</cm.TopBar_menu_item_dark>
         </cm.TopBar_menu>
         <cm.TopBar_Menu_right>

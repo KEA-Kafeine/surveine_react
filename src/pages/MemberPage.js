@@ -130,7 +130,7 @@ function MemberPage() {
   };
 
   const clickLeftArrowBtn = () => {
-    navigate("/workspace");
+    navigate("/workspace/cbox/0");
   };
 
   const clickChangePassword = () => {
@@ -174,13 +174,13 @@ function MemberPage() {
           {" "}
           <cm.WLogo
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("/workspace")}
+            onClick={() => navigate("/workspace/cbox/0")}
           />
         </cm.TopBar_Menu_left>
         <cm.TopBar_menu style={{ marginLeft: "5rem" }}>
           <cm.TopBar_menu_item_dark
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("/workspace")}
+            onClick={() => navigate("/workspace/cbox/0")}
           >
             Work Space
           </cm.TopBar_menu_item_dark>

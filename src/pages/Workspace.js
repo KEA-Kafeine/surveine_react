@@ -99,14 +99,16 @@ function Workspace() {
     console.log("===WHY NOT===");
     console.log(folderData);
     setUpFolderData(folderData);
-    // if(folderData.hasOwnProperty("cboxId")) {
-    //   setBoxId(folderData.cboxId);
-    //   console.log(folderData.cboxId);
-    //   // navigate(`/workspace/${folderData.cboxId}`);
-    // } else if(folderData.hasOwnProperty("aboxId")) {
-    //   setBoxId(folderData.aboxId);
-    //   // navigate(`/workspace/${folderData.aboxId}`);
-    // }
+
+    // URL: workspace/${folderId}
+    if(folderData.hasOwnProperty("cboxId")) {
+      // setBoxId(folderData.cboxId);
+      // console.log("FOLDER ID: ", folderData.cboxId);
+      navigate(`/workspace/cbox/${folderData.cboxId}`);
+    } else if(folderData.hasOwnProperty("aboxId")) {
+      // setBoxId(folderData.aboxId);
+      navigate(`/workspace/abox/${folderData.aboxId}`);
+    }
   };
 
   useEffect(() => {
@@ -162,7 +164,7 @@ function Workspace() {
           <cm.TopBar_menu style={{ marginLeft: "5rem" }}>
             <cm.TopBar_menu_item
               style={{ cursor: "pointer" }}
-              onClick={() => navigate("/workspace")}
+              onClick={() => navigate("/workspace/cbox/0")}
             >
               Work Space
             </cm.TopBar_menu_item>
