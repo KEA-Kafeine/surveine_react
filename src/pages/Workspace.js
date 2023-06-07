@@ -426,7 +426,7 @@ const SubInfoBottom = styled.div`
 
 const MapWrapper = styled.div`
   position: absolute;
-  right: 2rem;
+  right: 1.7vw;
   bottom: 2vh;
   width: 25vw;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
