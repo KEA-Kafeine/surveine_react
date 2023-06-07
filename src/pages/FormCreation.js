@@ -23,6 +23,7 @@ import CustomNode from "../components/Form/CustomNode";
 import { useNavigate } from "react-router-dom";
 import DnDFlow from "../components/Form/DnDFlow";
 import PickModal from "../components/Form/PickModal";
+import LeftArrow from "../img/memberPage/left_arrow.svg";
 const ALL = {};
 const DATA = [];
 const colors = [
@@ -313,6 +314,10 @@ function FormCreation() {
       }))
     );
   }
+
+  const clickLeftArrowBtn = () => {
+    navigate("/workspace");
+  };
 
   //브랜치 설정
   const onToggle = (e) => {
@@ -626,6 +631,7 @@ function FormCreation() {
       {blur && <GrayBackground />}
       <FormMain blur={blur}>
         <FormSection>
+          <ArrowNavButton src={LeftArrow} onClick={clickLeftArrowBtn} />
           <Header>
             <HeaderHalf direction="left">
               <Menu>
@@ -1056,4 +1062,12 @@ const HeadBtn = styled.div`
 
 const QstBtn = styled.div`
   margin-left: 10px;
+`;
+const ArrowNavButton = styled.img`
+  margin-top: 2vh;
+  margin-left: 2vw;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 `;

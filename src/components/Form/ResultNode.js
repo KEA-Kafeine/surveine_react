@@ -6,6 +6,11 @@ import Ryan from "../../img/form/ryanface.png";
 import ResultNodeChart from "./ResultNodeChart";
 const ResultNode = (props) => {
   const [isVisible, setVisible] = useState(false);
+  const [toggle, setToggle] = useState(false);
+
+  const clickNode = () => {
+    setToggle(!toggle);
+  };
 
   console.log(props.data.qst.options);
   console.log(props.data.qstResult);
@@ -42,7 +47,10 @@ const ResultNode = (props) => {
         </Tooltip>
       </NodeToolbar>
       {props.data.qst.branch ? (
-        <NodeBranchStyled backgroundColor={props.data.color}>
+        <NodeBranchStyled
+          backgroundColor={props.data.color}
+          onClick={clickNode}
+        >
           <TagEssen>
             {" "}
             {props.data.qst.anonymous ? (
@@ -54,27 +62,32 @@ const ResultNode = (props) => {
           </TagEssen>
           {props.data.qst.qstTitle}
 
-          {props.data.qst.options.map((option) => {
-            const resultIndex = props.data.qstResult.qstAnsKind.all.findIndex(
-              (result) => result.optId === option.optionId
-            );
-            const optionContent = option.optionContent;
-            const result =
-              resultIndex !== -1
-                ? props.data.qstResult.qstAnsKind.all[resultIndex].optCnt
-                : "";
+          {toggle && (
+            <>
+              {props.data.qst.options.map((option) => {
+                const resultIndex =
+                  props.data.qstResult.qstAnsKind.all.findIndex(
+                    (result) => result.optId === option.optionId
+                  );
+                const optionContent = option.optionContent;
+                const result =
+                  resultIndex !== -1
+                    ? props.data.qstResult.qstAnsKind.all[resultIndex].optCnt
+                    : "";
 
-            return (
-              <p key={option.optionId}>
-                <ResultText textLength={optionContent.length}>
-                  {optionContent} <ResultCnt>{result}</ResultCnt>
-                </ResultText>
-              </p>
-            );
-          })}
+                return (
+                  <p key={option.optionId}>
+                    <ResultText textLength={optionContent.length}>
+                      {optionContent} <ResultCnt>{result}</ResultCnt>
+                    </ResultText>
+                  </p>
+                );
+              })}
+            </>
+          )}
         </NodeBranchStyled>
       ) : (
-        <NodeStyled>
+        <NodeStyled onClick={clickNode}>
           <TagEssen>
             {" "}
             {props.data.qst.anonymous ? (
@@ -86,24 +99,29 @@ const ResultNode = (props) => {
           </TagEssen>
           {props.data.qst.qstTitle}
 
-          {props.data.qst.options.map((option) => {
-            const resultIndex = props.data.qstResult.qstAnsKind.all.findIndex(
-              (result) => result.optId === option.optionId
-            );
-            const optionContent = option.optionContent;
-            const result =
-              resultIndex !== -1
-                ? props.data.qstResult.qstAnsKind.all[resultIndex].optCnt
-                : "";
+          {toggle && (
+            <>
+              {props.data.qst.options.map((option) => {
+                const resultIndex =
+                  props.data.qstResult.qstAnsKind.all.findIndex(
+                    (result) => result.optId === option.optionId
+                  );
+                const optionContent = option.optionContent;
+                const result =
+                  resultIndex !== -1
+                    ? props.data.qstResult.qstAnsKind.all[resultIndex].optCnt
+                    : "";
 
-            return (
-              <p key={option.optionId}>
-                <ResultText>
-                  {optionContent} <ResultCnt>{result}</ResultCnt>
-                </ResultText>
-              </p>
-            );
-          })}
+                return (
+                  <p key={option.optionId}>
+                    <ResultText>
+                      {optionContent} <ResultCnt>{result}</ResultCnt>
+                    </ResultText>
+                  </p>
+                );
+              })}
+            </>
+          )}
         </NodeStyled>
       )}
       <Handle type="target" position={Position.Bottom} />
