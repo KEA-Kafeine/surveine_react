@@ -22,7 +22,7 @@ function LandingPage() {
       }
 
       const landingView = document.getElementById("landing-view");
-      if(landingView && scrollTop > landingView.offsetTop - window.innerHeight/2) {
+      if (landingView && scrollTop > landingView.offsetTop - window.innerHeight / 2) {
         setFadeIn(true);
       }
     }
@@ -56,7 +56,7 @@ function LandingPage() {
             <cm.BLogo style={{ margin: "10px" }} />
           </div>
           <h2 style={{ margin: "0px", FontFace: "Inter" }}>Powerful Form Creation Service.</h2>
-          <GradationAnimation style={{display: "flex", marginTop: "50px"}}>
+          <GradationAnimation style={{ display: "flex", marginTop: "50px" }}>
             <MemoPad />
             <H1Text2 style={{ marginLeft: "100px" }}>
               <br />
@@ -79,7 +79,7 @@ function LandingPage() {
                 <br />
               </H1Text2>
               <cm.LinkNone
-                to="https://beneficial-structure-ef5.notion.site/How-to-Make-SurVeine-93d3249b77d94d34ba2ff006d2c0b1cd"
+                to="https://beneficial-structure-ef5.notion.site/Surveine-4f561f4e21a742c1a3ecdb23db9b3ac7?pvs=4"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -116,11 +116,7 @@ function LandingPage() {
                 <br />
                 설문 공유
               </H1Text2>
-              <cm.LinkNone
-                to="https://beneficial-structure-ef5.notion.site/How-to-Make-SurVeine-93d3249b77d94d34ba2ff006d2c0b1cd"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <cm.LinkNone to="https://beneficial-structure-ef5.notion.site/a49db4ffe60e499ba0b74409c036a366" target="_blank" rel="noopener noreferrer">
                 <cm.BtnBlue
                   style={{
                     width: "20rem",
@@ -197,7 +193,7 @@ const LandingView = styled.div`
 
   opacity: 0;
   visibility: hidden;
-  ${({fadeIn}) =>
+  ${({ fadeIn }) =>
     fadeIn &&
     css`
       animation: ${FadeInAnimation} 1s ease-in-out forwards;
