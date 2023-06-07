@@ -115,7 +115,7 @@ const EditModal = (props) => {
         console.log("enq name: " + enqName);
 
         // 커피콩 이름 변경: cbox에서만 가능 (abox에 관한 것 따로 구현 X)
-        axios.put(`/api/wspace/enq/rename/${props.enqId}`, {"enqName": enqName}, {
+        axios.put(`/api/enq/rename/${props.enqId}`, {"enqName": enqName}, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
@@ -137,7 +137,7 @@ const EditModal = (props) => {
         console.log(selectedFolder);
         console.log("id: ", selectedFolder.cboxId);
 
-        axios.put(`/api/wspace/enq/move/${props.enqId}`, {"cboxId": selectedFolder.cboxId}, {
+        axios.put(`/api/enq/move/${props.enqId}`, {"cboxId": selectedFolder.cboxId}, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
@@ -175,7 +175,7 @@ const EditModal = (props) => {
         console.log(confirmRep);
 
         // 커피콩 복제: cbox에서만 가능 (abox에 관한 것 따로 구현 X)
-        axios.put(`/api/wspace/enq/replic/${props.enqId}`, {
+        axios.put(`/api/enq/replic/${props.enqId}`, null, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {
@@ -233,7 +233,7 @@ const EditModal = (props) => {
         console.log(confirmShare);
 
         // 커피콩 공유여부: cbox에서만 가능 (abox에 관한 것 따로 구현 X)
-        axios.put(`/api/wspace/enq/share/${props.enqId}`, null, {
+        axios.put(`/api/enq/share/${props.enqId}`, null, {
             headers: { Authorization: "Bearer " + String(tokenValue) },
         })
         .then((response) => {

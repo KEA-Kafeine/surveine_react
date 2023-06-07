@@ -96,7 +96,7 @@ function CoffeeBeanList(props) {
               >
                 <CoffeeBean
                   cbId={coffeeBean.ansId}
-                  cbName={coffeeBean.enqName}
+                  cbName={coffeeBean.enqTitle}
                   cbStatus={coffeeBean.ansStatus}
                   distType={coffeeBean.distType}
                   updateDate={coffeeBean.updateDate}
@@ -135,8 +135,8 @@ function CoffeeBeanList(props) {
             >
               <CoffeeBean
                 cbId={coffeeBean.enq.enqId}
-                cbName={coffeeBean.enq.enqName}
-                cbStatus={coffeeBean.enq.enqStatus}
+                cbName={coffeeBean.enq.enqTitle}
+                cbStatus={coffeeBean.ansStatus}
                 updateDate={coffeeBean.enq.updateDate}
                 distance={coffeeBean.distance}
                 distType="GPS"
