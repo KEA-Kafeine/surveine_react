@@ -33,7 +33,7 @@ import { DownOutlined, UpOutlined } from "@ant-design/icons";
 function Workspace() {
   const tokenValue = useRecoilValue(uToken);
   const navigate = useNavigate();
-  let { boxId } = useParams();
+  let { boxType, boxId } = useParams();
 
   // back이랑 소통할 때!
   const [resp, setResp] = useState({});
@@ -60,6 +60,7 @@ function Workspace() {
   //   console.log(CorA);
   // }, []);
 
+  console.log("망할" + boxType);
   // const [memName, setMemName] = useState("");
   // const [cbList, setCbList] = useState([]);
   // const [abList, setAbList] = useState([]);
@@ -69,7 +70,7 @@ function Workspace() {
   // back이랑 소통할 때!
   useEffect(() => {
     axios
-      .get(`/api/wspace/cbox/${boxId}`, {
+      .get(`/api/wspace/${boxType}/${boxId}`, {
         headers: { Authorization: "Bearer " + String(tokenValue) },
       })
       .then((response) => {

@@ -26,8 +26,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotpwPage />} />
         {/* <Route path="/workspace" exact element={<Workspace />} /> */}
-        <Route path="/workspace/cbox/:boxId" element={<Workspace />} />
-        <Route path="/workspace/abox/:boxId" element={<Workspace />} />
+        <Route path="/workspace/:boxType/:boxId" element={<Workspace />} />
         <Route path="/mypage" element={<MemberPage />} />
         <Route path="/create/:cboxId" element={<FormCreation />} />
         <Route path="/create/:cboxId/:enqId" element={<FormCreation />} />
