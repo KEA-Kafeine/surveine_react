@@ -130,12 +130,15 @@ function CoffeeBeanList(props) {
       {props.boxType === "gbox" && (
         <FormList>
           {data.map((coffeeBean) => (
-            <CBContainer key={coffeeBean.enqId}>
+            <CBContainer
+              key={coffeeBean.enq.enqId}
+            >
               <CoffeeBean
-                cbId={coffeeBean.enqId}
-                cbName={coffeeBean.enqName}
-                cbStatus={coffeeBean.enqStatus}
-                updateDate={coffeeBean.updateDate}
+                cbId={coffeeBean.enq.enqId}
+                cbName={coffeeBean.enq.enqName}
+                cbStatus={coffeeBean.enq.enqStatus}
+                updateDate={coffeeBean.enq.updateDate}
+                distance={coffeeBean.distance}
                 distType="GPS"
                 abList={aboxList}
                 type="gbox"
