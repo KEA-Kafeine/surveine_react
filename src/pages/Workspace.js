@@ -64,34 +64,34 @@ function Workspace() {
   // const [box, setBox] = useState({});
   // const [CorA, setCorA] = useState("");
 
-  // back이랑 소통할 때!
-  useEffect(() => {
-    axios
-      .get("/api/wspace/cbox/0", {
-        headers: { Authorization: "Bearer " + String(tokenValue) },
-      })
-      .then((response) => {
-        if (response.data) {
-          console.log("====FIRST====");
-          console.log(response.data);
-          console.log(response.data.result);
+  // // back이랑 소통할 때!
+  // useEffect(() => {
+  //   axios
+  //     .get("/api/wspace/cbox/0", {
+  //       headers: { Authorization: "Bearer " + String(tokenValue) },
+  //     })
+  //     .then((response) => {
+  //       if (response.data) {
+  //         console.log("====FIRST====");
+  //         console.log(response.data);
+  //         console.log(response.data.result);
 
-          setMemName(response.data.result.memName);
-          setCbList(response.data.result.cboxList);
-          setAbList(response.data.result.aboxList);
+  //         setMemName(response.data.result.memName);
+  //         setCbList(response.data.result.cboxList);
+  //         setAbList(response.data.result.aboxList);
 
-          if (response.data.result.hasOwnProperty("cbox")) {
-            setBox(response.data.result.cbox);
-            setCorA("cbox");
-          } else if (response.data.result.hasOwnProperty("abox")) {
-            setBox(response.data.result.abox);
-            setCorA("abox");
-          }
-        } else {
-          alert("failed to");
-        }
-      });
-  }, []);
+  //         if (response.data.result.hasOwnProperty("cbox")) {
+  //           setBox(response.data.result.cbox);
+  //           setCorA("cbox");
+  //         } else if (response.data.result.hasOwnProperty("abox")) {
+  //           setBox(response.data.result.abox);
+  //           setCorA("abox");
+  //         }
+  //       } else {
+  //         alert("failed to");
+  //       }
+  //     });
+  // }, []);
 
   const [upFolderData, setUpFolderData] = useState({});
   // const [boxId, setBoxId] = useState(0);
@@ -100,16 +100,23 @@ function Workspace() {
     console.log(folderData);
     setUpFolderData(folderData);
 
-    // URL: workspace/${folderId}
-    if(folderData.hasOwnProperty("cboxId")) {
-      // setBoxId(folderData.cboxId);
-      // console.log("FOLDER ID: ", folderData.cboxId);
-      navigate(`/workspace/cbox/${folderData.cboxId}`);
-    } else if(folderData.hasOwnProperty("aboxId")) {
-      // setBoxId(folderData.aboxId);
-      navigate(`/workspace/abox/${folderData.aboxId}`);
-    }
+    // // URL: workspace/${folderId}
+    // if(folderData.hasOwnProperty("cboxId")) {
+    //   // setBoxId(folderData.cboxId);
+    //   // console.log("FOLDER ID: ", folderData.cboxId);
+    //   navigate(`/workspace/cbox/${folderData.cboxId}`);
+    // } else if(folderData.hasOwnProperty("aboxId")) {
+    //   // setBoxId(folderData.aboxId);
+    //   navigate(`/workspace/abox/${folderData.aboxId}`);
+    // }
   };
+  useEffect(() => {
+    if(upFolderData.hasOwnProperty("cboxId")) {
+      navigate(`/workspace/cbox/${upFolderData.cboxId}`);
+    } else if(upFolderData.hasOwnProperty("aboxId")) {
+      navigate(`/workspace/abox/${upFolderData.aboxId}`);
+    }
+  }, [upFolderData, navigate]);
 
   useEffect(() => {
     console.log("===YEAH===");
