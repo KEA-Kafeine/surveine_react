@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import DnDFlow from "../components/Form/DnDFlow";
 import PickModal from "../components/Form/PickModal";
 import LeftArrow from "../img/memberPage/left_arrow.svg";
+import { Link } from "react-router-dom";
 const ALL = {};
 const DATA = [];
 const colors = [
@@ -316,7 +317,7 @@ function FormCreation() {
   }
 
   const clickLeftArrowBtn = () => {
-    navigate("/workspace");
+    navigate(`/workspace/cbox/${cboxId}`);
   };
 
   //브랜치 설정
@@ -631,8 +632,11 @@ function FormCreation() {
       {blur && <GrayBackground />}
       <FormMain blur={blur}>
         <FormSection>
-          <ArrowNavButton src={LeftArrow} onClick={clickLeftArrowBtn} />
           <Header>
+            <Link to={`/workspace/cbox/${cboxId}`}>
+              <ArrowNavButton src={LeftArrow} />
+            </Link>
+
             <HeaderHalf direction="left">
               <Menu>
                 {" "}
@@ -1047,12 +1051,12 @@ const NameField = styled.input`
     outline: none;
   }
   width: 15rem;
-  height: 1em;
   display: block;
   text-align: center;
   font-size: 1rem;
   border-radius: 1rem;
   border: none;
+  margin-left: -50px;
 `;
 
 const HeadBtn = styled.div`
@@ -1064,10 +1068,10 @@ const QstBtn = styled.div`
   margin-left: 10px;
 `;
 const ArrowNavButton = styled.img`
-  margin-top: 2vh;
+  margin-top: 34px;
   margin-left: 2vw;
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   cursor: pointer;
 `;
