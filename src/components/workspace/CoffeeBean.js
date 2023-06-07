@@ -173,6 +173,10 @@ const CoffeeBean = (props) => {
         </EnqPreview>
       </div>
 
+      {props.type === "gbox" && (
+        <DistanceInfo>{props.distance}</DistanceInfo>
+      )}
+
       {props.type !== "sbox" &&
         props.type !== "gbox" &&
         props.distType == "GPS" && <GPSType src={GPSIcon} />}
@@ -217,7 +221,7 @@ const CoffeeBean = (props) => {
       )}
 
       {/* GPS 설문함에서만 보이는 버튼 */}
-      {props.type === "gbox" && (
+      {props.type === "gbox" && props.cbStatus === "WAIT" && (
         <div>
           <DistrBtn onClick={clickGPSResponse}>설문참여</DistrBtn>
           {showGPSRespModal && (
@@ -404,4 +408,12 @@ const FavCnt = styled.div`
   flex-direction: row;
   font-size: 15px;
   font-weight: 350;
+`;
+
+const DistanceInfo = styled.div`
+  font-size: 15px;
+  position: absolute;
+  bottom: 4rem;
+  right: -0.8rem;
+  color: #1a2051;
 `;
