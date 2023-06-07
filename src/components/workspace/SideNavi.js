@@ -14,6 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { uToken } from "../TokenAtom";
 import { useRecoilValue } from "recoil";
+import { Edit } from "../Form/FromStyled";
 
 export function SideNavi(props) {
   const tokenValue = useRecoilValue(uToken);
@@ -123,25 +124,30 @@ export function SideNavi(props) {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   useEffect(() => {
-    if(lat && lng) {
+    if (lat && lng) {
       // TODO: Back
-      axios.post("/api/wspace/gbox", {"lat": lat, "lng": lng}, {
-        headers: { Authorization: "Bearer " + String(tokenValue) },
-      })
-      .then((response) => {
-        if(response.data.isSuccess) {
-          let GPSBoxData = [];
-          GPSBoxData = response.data.result;
-          props.onFolderDataChange(GPSBoxData);
-          props.onChangeLat(lat);
-          props.onChangeLng(lng);
-        } else {
-          alert("failed to");
-        }
-      })
-      .catch((error) => {
-        console.error("[ERROR] get GPS coffeebean list", error);
-      });
+      axios
+        .post(
+          "/api/wspace/gbox",
+          { lat: lat, lng: lng },
+          {
+            headers: { Authorization: "Bearer " + String(tokenValue) },
+          }
+        )
+        .then((response) => {
+          if (response.data.isSuccess) {
+            let GPSBoxData = [];
+            GPSBoxData = response.data.result;
+            props.onFolderDataChange(GPSBoxData);
+            props.onChangeLat(lat);
+            props.onChangeLng(lng);
+          } else {
+            alert("failed to");
+          }
+        })
+        .catch((error) => {
+          console.error("[ERROR] get GPS coffeebean list", error);
+        });
 
       // // 하드코딩
       // let GPSData = {
@@ -192,16 +198,30 @@ export function SideNavi(props) {
     <MainWrapper>
       <Wrapper>
         <TopWapper>
-          <Link to="/">
-            <Logo src={LogoWhite} />
-          </Link>
-          <Link to="/mypage">
-            <EditProf src={settingsWhite} />
-          </Link>
-          <Profile src={defaultProfile} onClick={Test} />
+          <WrapperBottom>
+            <LogoContainer>
+              <Link to="/">
+                <Logo src={LogoWhite} />
+              </Link>
+            </LogoContainer>
+            <Contact>
+              <Link to="/contact">
+                {" "}
+                <ContactText>문의하기</ContactText>
+              </Link>
+            </Contact>
+          </WrapperBottom>
+          <ProfileContainer>
+            <Profile src={defaultProfile} onClick={Test} />
+          </ProfileContainer>
+          <EditContainer>
+            <Link to="/mypage">
+              <EditProf src={settingsWhite} />
+            </Link>
+          </EditContainer>
           <ProfName>{props.memberName}</ProfName>
-          <Line />
         </TopWapper>
+        <Line />
         <BottomWapper>
           <Container>
             <Category onClick={clickGPS}>
@@ -294,9 +314,6 @@ export function SideNavi(props) {
           </Container>
         </BottomWapper>
       </Wrapper>
-      <Link to="/contact">
-        <WrapperBottom>문의하기</WrapperBottom>
-      </Link>
     </MainWrapper>
   );
 }
@@ -306,106 +323,85 @@ const MainWrapper = styled.div`
   height: 100%;
   background-color: #111536;
   font-family: "Poppins";
-  display: flex;
-  flex-direction: column;
   color: white;
 `;
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background-color: #111536;
   flex-direction: column;
   align-items: center;
   vertical-align: center;
   font-family: "Poppins";
   position: relative;
-  color: white;
-`;
-
-const WrapperBottom = styled.div`
-  width: 100%;
-  background-color: #111536;
-  font-family: "Poppins";
-  color: white;
-  padding-bottom: 30px;
-  display: flex;
-  justify-content: center;
-  position: relative;
-  bottom: 0;
 `;
 
 const TopWapper = styled.div`
   width: 100%;
-  height: 340px;
+  height: 270px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  background-color: #111536;
+  align-items: center;
 `;
 
 const BottomWapper = styled.div`
   width: 100%;
-  height: 300px;
-  margin-top: 20px;
-  background-color: #111536;
+`;
+
+const Logo = styled.img``;
+
+const Profile = styled.img``;
+const ProfileContainer = styled.div`
+  width: 100%;
   display: flex;
   justify-content: center;
 `;
 
-const Logo = styled.img`
-  position: absolute;
-  top: 8px;
-  left: 20px;
-`;
-
-const Profile = styled.img`
-  position: absolute;
-  top: 135px;
+const EditContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 const EditProf = styled.img`
-  position: absolute;
-  top: 95px;
-  left: 195px;
+  margin-right: 30px;
 `;
 
 const ProfName = styled.div`
-  position: absolute;
-  top: 280px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
   font-weight: 900;
   font-size: 21px;
 `;
 
 const Line = styled.div`
-  position: absolute;
-  width: 196.67px;
-  height: 0px;
-  top: 335px;
-  border: 0.5px solid white;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid white;
 `;
 
 const Category = styled.div`
-  position: absolute;
-  top: 370px;
-  left: 45px;
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  justify-content: flex-start;
   font-weight: 700;
   font-size: 19px;
+  margin-bottom: 20px;
 
   cursor: pointer;
 `;
 
 const GPSIcon = styled.img`
-  position: absolute;
   margin-right: 10px;
-  left: -25px;
 `;
 
 const FolderRow = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: 60px;
+  margin-bottom: 10px;
 `;
 
 const FolderList = styled.div`
@@ -432,16 +428,17 @@ const FolderCategory = styled.div`
 
 const Folder = styled.div`
   font-weight: 400;
-  margin-top: 10px;
   margin-left: 26px;
   flex-basis: 100%;
   overflow: hidden;
 `;
 
 const Container = styled.div`
+  width: 90%;
   display: flex;
   flex-direction: column;
   height: 100%;
+  margin-left: 20px;
 `;
 
 const FolderContainerTop = styled.div`
@@ -450,8 +447,8 @@ const FolderContainerTop = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 0.001;
-  margin-bottom: 20px;
   overflow-y: scroll;
+  margin-bottom: 5px;
   cursor: pointer;
   /* Hide the scrollbar */
   &::-webkit-scrollbar {
@@ -467,7 +464,7 @@ const FolderContainerTop = styled.div`
 
 const FolderContainerBottom = styled.div`
   width: 95%;
-  height: auto;
+  height: 95%;
   display: flex;
   flex-direction: column;
   flex-grow: 0.001;
@@ -484,4 +481,33 @@ const FolderContainerBottom = styled.div`
   &::-webkit-scrollbar-thumb {
     background-color: transparent;
   }
+`;
+
+const WrapperBottom = styled.div`
+  width: 90%;
+
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  margin-bottom: 10px;
+`;
+
+const Contact = styled.div`
+  width: 50%;
+  font-size: 15px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  color: white;
+`;
+
+const LogoContainer = styled.div`
+  color: white;
+  width: 50%;
+  font-size: 15px;
+  color: white;
+`;
+
+const ContactText = styled.div`
+  color: white;
 `;
