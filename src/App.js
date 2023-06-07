@@ -9,6 +9,7 @@ import FormCreation from "./pages/FormCreation";
 //import Distributionpage from "./pages/DistributionPage";
 import Distribution from "./components/Distribution";
 import Answer from "./pages/FormAnswer";
+import ShowAnswer from "./pages/FormAnswerShow";
 import { RecoilRoot } from "recoil";
 import MemberPage from "./pages/MemberPage";
 import SandBoxPage from "./pages/SandBoxPage";
@@ -31,6 +32,7 @@ function App() {
         <Route path="/create/:cboxId/:enqId" element={<FormCreation />} />
         <Route path="/distribution" element={<Distribution />} />
         <Route path="/answer/:url" element={<Answer />} />
+        <Route path="/showanswer/:aboxId/:ansId" element={<ShowAnswer />} />
         <Route path="/sandbox" element={<SandBoxPage />} />
         <Route path="/result/:enqId" element={<FormResult />} />
         <Route path="/flow" element={<DnDFlow />} />

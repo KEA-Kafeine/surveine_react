@@ -8,10 +8,9 @@ import GoogleSocial from "../img/memberPage/google_social.svg";
 import LeftArrow from "../img/memberPage/left_arrow.svg";
 import * as cm from "../components/Common";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { RedoOutlined } from '@ant-design/icons';
-
-const {kakao} = window;
+import { Link, useNavigate } from "react-router-dom";
+import { RedoOutlined } from "@ant-design/icons";
+const { kakao } = window;
 
 function MemberPage() {
   const tokenValue = useRecoilValue(uToken);
@@ -61,7 +60,9 @@ function MemberPage() {
       },
       (error) => {
         console.log("[ERROR] GPS: ", error);
-        alert("현재 위치를 확인하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해주세요.");
+        alert(
+          "현재 위치를 확인하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해주세요."
+        );
       }
     );
   }, []);
@@ -75,7 +76,9 @@ function MemberPage() {
       },
       (error) => {
         console.log("[ERROR] GPS: ", error);
-        alert("현재 위치를 확인하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해주세요.");
+        alert(
+          "현재 위치를 확인하려면 위치에 엑세스 할 수 있도록 위치 권한을 허용해주세요."
+        );
       }
     );
   };
@@ -85,30 +88,34 @@ function MemberPage() {
   const getAddress = (lat, lng) => {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
     fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      setLat(lat);
-      setLng(lng);
-      setAddress(data.display_name);
-    })
-    .catch((error) => {
-      console.error("[ERROR] Reverse geocoding error: ", error);
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        setLat(lat);
+        setLng(lng);
+        setAddress(data.display_name);
+      })
+      .catch((error) => {
+        console.error("[ERROR] Reverse geocoding error: ", error);
+      });
   };
   const [detailAddress, setDetailAddress] = useState("알 수 없음");
   useEffect(() => {
-    if(address !== "알 수 없음") {
+    if (address !== "알 수 없음") {
       const addressArray = address.split(",");
       let firstEle = addressArray[0].trim();
-      let cityEle = addressArray.find((element) => element.trim().endsWith("시"));
-      let secondEle = addressArray.find((element) => element.trim().endsWith("동"));
-      if(cityEle) {
+      let cityEle = addressArray.find((element) =>
+        element.trim().endsWith("시")
+      );
+      let secondEle = addressArray.find((element) =>
+        element.trim().endsWith("동")
+      );
+      if (cityEle) {
         cityEle = cityEle.trim();
       }
-      if(secondEle) {
+      if (secondEle) {
         secondEle = secondEle.trim();
       }
-      if(firstEle) {
+      if (firstEle) {
         firstEle = firstEle.trim();
       }
       const combine = `${cityEle} ${secondEle} ${firstEle}`;
@@ -138,16 +145,24 @@ function MemberPage() {
     alert("구글 소셜 연동");
   };
 
+  const clickLogout = () => {};
+
   useEffect(() => {
-    const container = document.getElementById('map');
+    const container = document.getElementById("map");
     const options = {
-      center: new kakao.maps.LatLng(NowMemberLocation.lat, NowMemberLocation.lng),
-      level: 3
+      center: new kakao.maps.LatLng(
+        NowMemberLocation.lat,
+        NowMemberLocation.lng
+      ),
+      level: 3,
     };
     const map = new kakao.maps.Map(container, options);
-    const markerPosition = new kakao.maps.LatLng(NowMemberLocation.lat, NowMemberLocation.lng);
+    const markerPosition = new kakao.maps.LatLng(
+      NowMemberLocation.lat,
+      NowMemberLocation.lng
+    );
     const marker = new kakao.maps.Marker({
-      position: markerPosition
+      position: markerPosition,
     });
     marker.setMap(map);
   }, [lat, lng]);
@@ -157,15 +172,28 @@ function MemberPage() {
       <cm.TopBarDark>
         <cm.TopBar_Menu_left>
           {" "}
-          <cm.WLogo style={{cursor: "pointer"}} onClick={() => navigate("/workspace")} />
+          <cm.WLogo
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/workspace")}
+          />
         </cm.TopBar_Menu_left>
         <cm.TopBar_menu style={{ marginLeft: "5rem" }}>
-          <cm.TopBar_menu_item_dark style={{cursor: "pointer"}} onClick={() => navigate("/workspace")}>Work Space</cm.TopBar_menu_item_dark>
-          <cm.TopBar_menu_item_dark style={{cursor: "pointer"}} onClick={() => navigate("/sandbox")}>Sand Box</cm.TopBar_menu_item_dark>
+          <cm.TopBar_menu_item_dark
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/workspace")}
+          >
+            Work Space
+          </cm.TopBar_menu_item_dark>
+          <cm.TopBar_menu_item_dark
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/sandbox")}
+          >
+            Sand Box
+          </cm.TopBar_menu_item_dark>
         </cm.TopBar_menu>
         <cm.TopBar_Menu_right>
-          <cm.LinkNone to="/login">
-            <cm.BtnWhite>Login</cm.BtnWhite>
+          <cm.LinkNone to="/">
+            <cm.BtnWhite onClick={clickLogout}>Logout</cm.BtnWhite>
           </cm.LinkNone>
           <cm.TranslateBtn_white />
         </cm.TopBar_Menu_right>
@@ -236,7 +264,10 @@ function MemberPage() {
             <LocationInfoContainer>
               <LocationTop>
                 <LocationTitle>현재 위치</LocationTitle>
-                <RedoOutlined style={{marginLeft: "0.8rem", marginTop: "1.4rem"}} onClick={clickGPS} />
+                <RedoOutlined
+                  style={{ marginLeft: "0.8rem", marginTop: "1.4rem" }}
+                  onClick={clickGPS}
+                />
               </LocationTop>
               <LocationAddress>{NowMemberLocation.address}</LocationAddress>
               <LocationLatLng>
@@ -249,8 +280,7 @@ function MemberPage() {
               </LocationLatLng>
             </LocationInfoContainer>
           </SubInfoTopContainer>
-          <SubInfoBottomContainer id="map">
-          </SubInfoBottomContainer>
+          <SubInfoBottomContainer id="map"></SubInfoBottomContainer>
         </SubInfoContainer>
       </MemberMainContainer>
     </MemberPageContainer>

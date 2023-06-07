@@ -1,4 +1,4 @@
-import styled, {css, keyframes} from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 import { Link } from "react-router-dom";
 import { ReactComponent as Logo_white } from "../img/logo_white.svg";
@@ -36,10 +36,16 @@ export const TopBarDark = styled.div`
 
 //네비바 왼쪽 로고
 export const WLogo = styled(Logo_white)`
-  margin-left: 1.5rem;
+  margin-left: 3rem;
   display: block;
   width: 35%;
-  height: auto;
+  height: 100px;
+`;
+
+export const WLogoLand = styled(Logo_white)`
+  display: block;
+  width: 35%;
+  height: 40px;
 `;
 
 export const TopBar_menu = styled.div`
@@ -72,7 +78,7 @@ export const TopBar_menu_item = styled.div`
 
 // 남색 배경 탑바의 워크스페이스, 샌드박스 네비게이션 버튼 흰색 버전
 export const TopBar_menu_item_dark = styled.div`
-  color: #FFFFFF;
+  color: #ffffff;
   margin: 10px;
   text-decoration: none;
   font-size: 1.5em;

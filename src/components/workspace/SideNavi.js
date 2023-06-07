@@ -34,8 +34,18 @@ export function SideNavi(props) {
     console.log(props.cbList);
     console.log(props.abList);
 
-    setAllCBList([props.cbList[0], ...props.cbList.slice(1).sort((a, b) => a.cboxName.localeCompare(b.cboxName))]);
-    setAllABList([props.abList[0], ...props.abList.slice(1).sort((a, b) => a.aboxName.localeCompare(b.aboxName))]);
+    setAllCBList([
+      props.cbList[0],
+      ...props.cbList
+        .slice(1)
+        .sort((a, b) => a.cboxName.localeCompare(b.cboxName)),
+    ]);
+    setAllABList([
+      props.abList[0],
+      ...props.abList
+        .slice(1)
+        .sort((a, b) => a.aboxName.localeCompare(b.aboxName)),
+    ]);
   }, []);
   // [props.abList, props.cbList]
 
@@ -111,38 +121,28 @@ export function SideNavi(props) {
 
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
-
   useEffect(() => {
-    if (lat && lng) {
+    if(lat && lng) {
       // TODO: Back
-      axios
-        .post(
-          `/api/wspace/gbox`,
-          {
-            lat: lat,
-            lng: lng,
-          },
+      axios.post("/api/wspace/gbox", {"lat": lat, "lng": lng}, {
+        headers: { Authorization: "Bearer " + String(tokenValue) },
+      })
+      .then((response) => {
+        if(response.data.isSuccess) {
+          let GPSBoxData = [];
+          GPSBoxData = response.data.result;
+          props.onFolderDataChange(GPSBoxData);
+          props.onChangeLat(lat);
+          props.onChangeLng(lng);
+        } else {
+          alert("failed to");
+        }
+      })
+      .catch((error) => {
+        console.error("[ERROR] get GPS coffeebean list", error);
+      });
 
-          {
-            headers: { Authorization: "Bearer " + String(tokenValue) },
-          }
-        )
-        .then((response) => {
-          if (response.data.isSuccess) {
-            let GPSBoxData = [];
-            GPSBoxData = response.data.result;
-            props.onFolderDataChange(GPSBoxData);
-            props.onChangeLat(lat);
-            props.onChangeLng(lng);
-          } else {
-            alert("failed to");
-          }
-        })
-        .catch((error) => {
-          console.error("[ERROR] get GPS coffeebean list", error);
-        });
-
-      // 하드코딩
+      // // 하드코딩
       // let GPSData = {
       //   "result": {
       //     // "abList": [
@@ -188,10 +188,10 @@ export function SideNavi(props) {
   };
 
   return (
-    <>
+    <MainWrapper>
       <Wrapper>
         <TopWapper>
-          <Link to="/workspace/0">
+          <Link to="/">
             <Logo src={LogoWhite} />
           </Link>
           <Link to="/mypage">
@@ -200,21 +200,31 @@ export function SideNavi(props) {
           <Profile src={defaultProfile} onClick={Test} />
           <ProfName>{props.memberName}</ProfName>
           <Line />
-          <Category onClick={clickGPS}>
-            <GPSIcon src={GPSwhite} />
-            GPS 설문함
-          </Category>
         </TopWapper>
         <BottomWapper>
           <Container>
+            <Category onClick={clickGPS}>
+              <GPSIcon src={GPSwhite} />
+              GPS 설문함
+            </Category>
             <FolderRow>
               <FolderCategory onClick={handleCBToggle}>
-                <img src={CBToggle ? toggleOpen : toggleClose} onClick={handleCBToggle} />
+                <img
+                  src={CBToggle ? toggleOpen : toggleClose}
+                  onClick={handleCBToggle}
+                />
                 &nbsp; 제작함
               </FolderCategory>
               <div>
                 <PlusBtn src={plusWhite} onClick={() => addFolder("제작함")} />
-                {showNewFolder && <EditModal onClose={() => setShowNewFolder(false)} onSave={handleNewFolderSave} type={folderType} what="newFolder" />}
+                {showNewFolder && (
+                  <EditModal
+                    onClose={() => setShowNewFolder(false)}
+                    onSave={handleNewFolderSave}
+                    type={folderType}
+                    what="newFolder"
+                  />
+                )}
               </div>
             </FolderRow>
             <FolderContainerTop height={height}>
@@ -222,7 +232,12 @@ export function SideNavi(props) {
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   {allCBList.map((cbList) => (
                     <div key={cbList.cboxId}>
-                      <Folder key={cbList.cboxName} onClick={() => clickFolder("cbox", cbList.cboxId, cbList.cboxName)}>
+                      <Folder
+                        key={cbList.cboxName}
+                        onClick={() =>
+                          clickFolder("cbox", cbList.cboxId, cbList.cboxName)
+                        }
+                      >
                         <FolderList>
                           <div>{cbList.cboxName}</div>
                           <div>{cbList.enqCnt}</div>
@@ -236,12 +251,22 @@ export function SideNavi(props) {
 
             <FolderRow>
               <FolderCategory onClick={handleABToggle}>
-                <img src={ABToggle ? toggleOpen : toggleClose} onClick={handleABToggle} />
+                <img
+                  src={ABToggle ? toggleOpen : toggleClose}
+                  onClick={handleABToggle}
+                />
                 &nbsp; 참여함
               </FolderCategory>
               <div>
                 <PlusBtn src={plusWhite} onClick={() => addFolder("참여함")} />
-                {showNewFolder && <EditModal onClose={() => setShowNewFolder(false)} onSave={handleNewFolderSave} type={folderType} what="newFolder" />}
+                {showNewFolder && (
+                  <EditModal
+                    onClose={() => setShowNewFolder(false)}
+                    onSave={handleNewFolderSave}
+                    type={folderType}
+                    what="newFolder"
+                  />
+                )}
               </div>
             </FolderRow>
             <FolderContainerBottom>
@@ -249,7 +274,12 @@ export function SideNavi(props) {
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   {allABList.map((abList) => (
                     <div key={abList.aboxId}>
-                      <Folder key={abList.aboxName} onClick={() => clickFolder("abox", abList.aboxId, abList.aboxName)}>
+                      <Folder
+                        key={abList.aboxName}
+                        onClick={() =>
+                          clickFolder("abox", abList.aboxId, abList.aboxName)
+                        }
+                      >
                         <FolderList>
                           <div>{abList.aboxName}</div>
                           <div>{abList.ansCnt}</div>
@@ -263,32 +293,59 @@ export function SideNavi(props) {
           </Container>
         </BottomWapper>
       </Wrapper>
-    </>
+      <Link to="/contact">
+        <WrapperBottom>문의하기</WrapperBottom>
+      </Link>
+    </MainWrapper>
   );
 }
 
-const Wrapper = styled.div`
+const MainWrapper = styled.div`
   width: 100%;
   height: 100%;
+  background-color: #111536;
+  font-family: "Poppins";
   display: flex;
+  flex-direction: column;
+  color: white;
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100vh;
   background-color: #111536;
   flex-direction: column;
   align-items: center;
   vertical-align: center;
   font-family: "Poppins";
+  position: relative;
   color: white;
+`;
+
+const WrapperBottom = styled.div`
+  width: 100%;
+  background-color: #111536;
+  font-family: "Poppins";
+  color: white;
+  padding-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  bottom: 0;
 `;
 
 const TopWapper = styled.div`
   width: 100%;
-  height: 50%;
+  height: 340px;
   display: flex;
   justify-content: center;
+  background-color: #111536;
 `;
 
 const BottomWapper = styled.div`
   width: 100%;
-  height: 50%;
+  height: 300px;
+  margin-top: 20px;
   background-color: #111536;
   display: flex;
   justify-content: center;
@@ -334,6 +391,7 @@ const Category = styled.div`
   flex-direction: row;
   font-weight: 700;
   font-size: 19px;
+
   cursor: pointer;
 `;
 
@@ -346,6 +404,7 @@ const GPSIcon = styled.img`
 const FolderRow = styled.div`
   display: flex;
   flex-direction: row;
+  margin-top: 60px;
 `;
 
 const FolderList = styled.div`
@@ -366,6 +425,7 @@ const FolderCategory = styled.div`
   margin-right: 102px;
   font-weight: 700;
   font-size: 19px;
+
   cursor: default;
 `;
 
@@ -392,6 +452,16 @@ const FolderContainerTop = styled.div`
   margin-bottom: 20px;
   overflow-y: scroll;
   cursor: pointer;
+  /* Hide the scrollbar */
+  &::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: transparent;
+  }
+
+  /* Hide the scrollbar thumb */
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
 `;
 
 const FolderContainerBottom = styled.div`
@@ -403,4 +473,14 @@ const FolderContainerBottom = styled.div`
   margin-bottom: 20px;
   overflow-y: scroll;
   cursor: pointer;
+  /* Hide the scrollbar */
+  &::-webkit-scrollbar {
+    width: 0.5em;
+    background-color: transparent;
+  }
+
+  /* Hide the scrollbar thumb */
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
 `;
