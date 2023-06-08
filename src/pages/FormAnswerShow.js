@@ -170,7 +170,10 @@ const FormQuestion = (props) => {
               value={text}
               placeholder={
                 props.answerArr.find((answer) => answer.qstId == props.qstId)
-                  .answerText
+                  ? props.answerArr.find(
+                      (answer) => answer.qstId == props.qstId
+                    ).answerText
+                  : "질문에 대한 응답을 입력하세요"
               }
               onChange={onChange}
               onBlur={() => handleBlur(props.qstId, props.qstType)}
