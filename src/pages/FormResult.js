@@ -388,7 +388,7 @@ const FlowFrame = styled.div`
   margin-right: 0.5rem;
 `;
 const FormMain = styled.div`
-  background: #f5f5f5;
+  background: #eef3ff;
   width: 100vw;
   height: 100vh;
   display: flex;
