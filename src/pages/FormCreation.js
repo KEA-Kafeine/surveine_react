@@ -154,6 +154,7 @@ function FormCreation() {
   const [inputEditOption, setInputEditOption] = useState("");
   const [enqStatus, setEnqStatus] = useState("ENQ_MAKE");
   const [blur, setBlur] = useState(false);
+  const [answerCnt, setAnswerCnt] = useState(0);
 
   useEffect(() => {
     if (enqId != null) {
@@ -175,6 +176,7 @@ function FormCreation() {
           setName(response.data.result.name);
           setEnqStatus(response.data.result.enqStatus);
           setTitle(response.data.result.enqTitle);
+          setAnswerCnt(response.data.result.answerCnt);
         });
     } else {
       console.log(tokenValue);
@@ -566,7 +568,11 @@ function FormCreation() {
   }
 
   function openResult() {
-    navigate(`/result/${enqId}`);
+    if (answerCnt > 0) {
+      navigate(`/result/${enqId}`);
+    } else {
+      alert("응답이 존재하지 않습니다.");
+    }
   }
   const handleChange = (e) => {
     setInput(e.target.value);
@@ -666,8 +672,9 @@ function FormCreation() {
                   <t.FormButton onClick={clickPick}>추첨</t.FormButton>
                 </QstBtn>
                 <QstBtn>
-                  <t.FormButton onClick={openResult}>결과분석</t.FormButton>
+                  <t.FormButton onClick={openResult}>결과</t.FormButton>
                 </QstBtn>
+                <AnswerCount>{answerCnt}</AnswerCount>
                 <QstBtn>
                   <t.Export onClick={clickDistriubtion}>배포</t.Export>
                 </QstBtn>
@@ -950,7 +957,7 @@ function FormCreation() {
         />
       ) : null}
 
-      {pick ? <PickModal clickPick={clickPick} /> : null}
+      {pick ? <PickModal clickPick={clickPick} enqId={enqId} /> : null}
     </>
   );
 }
@@ -1081,4 +1088,16 @@ const ArrowNavButton = styled.img`
   width: 15px;
   height: 15px;
   cursor: pointer;
+`;
+const AnswerCount = styled.div`
+  width: 17px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a2051;
+  color: white;
+  border-radius: 80%;
+  margin-left: 6px;
+  font-size: 12px;
 `;
