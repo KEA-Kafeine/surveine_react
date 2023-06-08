@@ -38,7 +38,7 @@ export const TopBarDark = styled.div`
 export const WLogo = styled(Logo_white)`
   margin-left: 3rem;
   display: block;
-  width: 35%;
+  width: 120px;
   height: 100px;
 `;
 
