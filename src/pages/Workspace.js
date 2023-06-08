@@ -59,8 +59,7 @@ function Workspace() {
   //   // console.log(box); // 비어있어
   //   console.log(CorA);
   // }, []);
-
-  console.log("망할" + boxType);
+  
   // const [memName, setMemName] = useState("");
   // const [cbList, setCbList] = useState([]);
   // const [abList, setAbList] = useState([]);
