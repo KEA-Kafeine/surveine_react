@@ -113,25 +113,41 @@ const Distribution = (props) => {
 
   const gps_ranges = [
     {
+      key: "10",
+      label: "10m"
+    },
+    {
+      key: "20",
+      label: "20m"
+    },
+    {
+      key: "50",
+      label: "50m"
+    },
+    {
       key: "100",
-      label: "100m",
+      label: "100m"
     },
     {
       key: "200",
-      label: "200m",
-    },
-    {
-      key: "300",
-      label: "300m",
+      label: "200m"
     },
     {
       key: "400",
-      label: "400m",
+      label: "400m"
     },
     {
-      key: "500",
-      label: "500m",
+      key: "1000",
+      label: "1000m"
     },
+    {
+      key: "5000",
+      label: "5000m"
+    },
+    {
+      key: "10000",
+      label: "10000m"
+    }
   ];
 
   const closeModal = () => {
