@@ -412,8 +412,11 @@ const FavCnt = styled.div`
 
 const DistanceInfo = styled.div`
   font-size: 15px;
-  position: absolute;
-  bottom: 4rem;
-  right: -0.8rem;
+  // position: absolute;
+  // bottom: 4rem;
+  // right: 0.6rem;
+  display: flex;
+  margin-left: 10.3rem;
+  margin-top: 7.3rem;
   color: #1a2051;
 `;
