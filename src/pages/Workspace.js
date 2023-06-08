@@ -462,3 +462,7 @@ const MapContainer = styled.div`
 
   display: ${(props) => (props.isExpanded ? "block" : "none")};
 `;
+
+const ChatBotConatiner = styled.div`
+  position: absolute;
+`;

@@ -320,15 +320,7 @@ function FormAnswer() {
         <FormSection>
           <Header>
             <HeaderHalf direction="left">
-              <Menu>
-                {" "}
-                <NameField
-                  type="text"
-                  value={name}
-                  placeholder="파일 이름을 입력하세요"
-                  onChange={onChangeName}
-                />
-              </Menu>
+              <Menu> </Menu>
             </HeaderHalf>
             <HeaderHalf direction="right">
               <HeadBtn>
@@ -417,7 +409,7 @@ export default FormAnswer;
 
 // 도경 부분
 const FormMain = styled.div`
-  background: #f5f5f5;
+  background: #eef3ff;
   width: 100vw;
   height: 100vh;
   display: flex;

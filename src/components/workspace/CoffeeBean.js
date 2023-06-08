@@ -53,7 +53,7 @@ const CoffeeBean = (props) => {
     console.log(cbId + " 좋아요");
     axios
       .put(
-        "/api/sbox/fav",
+        "/api/sbox/chkfav",
         { enqId: cbId },
         {
           headers: { Authorization: "Bearer " + String(tokenValue) },
@@ -173,9 +173,7 @@ const CoffeeBean = (props) => {
         </EnqPreview>
       </div>
 
-      {props.type === "gbox" && (
-        <DistanceInfo>{props.distance}</DistanceInfo>
-      )}
+      {props.type === "gbox" && <DistanceInfo>{props.distance}</DistanceInfo>}
 
       {props.type !== "sbox" &&
         props.type !== "gbox" &&

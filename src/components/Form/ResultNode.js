@@ -208,20 +208,17 @@ const TagEssen = styled.div`
 `;
 // Tooltip Nodes
 const Tooltip = styled.div`
-  width: 150px;
   background-color: #eef3ff;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  padding: 20px;
+  padding: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 23px;
 `;
 
 const TooltipTitle = styled.div`
-  width: 140px;
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
